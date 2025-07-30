@@ -21,8 +21,8 @@ This is a starter template for building a application using **Next.js** with sup
 ## Getting Started
 
 ```bash
-git clone https://github.com/clacky-ai/next-app-starter
-cd next-app-starter
+git clone git@github.com:Frank-whw/roommate-matching-system.git
+cd roommate-matching-system
 npm install
 ```
 
