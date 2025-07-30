@@ -4,16 +4,15 @@ import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Home, Loader2, Mail, CheckCircle, AlertCircle } from 'lucide-react';
 import { signIn, signUp, resendVerificationEmail } from './actions';
 import { ActionState } from '@/lib/auth/middleware';
 import { siteConfig } from '@/lib/config';
-
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const searchParams = useSearchParams();
