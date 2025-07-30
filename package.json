@@ -8,7 +8,10 @@
     "db:seed": "npx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "deploy:prepare": "node scripts/migrate-to-cloud.js",
+    "test:email": "echo 'Please visit /test-email page to test email functionality'",
+    "production:check": "node scripts/production-check.js"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -21,6 +24,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/postcss": "4.1.7",
     "@types/node": "^22.15.18",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
     "autoprefixer": "^10.4.21",
@@ -34,6 +38,7 @@
     "jose": "^6.0.11",
     "lucide-react": "^0.511.0",
     "next": "15.4.0-canary.47",
+    "nodemailer": "^7.0.5",
     "postcss": "^8.5.3",
     "postgres": "^3.4.5",
     "react": "19.1.0",
@@ -45,5 +50,8 @@
     "tw-animate-css": "^1.3.0",
     "typescript": "^5.8.3",
     "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "readline-sync": "^1.4.10"
   }
 }
