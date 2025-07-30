@@ -9,7 +9,7 @@ import { Bell, TestTube } from 'lucide-react';
 
 export function RealtimeTest() {
   const { addNotification, state } = useRealtime();
-  const [isTestingPollling, setIsTestingPolling] = useState(false);
+  const [isTestingPolling, setIsTestingPolling] = useState(false);
 
   const testNotifications = [
     {
@@ -123,7 +123,7 @@ export function RealtimeTest() {
         </div>
         
         <div className="text-xs text-gray-500">
-          <p>上次更新: {state.lastUpdated.toLocaleTimeString()}</p>
+          <p>上次更新: {state.lastUpdated.toLocaleTimeString('zh-CN', { hour12: false })}</p>
         </div>
       </CardContent>
     </Card>
