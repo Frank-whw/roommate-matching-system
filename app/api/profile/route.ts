@@ -12,8 +12,23 @@ export async function GET() {
 
     const profileData = await getUserProfileData(user.users.id);
     
+    // 检查个人资料完整性
+    const isProfileComplete = profileData && 
+      profileData.wechatId && 
+      profileData.gender && 
+      profileData.age && 
+      profileData.sleepTime && 
+      profileData.wakeTime && 
+      profileData.studyHabit && 
+      profileData.lifestyle && 
+      profileData.cleanliness && 
+      profileData.mbti && 
+      profileData.roommateExpectations && 
+      profileData.hobbies;
+    
     return NextResponse.json({
       success: true,
+      isProfileComplete: !!isProfileComplete,
       data: {
         user: user.users,
         profile: profileData
