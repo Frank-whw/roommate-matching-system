@@ -1,0 +1,999 @@
+'use server';
+
+import { z } from 'zod';
+import { eq, and, or, ne, count, desc } from 'drizzle-orm';
+import { db } from '@/lib/db/drizzle';
+import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
+import { getCurrentUser, logActivity } from '@/lib/db/queries';
+import { revalidatePath } from 'next/cache';
+
+// Create team schema
+const createTeamSchema = z.object({
+  name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长'),
+  description: z.string().optional(),
+  dormArea: z.string().optional(),
+  requirements: z.string().optional(),
+  maxMembers: z.number().int().min(2).max(4).default(4),
+});
+
+// Join team request schema
+const joinTeamSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+  message: z.string().optional(),
+});
+
+// Review join request schema
+const reviewJoinRequestSchema = z.object({
+  requestId: z.number().int().positive('申请ID不正确'),
+  approved: z.boolean(),
+});
+
+// Leave team schema
+const leaveTeamSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+});
+
+// Remove member schema
+const removeMemberSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+  memberId: z.number().int().positive('成员ID不正确'),
+});
+
+// Transfer leadership schema
+const transferLeadershipSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+  newLeaderId: z.number().int().positive('新队长ID不正确'),
+});
+
+// Disband team schema
+const disbandTeamSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+});
+
+// Update team schema
+const updateTeamSchema = z.object({
+  teamId: z.number().int().positive('队伍ID不正确'),
+  name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长').optional(),
+  description: z.string().optional(),
+  dormArea: z.string().optional(),
+  requirements: z.string().optional(),
+  maxMembers: z.number().int().min(2).max(4).optional(),
+});
+
+// Create a new team
+export async function createTeam(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = createTeamSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { name, description, dormArea, requirements, maxMembers } = result.data;
+
+    // Check if user is already in a team
+    const existingMembership = await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.userId, currentUserId))
+      .limit(1);
+
+    if (existingMembership.length > 0) {
+      return { error: '您已经在一个队伍中，请先退出当前队伍' };
+    }
+
+    // Create the team (within a transaction)
+    const newTeam = await db.transaction(async (tx) => {
+      // Create team
+      const [team] = await tx.insert(teams).values({
+        name,
+        description,
+        dormArea,
+        requirements,
+        leaderId: currentUserId,
+        maxMembers,
+        currentMembers: 1,
+        status: 'recruiting',
+      }).returning();
+
+      // Add creator as first team member and leader
+      await tx.insert(teamMembers).values({
+        teamId: team.id,
+        userId: currentUserId,
+        isLeader: true,
+      });
+
+      return team;
+    });
+
+    // Log activity
+    await logActivity(
+      currentUserId,
+      ActivityType.CREATE_TEAM,
+      undefined,
+      { teamId: newTeam.id, teamName: name }
+    );
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: '队伍创建成功！',
+      teamId: newTeam.id,
+    };
+
+  } catch (error) {
+    console.error('创建队伍失败:', error);
+    return {
+      error: '创建队伍失败，请重试',
+    };
+  }
+}
+
+// Join a team (create join request)
+export async function joinTeam(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = joinTeamSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId, message } = result.data;
+
+    // Check if user is already in a team
+    const existingMembership = await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.userId, currentUserId))
+      .limit(1);
+
+    if (existingMembership.length > 0) {
+      return { error: '您已经在一个队伍中' };
+    }
+
+    // Check if team exists and has space
+    const targetTeam = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (targetTeam.length === 0) {
+      return { error: '队伍不存在' };
+    }
+
+    const team = targetTeam[0];
+
+    if (team.currentMembers >= team.maxMembers) {
+      return { error: '队伍已满' };
+    }
+
+    if (team.status !== 'recruiting') {
+      return { error: '队伍当前不接受新成员' };
+    }
+
+    if (team.leaderId === currentUserId) {
+      return { error: '您不能申请加入自己创建的队伍' };
+    }
+
+    // Check if user already has a pending request for this team
+    const existingRequest = await db
+      .select()
+      .from(teamJoinRequests)
+      .where(
+        and(
+          eq(teamJoinRequests.teamId, teamId),
+          eq(teamJoinRequests.userId, currentUserId),
+          eq(teamJoinRequests.status, 'pending')
+        )
+      )
+      .limit(1);
+
+    if (existingRequest.length > 0) {
+      return { error: '您已经向该队伍发送过申请' };
+    }
+
+    // Create join request
+    await db.insert(teamJoinRequests).values({
+      teamId,
+      userId: currentUserId,
+      message: message || '',
+      status: 'pending',
+    });
+
+    // Log activity
+    await logActivity(
+      currentUserId,
+      ActivityType.REQUEST_JOIN_TEAM,
+      undefined,
+      { teamId, teamName: team.name }
+    );
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: '申请已发送，等待队长审核',
+    };
+
+  } catch (error) {
+    console.error('申请加入队伍失败:', error);
+    return {
+      error: '申请失败，请重试',
+    };
+  }
+}
+
+// Review join request (approve or reject)
+export async function reviewJoinRequest(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = reviewJoinRequestSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { requestId, approved } = result.data;
+
+    // Get the join request
+    const joinRequest = await db
+      .select({
+        request: teamJoinRequests,
+        team: teams,
+        applicant: users,
+      })
+      .from(teamJoinRequests)
+      .innerJoin(teams, eq(teamJoinRequests.teamId, teams.id))
+      .innerJoin(users, eq(teamJoinRequests.userId, users.id))
+      .where(eq(teamJoinRequests.id, requestId))
+      .limit(1);
+
+    if (joinRequest.length === 0) {
+      return { error: '申请不存在' };
+    }
+
+    const { request, team, applicant } = joinRequest[0];
+
+    // Check if current user is the team leader
+    if (team.leaderId !== currentUserId) {
+      return { error: '只有队长可以审核申请' };
+    }
+
+    // Check if request is still pending
+    if (request.status !== 'pending') {
+      return { error: '该申请已被处理' };
+    }
+
+    if (approved) {
+      // Check if team still has space
+      if (team.currentMembers >= team.maxMembers) {
+        return { error: '队伍已满' };
+      }
+
+      // Check if applicant is still available (not in another team)
+      const applicantMembership = await db
+        .select()
+        .from(teamMembers)
+        .where(eq(teamMembers.userId, request.userId))
+        .limit(1);
+
+      if (applicantMembership.length > 0) {
+        // Update request status to rejected
+        await db
+          .update(teamJoinRequests)
+          .set({
+            status: 'rejected',
+            reviewedBy: currentUserId,
+            reviewedAt: new Date(),
+          })
+          .where(eq(teamJoinRequests.id, requestId));
+
+        return { error: '该用户已加入其他队伍' };
+      }
+
+      // Approve the request (within a transaction)
+      await db.transaction(async (tx) => {
+        // Add user to team
+        await tx.insert(teamMembers).values({
+          teamId: team.id,
+          userId: request.userId,
+          isLeader: false,
+        });
+
+        // Update team member count
+        await tx
+          .update(teams)
+          .set({
+            currentMembers: team.currentMembers + 1,
+            updatedAt: new Date(),
+          })
+          .where(eq(teams.id, team.id));
+
+        // Update request status
+        await tx
+          .update(teamJoinRequests)
+          .set({
+            status: 'matched',
+            reviewedBy: currentUserId,
+            reviewedAt: new Date(),
+          })
+          .where(eq(teamJoinRequests.id, requestId));
+      });
+
+      // Log activities
+      await Promise.all([
+        logActivity(
+          currentUserId,
+          ActivityType.APPROVE_JOIN_REQUEST,
+          undefined,
+          { teamId: team.id, applicantId: request.userId }
+        ),
+        logActivity(
+          request.userId,
+          ActivityType.JOIN_TEAM,
+          undefined,
+          { teamId: team.id, teamName: team.name }
+        ),
+      ]);
+
+      revalidatePath('/teams');
+      return {
+        success: true,
+        message: `已批准 ${applicant.name || applicant.email} 加入队伍`,
+      };
+
+    } else {
+      // Reject the request
+      await db
+        .update(teamJoinRequests)
+        .set({
+          status: 'rejected',
+          reviewedBy: currentUserId,
+          reviewedAt: new Date(),
+        })
+        .where(eq(teamJoinRequests.id, requestId));
+
+      // Log activity
+      await logActivity(
+        currentUserId,
+        ActivityType.REJECT_JOIN_REQUEST,
+        undefined,
+        { teamId: team.id, applicantId: request.userId }
+      );
+
+      revalidatePath('/teams');
+      return {
+        success: true,
+        message: '已拒绝该申请',
+      };
+    }
+
+  } catch (error) {
+    console.error('审核申请失败:', error);
+    return {
+      error: '审核失败，请重试',
+    };
+  }
+}
+
+// Leave team
+export async function leaveTeam(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = leaveTeamSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId } = result.data;
+
+    // Get team and user membership
+    const teamInfo = await db
+      .select({
+        team: teams,
+        membership: teamMembers,
+      })
+      .from(teams)
+      .innerJoin(teamMembers, and(
+        eq(teamMembers.teamId, teams.id),
+        eq(teamMembers.userId, currentUserId)
+      ))
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (teamInfo.length === 0) {
+      return { error: '您不在该队伍中' };
+    }
+
+    const { team, membership } = teamInfo[0];
+
+    // If user is the leader and there are other members, transfer leadership or disband
+    if (membership.isLeader && team.currentMembers > 1) {
+      // Find another member to make leader
+      const otherMembers = await db
+        .select({
+          member: teamMembers,
+          user: users,
+        })
+        .from(teamMembers)
+        .innerJoin(users, eq(teamMembers.userId, users.id))
+        .where(
+          and(
+            eq(teamMembers.teamId, teamId),
+            ne(teamMembers.userId, currentUserId)
+          )
+        )
+        .limit(1);
+
+      if (otherMembers.length > 0) {
+        // Transfer leadership to the first available member
+        const newLeader = otherMembers[0];
+        
+        await db.transaction(async (tx) => {
+          // Update team leader
+          await tx
+            .update(teams)
+            .set({
+              leaderId: newLeader.member.userId,
+              currentMembers: team.currentMembers - 1,
+              updatedAt: new Date(),
+            })
+            .where(eq(teams.id, teamId));
+
+          // Update new leader status
+          await tx
+            .update(teamMembers)
+            .set({ isLeader: true })
+            .where(eq(teamMembers.id, newLeader.member.id));
+
+          // Remove current user from team
+          await tx
+            .delete(teamMembers)
+            .where(eq(teamMembers.id, membership.id));
+        });
+
+        // Log activities
+        await Promise.all([
+          logActivity(
+            currentUserId,
+            ActivityType.LEAVE_TEAM,
+            undefined,
+            { teamId, teamName: team.name }
+          ),
+          logActivity(
+            newLeader.member.userId,
+            ActivityType.BECOME_TEAM_LEADER,
+            undefined,
+            { teamId, teamName: team.name, previousLeaderId: currentUserId }
+          ),
+        ]);
+
+        revalidatePath('/teams');
+        return {
+          success: true,
+          message: `已退出队伍，队长已转交给 ${newLeader.user.name || newLeader.user.email}`,
+        };
+      }
+    }
+
+    // If user is the only member or not a leader, just remove them
+    await db.transaction(async (tx) => {
+      // Remove user from team
+      await tx
+        .delete(teamMembers)
+        .where(eq(teamMembers.id, membership.id));
+
+      if (team.currentMembers <= 1) {
+        // If this was the last member, mark team as disbanded
+        await tx
+          .update(teams)
+          .set({
+            status: 'disbanded',
+            currentMembers: 0,
+            updatedAt: new Date(),
+          })
+          .where(eq(teams.id, teamId));
+      } else {
+        // Update member count
+        await tx
+          .update(teams)
+          .set({
+            currentMembers: team.currentMembers - 1,
+            updatedAt: new Date(),
+          })
+          .where(eq(teams.id, teamId));
+      }
+    });
+
+    // Log activity
+    await logActivity(
+      currentUserId,
+      ActivityType.LEAVE_TEAM,
+      undefined,
+      { teamId, teamName: team.name }
+    );
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: team.currentMembers <= 1 ? '已退出队伍，队伍已解散' : '已退出队伍',
+    };
+
+  } catch (error) {
+    console.error('退出队伍失败:', error);
+    return {
+      error: '退出队伍失败，请重试',
+    };
+  }
+}
+
+// Remove team member (leader only)
+export async function removeMember(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = removeMemberSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId, memberId } = result.data;
+
+    // Check if current user is the team leader
+    const leaderCheck = await db
+      .select({
+        team: teams,
+        membership: teamMembers,
+      })
+      .from(teams)
+      .innerJoin(teamMembers, and(
+        eq(teamMembers.teamId, teams.id),
+        eq(teamMembers.userId, currentUserId),
+        eq(teamMembers.isLeader, true)
+      ))
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (leaderCheck.length === 0) {
+      return { error: '只有队长才能移除成员' };
+    }
+
+    // Cannot remove yourself
+    if (currentUserId === memberId) {
+      return { error: '不能移除自己，请使用退出队伍功能' };
+    }
+
+    // Get the member to be removed
+    const memberToRemove = await db
+      .select({
+        member: teamMembers,
+        user: users,
+      })
+      .from(teamMembers)
+      .innerJoin(users, eq(teamMembers.userId, users.id))
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          eq(teamMembers.userId, memberId)
+        )
+      )
+      .limit(1);
+
+    if (memberToRemove.length === 0) {
+      return { error: '该用户不在队伍中' };
+    }
+
+    const team = leaderCheck[0].team;
+    const memberInfo = memberToRemove[0];
+
+    // Remove member and update team count
+    await db.transaction(async (tx) => {
+      // Remove member from team
+      await tx
+        .delete(teamMembers)
+        .where(eq(teamMembers.id, memberInfo.member.id));
+
+      // Update team member count
+      await tx
+        .update(teams)
+        .set({
+          currentMembers: team.currentMembers - 1,
+          updatedAt: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+    });
+
+    // Log activities
+    await Promise.all([
+      logActivity(
+        currentUserId,
+        ActivityType.REMOVE_TEAM_MEMBER,
+        undefined,
+        { teamId, removedUserId: memberId, teamName: team.name }
+      ),
+      logActivity(
+        memberId,
+        ActivityType.LEAVE_TEAM,
+        undefined,
+        { teamId, teamName: team.name, removedByLeader: true }
+      ),
+    ]);
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: `已移除 ${memberInfo.user.name || memberInfo.user.email}`,
+    };
+
+  } catch (error) {
+    console.error('移除成员失败:', error);
+    return {
+      error: '移除成员失败，请重试',
+    };
+  }
+}
+
+// Transfer leadership (leader only)
+export async function transferLeadership(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = transferLeadershipSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId, newLeaderId } = result.data;
+
+    // Check if current user is the team leader
+    const leaderCheck = await db
+      .select({
+        team: teams,
+        membership: teamMembers,
+      })
+      .from(teams)
+      .innerJoin(teamMembers, and(
+        eq(teamMembers.teamId, teams.id),
+        eq(teamMembers.userId, currentUserId),
+        eq(teamMembers.isLeader, true)
+      ))
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (leaderCheck.length === 0) {
+      return { error: '只有队长才能转让队长职位' };
+    }
+
+    // Cannot transfer to yourself
+    if (currentUserId === newLeaderId) {
+      return { error: '不能转让给自己' };
+    }
+
+    // Check if new leader is in the team
+    const newLeaderMember = await db
+      .select({
+        member: teamMembers,
+        user: users,
+      })
+      .from(teamMembers)
+      .innerJoin(users, eq(teamMembers.userId, users.id))
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          eq(teamMembers.userId, newLeaderId)
+        )
+      )
+      .limit(1);
+
+    if (newLeaderMember.length === 0) {
+      return { error: '新队长必须是队伍成员' };
+    }
+
+    const team = leaderCheck[0].team;
+    const currentLeaderMember = leaderCheck[0].membership;
+    const newLeader = newLeaderMember[0];
+
+    // Transfer leadership
+    await db.transaction(async (tx) => {
+      // Update team leader
+      await tx
+        .update(teams)
+        .set({
+          leaderId: newLeaderId,
+          updatedAt: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+
+      // Update old leader status
+      await tx
+        .update(teamMembers)
+        .set({ isLeader: false })
+        .where(eq(teamMembers.id, currentLeaderMember.id));
+
+      // Update new leader status
+      await tx
+        .update(teamMembers)
+        .set({ isLeader: true })
+        .where(eq(teamMembers.id, newLeader.member.id));
+    });
+
+    // Log activities
+    await Promise.all([
+      logActivity(
+        currentUserId,
+        ActivityType.BECOME_TEAM_LEADER,
+        undefined,
+        { teamId, teamName: team.name, previousLeaderId: currentUserId, newLeaderId }
+      ),
+      logActivity(
+        newLeaderId,
+        ActivityType.BECOME_TEAM_LEADER,
+        undefined,
+        { teamId, teamName: team.name, previousLeaderId: currentUserId }
+      ),
+    ]);
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: `已将队长职位转让给 ${newLeader.user.name || newLeader.user.email}`,
+    };
+
+  } catch (error) {
+    console.error('转让队长失败:', error);
+    return {
+      error: '转让队长失败，请重试',
+    };
+  }
+}
+
+// Disband team (leader only)
+export async function disbandTeam(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = disbandTeamSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId } = result.data;
+
+    // Check if current user is the team leader
+    const leaderCheck = await db
+      .select({
+        team: teams,
+        membership: teamMembers,
+      })
+      .from(teams)
+      .innerJoin(teamMembers, and(
+        eq(teamMembers.teamId, teams.id),
+        eq(teamMembers.userId, currentUserId),
+        eq(teamMembers.isLeader, true)
+      ))
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (leaderCheck.length === 0) {
+      return { error: '只有队长才能解散队伍' };
+    }
+
+    const team = leaderCheck[0].team;
+
+    // Get all team members for logging
+    const allMembers = await db
+      .select({
+        member: teamMembers,
+        user: users,
+      })
+      .from(teamMembers)
+      .innerJoin(users, eq(teamMembers.userId, users.id))
+      .where(eq(teamMembers.teamId, teamId));
+
+    // Disband team
+    await db.transaction(async (tx) => {
+      // Mark team as disbanded
+      await tx
+        .update(teams)
+        .set({
+          status: 'disbanded',
+          currentMembers: 0,
+          updatedAt: new Date(),
+          deletedAt: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+
+      // Remove all team members
+      await tx
+        .delete(teamMembers)
+        .where(eq(teamMembers.teamId, teamId));
+
+      // Cancel all pending join requests
+      await tx
+        .update(teamJoinRequests)
+        .set({
+          status: 'rejected',
+          reviewedBy: currentUserId,
+          reviewedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(teamJoinRequests.teamId, teamId),
+            eq(teamJoinRequests.status, 'pending')
+          )
+        );
+    });
+
+    // Log activities for all members
+    const activityPromises = allMembers.map(({ member, user }) =>
+      logActivity(
+        user.id,
+        ActivityType.DISBAND_TEAM,
+        undefined,
+        {
+          teamId,
+          teamName: team.name,
+          disbandedBy: currentUserId,
+          wasLeader: member.isLeader,
+        }
+      )
+    );
+
+    await Promise.all(activityPromises);
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: `队伍 "${team.name}" 已解散`,
+    };
+
+  } catch (error) {
+    console.error('解散队伍失败:', error);
+    return {
+      error: '解散队伍失败，请重试',
+    };
+  }
+}
+
+// Update team information (leader only)
+export async function updateTeam(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // Validate data
+    const result = updateTeamSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { teamId, name, description, dormArea, requirements, maxMembers } = result.data;
+
+    // Check if current user is the team leader
+    const leaderCheck = await db
+      .select({
+        team: teams,
+        membership: teamMembers,
+      })
+      .from(teams)
+      .innerJoin(teamMembers, and(
+        eq(teamMembers.teamId, teams.id),
+        eq(teamMembers.userId, currentUserId),
+        eq(teamMembers.isLeader, true)
+      ))
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (leaderCheck.length === 0) {
+      return { error: '只有队长才能修改队伍信息' };
+    }
+
+    const team = leaderCheck[0].team;
+
+    // Check if trying to reduce maxMembers below current count
+    if (maxMembers && maxMembers < team.currentMembers) {
+      return {
+        error: `最大成员数不能少于当前成员数 (${team.currentMembers})`
+      };
+    }
+
+    // Prepare update data
+    const updateData: any = {
+      updatedAt: new Date(),
+    };
+
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (dormArea !== undefined) updateData.dormArea = dormArea;
+    if (requirements !== undefined) updateData.requirements = requirements;
+    if (maxMembers !== undefined) {
+      updateData.maxMembers = maxMembers;
+      // Update team status if it becomes full or has space
+      if (maxMembers === team.currentMembers) {
+        updateData.status = 'full';
+      } else if (team.status === 'full' && maxMembers > team.currentMembers) {
+        updateData.status = 'recruiting';
+      }
+    }
+
+    // Update team
+    await db
+      .update(teams)
+      .set(updateData)
+      .where(eq(teams.id, teamId));
+
+    // Log activity
+    await logActivity(
+      currentUserId,
+      ActivityType.CREATE_TEAM, // Reuse create team activity type for updates
+      undefined,
+      {
+        teamId,
+        teamName: name || team.name,
+        action: 'update',
+        changes: Object.keys(updateData).filter(key => key !== 'updatedAt')
+      }
+    );
+
+    revalidatePath('/teams');
+    return {
+      success: true,
+      message: '队伍信息已更新',
+    };
+
+  } catch (error) {
+    console.error('更新队伍信息失败:', error);
+    return {
+      error: '更新失败，请重试',
+    };
+  }
+}
