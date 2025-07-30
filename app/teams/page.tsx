@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { TeamsList } from '@/components/teams/teams-list';
 import { MyTeam } from '@/components/teams/my-team';
 import { JoinRequests } from '@/components/teams/join-requests';
+import { ProfileGuard } from '@/components/profile/profile-guard';
 
 export default async function TeamsPage() {
   const { user, session } = await getCurrentUser();
@@ -27,7 +28,8 @@ export default async function TeamsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <ProfileGuard>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 页面标题 */}
         <div className="mb-6 sm:mb-8">
@@ -227,7 +229,8 @@ export default async function TeamsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ProfileGuard>
   );
 }
 

@@ -30,7 +30,6 @@ export function CreateTeamForm() {
     const data = {
       name: formData.get('name') as string,
       description: formData.get('description') as string,
-      dormArea: formData.get('dormArea') as string,
       requirements: formData.get('requirements') as string,
       maxMembers: parseInt(formData.get('maxMembers') as string) || 4,
     };
@@ -101,22 +100,7 @@ export function CreateTeamForm() {
         </p>
       </div>
 
-      {/* 宿舍区域偏好 */}
-      <div>
-        <Label htmlFor="dormArea" className="flex items-center">
-          <MapPin className="w-4 h-4 mr-2" />
-          期望宿舍区域
-        </Label>
-        <Input
-          id="dormArea"
-          name="dormArea"
-          placeholder="例如：东区、西区、南区..."
-          className="mt-1"
-        />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          填写您希望的宿舍区域，帮助匹配附近的室友
-        </p>
-      </div>
+
 
       {/* 最大成员数 */}
       <div>

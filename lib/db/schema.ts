@@ -54,9 +54,6 @@ export const userProfiles = pgTable('user_profiles', {
   wechatId: varchar('wechat_id', { length: 100 }), // 微信号
   gender: genderEnum('gender'),
   age: integer('age'),
-  major: varchar('major', { length: 100 }), // 专业
-  grade: varchar('grade', { length: 20 }), // 年级
-  dormArea: varchar('dorm_area', { length: 100 }), // 宿舍区域偏好
   
   // 作息习惯
   sleepTime: varchar('sleep_time', { length: 10 }), // 睡觉时间，格式：22:00
@@ -94,7 +91,6 @@ export const teams = pgTable('teams', {
   maxMembers: integer('max_members').notNull().default(4), // 最大成员数
   currentMembers: integer('current_members').notNull().default(1), // 当前成员数
   status: teamStatusEnum('status').notNull().default('recruiting'), // 队伍状态
-  dormArea: varchar('dorm_area', { length: 100 }), // 期望宿舍区域
   requirements: text('requirements'), // 招募要求
   
   createdAt: timestamp('created_at').notNull().defaultNow(),

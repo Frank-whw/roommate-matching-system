@@ -19,7 +19,8 @@ import {
   validateEducationalEmail,
   validatePassword,
   generateEmailVerificationToken,
-  signEmailVerificationToken
+  signEmailVerificationToken,
+  signPasswordSetupToken
 } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
@@ -28,7 +29,7 @@ import {
   validatedAction,
   validatedActionWithUser
 } from '@/lib/auth/middleware';
-import { sendEmailVerification } from '@/lib/email';
+import { sendEmailVerification, sendPasswordSetupEmail } from '@/lib/email';
 import { authConfig } from '@/lib/config';
 
 // 学号格式验证zod schema
@@ -39,7 +40,7 @@ const studentIdSchema = z.string()
 const educationalEmailSchema = z.string()
   .email('请输入有效的邮箱地址')
   .refine((email) => validateEducationalEmail(email), {
-    message: '请使用教育邮箱（如：xxx@edu.cn）'
+    message: '请使用华东师范大学教育邮箱（如：xxx@stu.ecnu.edu.cn）'
   });
 
 // 密码强度验证zod schema
@@ -56,16 +57,12 @@ const passwordSchema = z.string()
 // 用户注册schema
 const signUpSchema = z.object({
   studentId: studentIdSchema,
-  email: educationalEmailSchema,
-  password: passwordSchema,
-  confirmPassword: z.string(),
-  name: z.string().min(1, '请输入姓名').max(50, '姓名不能超过50个字符'),
-  agreeToTerms: z.boolean().refine((val) => val === true, {
-    message: '请同意用户协议和隐私政策'
-  })
-}).refine((data) => data.password === data.confirmPassword, {
-  message: '两次输入的密码不一致',
-  path: ['confirmPassword'],
+  agreeToTerms: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().refine((val) => val === true, {
+      message: '请同意用户协议和隐私政策'
+    })
+  )
 });
 
 // 用户登录schema（支持学号或邮箱登录）
@@ -75,7 +72,10 @@ const signInSchema = z.object({
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
-  const { studentId, email, password, name } = data;
+  const { studentId } = data;
+  
+  // 自动生成邮箱
+  const email = `${studentId}@stu.ecnu.edu.cn`;
 
   try {
     // 检查学号是否已被注册
@@ -96,23 +96,20 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       };
     }
 
-    // 创建密码哈希
-    const passwordHash = await hashPassword(password);
+    // 生成设置密码的令牌
+    const passwordSetupToken = generateEmailVerificationToken();
+    const tokenExpires = new Date(Date.now() + authConfig.emailVerificationExpiresIn);
 
-    // 生成邮箱验证令牌
-    const verificationToken = generateEmailVerificationToken();
-    const verificationExpires = new Date(Date.now() + authConfig.emailVerificationExpiresIn);
-
-    // 创建新用户
+    // 创建临时用户记录（无密码）
     const newUser: NewUser = {
       studentId,
       email,
-      passwordHash,
-      name,
-      isActive: true,
+      passwordHash: '', // 临时空密码，等待用户设置
+      name: `用户${studentId}`,
+      isActive: false, // 设置为未激活，直到密码设置完成
       isEmailVerified: false,
-      emailVerificationToken: verificationToken,
-      emailVerificationExpires: verificationExpires
+      emailVerificationToken: passwordSetupToken,
+      emailVerificationExpires: tokenExpires
     };
 
     const createdUser = await createUser(newUser);
@@ -123,21 +120,21 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       };
     }
 
-    // 生成JWT邮箱验证令牌
-    const jwtVerificationToken = await signEmailVerificationToken(email, studentId);
+    // 生成JWT令牌用于设置密码
+    const jwtToken = await signPasswordSetupToken(email, studentId);
 
-    // 发送验证邮件
-    const emailSent = await sendEmailVerification(email, jwtVerificationToken, studentId);
+    // 发送设置密码的邮件
+    const emailSent = await sendPasswordSetupEmail(email, jwtToken, studentId);
     if (!emailSent) {
-      console.warn('验证邮件发送失败，但用户已创建');
+      console.warn('设置密码邮件发送失败');
+      return {
+        error: '邮件发送失败，请重试',
+      };
     }
-
-    // 记录活动日志
-    await logActivity(createdUser.id, ActivityType.SIGN_UP);
 
     return {
       success: true,
-      message: `注册成功！验证邮件已发送至 ${email}，请在10分钟内完成邮箱验证。`,
+      message: `注册成功！设置密码的邮件已发送至 ${email}，请在10分钟内完成密码设置。`,
       userId: createdUser.id
     };
 
@@ -202,15 +199,15 @@ export const signIn = validatedAction(signInSchema, async (data) => {
       logActivity(user.id, ActivityType.SIGN_IN)
     ]);
 
-    // 重定向到主页
-    redirect('/');
-
   } catch (error) {
     console.error('登录过程出错:', error);
     return {
       error: '登录失败，请重试',
     };
   }
+
+  // 登录成功后重定向到主页
+  redirect('/');
 });
 
 // 重新发送验证邮件

@@ -42,9 +42,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
     wechatId: initialProfile?.wechatId || '',
     gender: initialProfile?.gender || '',
     age: initialProfile?.age || '',
-    major: initialProfile?.major || '',
-    grade: initialProfile?.grade || '',
-    dormArea: initialProfile?.dormArea || '',
     
     // 作息习惯
     sleepTime: initialProfile?.sleepTime || '',
@@ -84,9 +81,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
       // 移除空字符串，让验证器处理为 undefined
       wechatId: formData.wechatId || undefined,
       gender: formData.gender || undefined,
-      major: formData.major || undefined,
-      grade: formData.grade || undefined,
-      dormArea: formData.dormArea || undefined,
       sleepTime: formData.sleepTime || undefined,
       wakeTime: formData.wakeTime || undefined,
       studyHabit: formData.studyHabit || undefined,
@@ -120,7 +114,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
 
   // 计算完成进度
   const requiredFields = [
-    formData.wechatId, formData.gender, formData.age, formData.major, formData.grade,
+    formData.wechatId, formData.gender, formData.age,
     formData.sleepTime, formData.wakeTime, formData.studyHabit,
     formData.lifestyle, formData.cleanliness, formData.mbti,
     formData.roommateExpectations, formData.hobbies
@@ -207,42 +201,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                 onChange={(e) => handleInputChange('age', e.target.value)}
                 min="16"
                 max="35"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="major">专业</Label>
-              <Input
-                id="major"
-                type="text"
-                placeholder="请输入您的专业"
-                value={formData.major}
-                onChange={(e) => handleInputChange('major', e.target.value)}
-                maxLength={100}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="grade">年级</Label>
-              <Input
-                id="grade"
-                type="text"
-                placeholder="如：大二、研一"
-                value={formData.grade}
-                onChange={(e) => handleInputChange('grade', e.target.value)}
-                maxLength={20}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="dormArea">宿舍区域偏好</Label>
-              <Input
-                id="dormArea"
-                type="text"
-                placeholder="如：南区、北区"
-                value={formData.dormArea}
-                onChange={(e) => handleInputChange('dormArea', e.target.value)}
-                maxLength={100}
               />
             </div>
           </div>

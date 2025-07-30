@@ -13,9 +13,6 @@ const profileSchema = z.object({
   wechatId: z.string().max(100, '微信号不能超过100个字符').optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   age: z.number().int().min(16, '年龄不能小于16').max(35, '年龄不能大于35').optional(),
-  major: z.string().max(100, '专业不能超过100个字符').optional(),
-  grade: z.string().max(20, '年级不能超过20个字符').optional(),
-  dormArea: z.string().max(100, '宿舍区域不能超过100个字符').optional(),
   
   // 作息习惯
   sleepTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '睡觉时间格式不正确').optional(),
@@ -67,14 +64,14 @@ export async function updateProfile(rawData: any) {
 
     // 计算资料完整度
     const requiredFields = [
-      data.wechatId, data.gender, data.age, data.major, data.grade,
+      data.wechatId, data.gender, data.age,
       data.sleepTime, data.wakeTime, data.studyHabit,
       data.lifestyle, data.cleanliness, data.mbti,
       data.roommateExpectations, data.hobbies
     ];
     
     const completedFields = requiredFields.filter(field => field !== undefined && field !== '').length;
-    const isProfileComplete = completedFields >= 10; // 至少需要完成10个重要字段
+    const isProfileComplete = completedFields >= 8; // 至少需要完成8个重要字段
 
     const profileData = {
       ...data,

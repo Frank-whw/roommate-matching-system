@@ -3,14 +3,14 @@ import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
 import { eq, or } from 'drizzle-orm';
-import { hashPassword, signEmailVerificationToken } from '@/lib/auth/session';
-import { sendEmailVerification } from '@/lib/email';
+import { hashPassword, signPasswordSetupToken } from '@/lib/auth/session';
+import { sendPasswordSetupEmail } from '@/lib/email';
 
 const registerSchema = z.object({
-  name: z.string().min(2, '姓名至少需要2个字符').max(50, '姓名不能超过50个字符'),
-  email: z.string().email('请输入有效的邮箱地址'),
   studentId: z.string().regex(/^102\d55014\d{2}$/, '学号格式不正确，应为102*55014**格式'),
-  password: z.string().min(6, '密码至少需要6个字符').max(100, '密码不能超过100个字符'),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: '请同意用户协议和隐私政策'
+  })
 });
 
 export async function POST(request: NextRequest) {
@@ -25,15 +25,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, studentId, password } = result.data;
-
-    // 检查邮箱格式是否为教育邮箱
-    if (!email.endsWith('.edu.cn') && !email.includes('edu')) {
-      return NextResponse.json(
-        { error: '请使用教育邮箱进行注册' },
-        { status: 400 }
-      );
-    }
+    const { studentId } = result.data;
+    
+    // 自动生成邮箱和姓名
+    const email = `${studentId}@stu.ecnu.edu.cn`;
+    const name = `用户${studentId}`;
 
     // 检查用户是否已存在
     const existingUser = await db
@@ -47,52 +43,60 @@ export async function POST(request: NextRequest) {
 
     if (existingUser.length > 0) {
       const user = existingUser[0];
-      if (user.email === email) {
-        return NextResponse.json(
-          { error: '该邮箱已被注册' },
-          { status: 409 }
-        );
-      }
-      if (user.studentId === studentId) {
-        return NextResponse.json(
-          { error: '该学号已被注册' },
-          { status: 409 }
-        );
+      // 如果用户已经设置了密码，则认为已完成注册
+      if (user.passwordHash && user.passwordHash.trim() !== '') {
+        if (user.email === email) {
+          return NextResponse.json(
+            { error: '该邮箱已被注册' },
+            { status: 409 }
+          );
+        }
+        if (user.studentId === studentId) {
+          return NextResponse.json(
+            { error: '该学号已被注册' },
+            { status: 409 }
+          );
+        }
+      } else {
+        // 如果用户存在但未设置密码，删除旧记录，允许重新注册
+        await db.delete(users).where(eq(users.id, user.id));
       }
     }
 
-    // 加密密码
-    const hashedPassword = await hashPassword(password);
+    // 生成设置密码的令牌
+    const passwordSetupToken = await signPasswordSetupToken(email, studentId);
 
-    // 生成邮箱验证令牌
-    const verificationToken = await signEmailVerificationToken(email, studentId);
-
-    // 创建用户
+    // 创建临时用户（无密码）
     const newUser = await db
       .insert(users)
       .values({
         name,
         email,
         studentId,
-        hashedPassword,
+        passwordHash: '', // 临时空密码，等待用户设置
+        isActive: false, // 设置为未激活，直到密码设置完成
         isEmailVerified: false,
-        emailVerificationToken: verificationToken,
+        emailVerificationToken: passwordSetupToken,
         emailVerificationExpires: new Date(Date.now() + 10 * 60 * 1000), // 10分钟后过期
         createdAt: new Date(),
         updatedAt: new Date()
       })
       .returning();
 
-    // 发送验证邮件
-    const emailSent = await sendEmailVerification(email, verificationToken, studentId);
+    // 发送设置密码的邮件
+    const emailSent = await sendPasswordSetupEmail(email, passwordSetupToken, studentId);
 
     if (!emailSent) {
-      console.warn('发送验证邮件失败，但用户创建成功');
+      console.warn('发送设置密码邮件失败');
+      return NextResponse.json(
+        { error: '邮件发送失败，请重试' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: '注册成功！请查收验证邮件并在10分钟内完成验证。',
+      message: '注册成功！设置密码的邮件已发送到 ' + email + '（开发环境下邮件内容显示在服务器控制台中），请在10分钟内完成密码设置。',
       data: {
         user: {
           id: newUser[0].id,
@@ -102,7 +106,9 @@ export async function POST(request: NextRequest) {
           isEmailVerified: newUser[0].isEmailVerified
         },
         emailSent,
-        verificationRequired: true
+        passwordSetupRequired: true,
+        emailAddress: email,
+        note: '开发环境下，邮件内容会显示在服务器控制台中，请查看终端输出获取设置密码链接。'
       }
     });
 

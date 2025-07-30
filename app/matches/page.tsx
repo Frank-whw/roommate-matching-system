@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/db/queries';
 import { MatchesList } from '@/components/matches/matches-list';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ProfileGuard } from '@/components/profile/profile-guard';
 import { 
   Heart,
   Users,
@@ -20,7 +21,8 @@ export default async function MatchesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+    <ProfileGuard>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 页面标题 */}
         <div className="mb-8">
@@ -113,7 +115,8 @@ export default async function MatchesPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </ProfileGuard>
   );
 }
 

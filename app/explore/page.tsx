@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/db/queries';
 import { ExploreHeader } from '@/components/explore/explore-header';
 import { UserCardGrid } from '@/components/explore/user-card-grid';
 import { FilterSidebar } from '@/components/explore/filter-sidebar';
+import { ProfileGuard } from '@/components/profile/profile-guard';
 import { 
   Users, 
   Heart,
@@ -24,32 +25,34 @@ export default async function ExplorePage() {
   const isProfileComplete = user.user_profiles?.isProfileComplete || false;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* 页面头部 */}
-        <ExploreHeader 
-          hasProfile={hasProfile}
-          isProfileComplete={isProfileComplete}
-        />
+    <ProfileGuard>
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          {/* 页面头部 */}
+          <ExploreHeader 
+            hasProfile={hasProfile}
+            isProfileComplete={isProfileComplete}
+          />
 
-        {/* 主要内容区域 */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* 左侧过滤器 */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-6">
-              <FilterSidebar />
+          {/* 主要内容区域 */}
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* 左侧过滤器 */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-6">
+                <FilterSidebar />
+              </div>
             </div>
-          </div>
 
-          {/* 右侧用户卡片网格 */}
-          <div className="lg:col-span-3">
-            <Suspense fallback={<UserCardGridSkeleton />}>
-              <UserCardGrid currentUserId={user.users?.id} />
-            </Suspense>
+            {/* 右侧用户卡片网格 */}
+            <div className="lg:col-span-3">
+              <Suspense fallback={<UserCardGridSkeleton />}>
+                <UserCardGrid currentUserId={user.users?.id} />
+              </Suspense>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ProfileGuard>
   );
 }
 

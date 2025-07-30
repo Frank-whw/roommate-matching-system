@@ -30,9 +30,6 @@ interface FilterState {
   search: string;
   gender: string;
   ageRange: [number, number];
-  major: string;
-  grade: string;
-  dormArea: string;
   sleepTimeRange: string;
   studyHabit: string[];
   lifestyle: string[];
@@ -44,9 +41,6 @@ const initialFilters: FilterState = {
   search: '',
   gender: '',
   ageRange: [18, 30],
-  major: '',
-  grade: '',
-  dormArea: '',
   sleepTimeRange: '',
   studyHabit: [],
   lifestyle: [],
@@ -84,10 +78,7 @@ export function FilterSidebar() {
   const getActiveFiltersCount = () => {
     let count = 0;
     if (filters.search) count++;
-    if (filters.gender) count++;
-    if (filters.major) count++;
-    if (filters.grade) count++;
-    if (filters.dormArea) count++;
+    if (filters.gender && filters.gender !== 'all') count++;
     if (filters.sleepTimeRange) count++;
     count += filters.studyHabit.length;
     count += filters.lifestyle.length;
@@ -160,7 +151,7 @@ export function FilterSidebar() {
                   <SelectValue placeholder="选择性别" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">不限</SelectItem>
+                  <SelectItem value="all">不限</SelectItem>
                   <SelectItem value="male">男</SelectItem>
                   <SelectItem value="female">女</SelectItem>
                   <SelectItem value="other">其他</SelectItem>
@@ -168,45 +159,7 @@ export function FilterSidebar() {
               </Select>
             </div>
 
-            <div>
-              <Label>专业</Label>
-              <Input
-                placeholder="输入专业名称"
-                value={filters.major}
-                onChange={(e) => handleFilterChange('major', e.target.value)}
-              />
-            </div>
 
-            <div>
-              <Label>年级</Label>
-              <Select value={filters.grade} onValueChange={(value) => handleFilterChange('grade', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择年级" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">不限</SelectItem>
-                  <SelectItem value="大一">大一</SelectItem>
-                  <SelectItem value="大二">大二</SelectItem>
-                  <SelectItem value="大三">大三</SelectItem>
-                  <SelectItem value="大四">大四</SelectItem>
-                  <SelectItem value="研一">研一</SelectItem>
-                  <SelectItem value="研二">研二</SelectItem>
-                  <SelectItem value="研三">研三</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="flex items-center">
-                <MapPin className="w-3 h-3 mr-1" />
-                宿舍区域
-              </Label>
-              <Input
-                placeholder="如：南区、北区"
-                value={filters.dormArea}
-                onChange={(e) => handleFilterChange('dormArea', e.target.value)}
-              />
-            </div>
           </div>
         </div>
 

@@ -100,40 +100,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                       className="mt-1"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      学号格式：102开头，55014结尾，如：1020055014XX
-                    </p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="name" className="text-sm font-medium">
-                      姓名 <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="请输入真实姓名"
-                      required
-                      maxLength={50}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="email" className="text-sm font-medium">
-                      教育邮箱 <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="请输入教育邮箱 (xxx@edu.cn)"
-                      required
-                      maxLength={255}
-                      className="mt-1"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      仅支持教育邮箱：@edu.cn、@stu.edu.cn等
+                      学号格式：102开头，55014结尾，如：1020055014XX<br/>
+                      邮箱将自动生成为：学号@stu.ecnu.edu.cn
                     </p>
                   </div>
                 </>
@@ -156,64 +124,42 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 </div>
               )}
 
-              <div>
-                <Label htmlFor="password" className="text-sm font-medium">
-                  密码 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder={mode === 'signup' ? '请设置密码' : '请输入密码'}
-                  autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-                  required
-                  minLength={8}
-                  maxLength={100}
-                  className="mt-1"
-                />
-                {mode === 'signup' && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    密码至少8位，包含大小写字母和数字
-                  </p>
-                )}
-              </div>
+              {mode === 'signin' && (
+                <div>
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    密码 <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="请输入密码"
+                    autoComplete="current-password"
+                    required
+                    minLength={8}
+                    maxLength={100}
+                    className="mt-1"
+                  />
+                </div>
+              )}
 
               {mode === 'signup' && (
-                <>
-                  <div>
-                    <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                      确认密码 <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="请再次输入密码"
-                      autoComplete="new-password"
-                      required
-                      minLength={8}
-                      maxLength={100}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="agreeToTerms" name="agreeToTerms" required />
-                    <Label 
-                      htmlFor="agreeToTerms" 
-                      className="text-sm leading-relaxed cursor-pointer"
-                    >
-                      我已阅读并同意
-                      <Link href="/terms" className="text-primary hover:underline mx-1">
-                        用户协议
-                      </Link>
-                      和
-                      <Link href="/privacy" className="text-primary hover:underline mx-1">
-                        隐私政策
-                      </Link>
-                    </Label>
-                  </div>
-                </>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="agreeToTerms" name="agreeToTerms" value="true" required />
+                  <Label 
+                    htmlFor="agreeToTerms" 
+                    className="text-sm leading-relaxed cursor-pointer"
+                  >
+                    我已阅读并同意
+                    <Link href="/terms" className="text-primary hover:underline mx-1">
+                      用户协议
+                    </Link>
+                    和
+                    <Link href="/privacy" className="text-primary hover:underline mx-1">
+                      隐私政策
+                    </Link>
+                  </Label>
+                </div>
               )}
 
               {(state.error || state.message) && (

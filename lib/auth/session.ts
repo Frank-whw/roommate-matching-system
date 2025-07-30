@@ -35,6 +35,12 @@ type EmailVerificationToken = {
   expires: number;
 };
 
+type PasswordSetupToken = {
+  email: string;
+  studentId: string;
+  expires: number;
+};
+
 export async function signToken(payload: SessionData) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
@@ -162,4 +168,40 @@ export async function verifyEmailVerificationToken(token: string): Promise<Email
 // 检查邮箱验证令牌是否过期
 export function isEmailVerificationTokenExpired(expiresAt: Date): boolean {
   return Date.now() > expiresAt.getTime();
+}
+
+// 生成设置密码JWT令牌
+export async function signPasswordSetupToken(email: string, studentId: string): Promise<string> {
+  const payload: PasswordSetupToken = {
+    email,
+    studentId,
+    expires: Date.now() + authConfig.emailVerificationExpiresIn
+  };
+
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(Math.floor(payload.expires / 1000))
+    .sign(key);
+}
+
+// 验证设置密码JWT令牌
+export async function verifyPasswordSetupToken(token: string): Promise<PasswordSetupToken | null> {
+  try {
+    const { payload } = await jwtVerify(token, key, {
+      algorithms: ['HS256'],
+    });
+    
+    const tokenData = payload as unknown as PasswordSetupToken;
+    
+    // 检查是否过期
+    if (Date.now() > tokenData.expires) {
+      return null;
+    }
+    
+    return tokenData;
+  } catch (error) {
+    console.error('设置密码令牌验证失败:', error);
+    return null;
+  }
 }

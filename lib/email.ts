@@ -55,6 +55,32 @@ export async function sendEmailVerification(email: string, token: string, studen
   });
 }
 
+// 发送设置密码邮件
+export async function sendPasswordSetupEmail(email: string, token: string, studentId: string): Promise<boolean> {
+  const passwordSetupUrl = `${process.env.BASE_URL}/set-password?token=${token}`;
+  
+  const subject = '室友匹配系统 - 设置密码';
+  const content = `
+    <h2>设置密码</h2>
+    <p>尊敬的同学（学号：${studentId}），</p>
+    <p>感谢您注册室友匹配系统！</p>
+    <p>请点击以下链接设置您的登录密码（链接10分钟内有效）：</p>
+    <p><a href="${passwordSetupUrl}" style="color: #007bff; text-decoration: none;">${passwordSetupUrl}</a></p>
+    <p>如果无法点击链接，请复制以上网址到浏览器地址栏访问。</p>
+    <p>如果您没有注册室友匹配系统，请忽略此邮件。</p>
+    <br>
+    <p>祝您找到理想室友！</p>
+    <p>室友匹配系统团队</p>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content,
+    token
+  });
+}
+
 // 发送匹配成功通知邮件
 export async function sendMatchNotification(email: string, matchedUserName: string): Promise<boolean> {
   const subject = '室友匹配系统 - 匹配成功通知';

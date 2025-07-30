@@ -11,7 +11,6 @@ import { revalidatePath } from 'next/cache';
 const createTeamSchema = z.object({
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长'),
   description: z.string().optional(),
-  dormArea: z.string().optional(),
   requirements: z.string().optional(),
   maxMembers: z.number().int().min(2).max(4).default(4),
 });
@@ -55,7 +54,6 @@ const updateTeamSchema = z.object({
   teamId: z.number().int().positive('队伍ID不正确'),
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长').optional(),
   description: z.string().optional(),
-  dormArea: z.string().optional(),
   requirements: z.string().optional(),
   maxMembers: z.number().int().min(2).max(4).optional(),
 });
@@ -76,7 +74,7 @@ export async function createTeam(rawData: any) {
       return { error: result.error.errors[0].message };
     }
 
-    const { name, description, dormArea, requirements, maxMembers } = result.data;
+    const { name, description, requirements, maxMembers } = result.data;
 
     // Check if user is already in a team
     const existingMembership = await db
@@ -95,7 +93,6 @@ export async function createTeam(rawData: any) {
       const [team] = await tx.insert(teams).values({
         name,
         description,
-        dormArea,
         requirements,
         leaderId: currentUserId,
         maxMembers,
@@ -916,7 +913,7 @@ export async function updateTeam(rawData: any) {
       return { error: result.error.errors[0].message };
     }
 
-    const { teamId, name, description, dormArea, requirements, maxMembers } = result.data;
+    const { teamId, name, description, requirements, maxMembers } = result.data;
 
     // Check if current user is the team leader
     const leaderCheck = await db
@@ -953,7 +950,6 @@ export async function updateTeam(rawData: any) {
 
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
-    if (dormArea !== undefined) updateData.dormArea = dormArea;
     if (requirements !== undefined) updateData.requirements = requirements;
     if (maxMembers !== undefined) {
       updateData.maxMembers = maxMembers;

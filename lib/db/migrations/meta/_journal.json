@@ -15,6 +15,13 @@
       "when": 1753789537295,
       "tag": "0001_lumpy_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753854943505,
+      "tag": "0002_neat_magma",
+      "breakpoints": true
     }
   ]
 }
