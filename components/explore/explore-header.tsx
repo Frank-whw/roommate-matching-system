@@ -17,9 +17,16 @@ import {
 interface ExploreHeaderProps {
   hasProfile: boolean;
   isProfileComplete: boolean;
+  activeFiltersCount?: number;
+  totalResults?: number;
 }
 
-export function ExploreHeader({ hasProfile, isProfileComplete }: ExploreHeaderProps) {
+export function ExploreHeader({ 
+  hasProfile, 
+  isProfileComplete, 
+  activeFiltersCount = 0,
+  totalResults 
+}: ExploreHeaderProps) {
   return (
     <div className="space-y-6">
       {/* 页面标题和统计 */}
@@ -35,11 +42,22 @@ export function ExploreHeader({ hasProfile, isProfileComplete }: ExploreHeaderPr
         </div>
         
         <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-            <Users className="w-4 h-4" />
-            <span>在线用户</span>
-            <Badge variant="secondary">128</Badge>
-          </div>
+          {totalResults !== undefined && (
+            <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+              <Users className="w-4 h-4" />
+              <span>找到用户</span>
+              <Badge variant="secondary">{totalResults}</Badge>
+            </div>
+          )}
+          
+          {activeFiltersCount > 0 && (
+            <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+              <Filter className="w-4 h-4" />
+              <span>筛选条件</span>
+              <Badge variant="outline">{activeFiltersCount}</Badge>
+            </div>
+          )}
+          
           <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
             <Heart className="w-4 h-4" />
             <span>今日匹配</span>

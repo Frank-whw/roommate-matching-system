@@ -185,7 +185,23 @@ export async function logActivity(
 }
 
 // 匹配相关查询
-export async function getUsersForMatching(currentUserId: number, limit = 20) {
+interface MatchingFilters {
+  search?: string;
+  gender?: string;
+  minAge?: number;
+  maxAge?: number;
+  sleepTime?: string;
+  studyHabit?: string[];
+  lifestyle?: string[];
+  cleanliness?: string[];
+  mbti?: string[];
+}
+
+export async function getUsersForMatching(
+  currentUserId: number, 
+  limit = 20, 
+  filters: MatchingFilters = {}
+) {
   // 获取当前用户已经点赞或跳过的用户ID
   const interactedUsers = await db
     .select({ userId: userLikes.toUserId })
@@ -194,7 +210,7 @@ export async function getUsersForMatching(currentUserId: number, limit = 20) {
   
   const interactedUserIds = interactedUsers.map(u => u.userId);
   
-  // 获取其他活跃用户（已验证邮箱且资料完整）
+  // 基本筛选条件
   let whereConditions = [
     eq(users.isActive, true),
     eq(users.isEmailVerified, true),
@@ -207,7 +223,48 @@ export async function getUsersForMatching(currentUserId: number, limit = 20) {
   if (interactedUserIds.length > 0) {
     whereConditions.push(notInArray(users.id, interactedUserIds));
   }
-  
+
+  // 应用筛选条件
+  if (filters.gender && filters.gender !== 'all') {
+    whereConditions.push(eq(userProfiles.gender, filters.gender));
+  }
+
+  if (filters.minAge !== undefined) {
+    whereConditions.push(gte(userProfiles.age, filters.minAge));
+  }
+
+  if (filters.maxAge !== undefined) {
+    whereConditions.push(lte(userProfiles.age, filters.maxAge));
+  }
+
+  if (filters.studyHabit && filters.studyHabit.length > 0) {
+    whereConditions.push(inArray(userProfiles.studyHabit, filters.studyHabit));
+  }
+
+  if (filters.lifestyle && filters.lifestyle.length > 0) {
+    whereConditions.push(inArray(userProfiles.lifestyle, filters.lifestyle));
+  }
+
+  if (filters.cleanliness && filters.cleanliness.length > 0) {
+    whereConditions.push(inArray(userProfiles.cleanliness, filters.cleanliness));
+  }
+
+  if (filters.mbti && filters.mbti.length > 0) {
+    whereConditions.push(inArray(userProfiles.mbti, filters.mbti));
+  }
+
+  // 关键词搜索（在个人简介、专业、爱好中搜索）
+  if (filters.search && filters.search.trim()) {
+    const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
+    whereConditions.push(
+      or(
+        ilike(userProfiles.bio, searchTerm),
+        ilike(userProfiles.major, searchTerm),
+        ilike(userProfiles.hobbies, searchTerm)
+      )
+    );
+  }
+
   return await db
     .select({
       user: users,
@@ -216,6 +273,7 @@ export async function getUsersForMatching(currentUserId: number, limit = 20) {
     .from(users)
     .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .where(and(...whereConditions))
+    .orderBy(desc(users.updatedAt)) // 按更新时间排序，显示最活跃的用户
     .limit(limit);
 }
 

@@ -12,9 +12,20 @@ import {
 interface UserCardGridProps {
   currentUserId?: number;
   limit?: number;
+  searchParams?: {
+    search?: string;
+    gender?: string;
+    minAge?: string;
+    maxAge?: string;
+    sleepTime?: string;
+    studyHabit?: string;
+    lifestyle?: string;
+    cleanliness?: string;
+    mbti?: string;
+  };
 }
 
-export async function UserCardGrid({ currentUserId, limit = 12 }: UserCardGridProps) {
+export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: UserCardGridProps) {
   if (!currentUserId) {
     return (
       <Alert>
@@ -27,33 +38,64 @@ export async function UserCardGrid({ currentUserId, limit = 12 }: UserCardGridPr
   }
 
   try {
-    const users = await getUsersForMatching(currentUserId, limit);
+    // 构建筛选条件
+    const filters = {
+      search: searchParams?.search,
+      gender: searchParams?.gender,
+      minAge: searchParams?.minAge ? parseInt(searchParams.minAge) : undefined,
+      maxAge: searchParams?.maxAge ? parseInt(searchParams.maxAge) : undefined,
+      sleepTime: searchParams?.sleepTime,
+      studyHabit: searchParams?.studyHabit ? searchParams.studyHabit.split(',').filter(Boolean) : [],
+      lifestyle: searchParams?.lifestyle ? searchParams.lifestyle.split(',').filter(Boolean) : [],
+      cleanliness: searchParams?.cleanliness ? searchParams.cleanliness.split(',').filter(Boolean) : [],
+      mbti: searchParams?.mbti ? searchParams.mbti.split(',').filter(Boolean) : []
+    };
+    
+    const users = await getUsersForMatching(currentUserId, limit, filters);
 
     if (users.length === 0) {
+      const hasFilters = searchParams && Object.values(searchParams).some(value => value && value !== 'all');
+      
       return (
         <div className="text-center py-12">
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <Users className="w-8 h-8 text-gray-400" />
+            <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
+              {hasFilters ? (
+                <Search className="w-8 h-8 text-gray-400" />
+              ) : (
+                <Users className="w-8 h-8 text-gray-400" />
+              )}
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                暂无可匹配的用户
+                {hasFilters ? '无符合条件的用户' : '暂无可匹配的用户'}
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                可能的原因：<br />
-                • 所有用户都已互动过<br />
-                • 筛选条件过于严格<br />
-                • 暂时没有符合条件的活跃用户
+                {hasFilters ? (
+                  <>
+                    尝试以下方式：<br />
+                    • 放宽筛选条件范围<br />
+                    • 清空部分筛选条件<br />
+                    • 修改关键词搜索
+                  </>
+                ) : (
+                  <>
+                    可能的原因：<br />
+                    • 所有用户都已互动过<br />
+                    • 暂时没有符合条件的活跃用户
+                  </>
+                )}
               </p>
               <div className="flex space-x-3 justify-center">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
                   <RefreshCw className="w-4 h-4 mr-2" />
                   刷新页面
                 </Button>
-                <Button variant="outline" size="sm">
-                  调整筛选
-                </Button>
+                {hasFilters && (
+                  <Button variant="outline" size="sm" onClick={() => window.location.href = '/explore'}>
+                    清空筛选
+                  </Button>
+                )}
               </div>
             </div>
           </div>

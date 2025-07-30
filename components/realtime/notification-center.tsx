@@ -19,7 +19,6 @@ import {
   Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 
 const NotificationIcon = ({ type }: { type: NotificationType }) => {
   switch (type) {
@@ -75,7 +74,7 @@ export function NotificationCenter() {
   };
 
   const formatTime = (date: Date) => {
-    return format(date, 'HH:mm', { locale: zhCN });
+    return format(date, 'HH:mm');
   };
 
   const formatDate = (date: Date) => {
@@ -90,7 +89,7 @@ export function NotificationCenter() {
       const diffInDays = Math.floor(diffInHours / 24);
       return `${diffInDays}天前`;
     } else {
-      return format(date, 'MM/dd', { locale: zhCN });
+      return format(date, 'MM/dd');
     }
   };
 

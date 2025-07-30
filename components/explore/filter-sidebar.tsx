@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
 import { 
   Filter,
   X,
@@ -23,7 +25,8 @@ import {
   Home,
   Brain,
   GraduationCap,
-  MapPin
+  MapPin,
+  Loader2
 } from 'lucide-react';
 
 interface FilterState {
@@ -49,8 +52,29 @@ const initialFilters: FilterState = {
 };
 
 export function FilterSidebar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+
+  // 从URL参数初始化筛选状态
+  useEffect(() => {
+    const urlFilters = {
+      search: searchParams.get('search') || '',
+      gender: searchParams.get('gender') || '',
+      ageRange: [
+        parseInt(searchParams.get('minAge') || '18'),
+        parseInt(searchParams.get('maxAge') || '30')
+      ] as [number, number],
+      sleepTimeRange: searchParams.get('sleepTime') || '',
+      studyHabit: searchParams.get('studyHabit')?.split(',').filter(Boolean) || [],
+      lifestyle: searchParams.get('lifestyle')?.split(',').filter(Boolean) || [],
+      cleanliness: searchParams.get('cleanliness')?.split(',').filter(Boolean) || [],
+      mbti: searchParams.get('mbti')?.split(',').filter(Boolean) || []
+    };
+    setFilters(urlFilters);
+  }, [searchParams]);
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     setFilters(prev => ({
@@ -71,9 +95,31 @@ export function FilterSidebar() {
     });
   };
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setFilters(initialFilters);
-  };
+    router.push('/explore', { scroll: false });
+  }, [router]);
+
+  const applyFilters = useCallback(async () => {
+    setIsApplying(true);
+    
+    const params = new URLSearchParams();
+    
+    if (filters.search.trim()) params.set('search', filters.search.trim());
+    if (filters.gender && filters.gender !== 'all') params.set('gender', filters.gender);
+    if (filters.ageRange[0] !== 18) params.set('minAge', filters.ageRange[0].toString());
+    if (filters.ageRange[1] !== 30) params.set('maxAge', filters.ageRange[1].toString());
+    if (filters.sleepTimeRange) params.set('sleepTime', filters.sleepTimeRange);
+    if (filters.studyHabit.length > 0) params.set('studyHabit', filters.studyHabit.join(','));
+    if (filters.lifestyle.length > 0) params.set('lifestyle', filters.lifestyle.join(','));
+    if (filters.cleanliness.length > 0) params.set('cleanliness', filters.cleanliness.join(','));
+    if (filters.mbti.length > 0) params.set('mbti', filters.mbti.join(','));
+
+    const queryString = params.toString();
+    router.push(`/explore${queryString ? `?${queryString}` : ''}`, { scroll: false });
+    
+    setIsApplying(false);
+  }, [filters, router]);
 
   const getActiveFiltersCount = () => {
     let count = 0;
@@ -96,7 +142,7 @@ export function FilterSidebar() {
             筛选条件
           </div>
           {getActiveFiltersCount() > 0 && (
-            <Badge variant="secondary">
+            <Badge variant="secondary" className="animate-pulse bg-gradient-to-r from-pink-500 to-purple-500 text-white">
               {getActiveFiltersCount()}
             </Badge>
           )}
@@ -106,7 +152,7 @@ export function FilterSidebar() {
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-1"
+            className="flex-1 transition-colors"
           >
             {isExpanded ? '收起' : '展开'}全部
           </Button>
@@ -115,6 +161,7 @@ export function FilterSidebar() {
             size="sm"
             onClick={resetFilters}
             disabled={getActiveFiltersCount() === 0}
+            className="transition-colors hover:bg-red-50 hover:text-red-600"
           >
             <RotateCcw className="w-3 h-3 mr-1" />
             重置
@@ -159,6 +206,38 @@ export function FilterSidebar() {
               </Select>
             </div>
 
+            <div>
+              <Label className="flex items-center justify-between mb-2">
+                <span>年龄范围</span>
+                <span className="text-sm text-gray-500">
+                  {filters.ageRange[0]} - {filters.ageRange[1]} 岁
+                </span>
+              </Label>
+              <Slider
+                value={filters.ageRange}
+                onValueChange={(value) => handleFilterChange('ageRange', value as [number, number])}
+                min={18}
+                max={35}
+                step={1}
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <Label>睡眠时间</Label>
+              <Select value={filters.sleepTimeRange} onValueChange={(value) => handleFilterChange('sleepTimeRange', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="选择睡眠时间范围" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">不限</SelectItem>
+                  <SelectItem value="early">早睡早起 (22:00-06:00)</SelectItem>
+                  <SelectItem value="normal">正常作息 (23:00-07:00)</SelectItem>
+                  <SelectItem value="late">晚睡晚起 (00:00-08:00)</SelectItem>
+                  <SelectItem value="night_owl">夜猫子 (01:00-09:00)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
           </div>
         </div>
@@ -293,9 +372,29 @@ export function FilterSidebar() {
         )}
 
         {/* 应用筛选 */}
-        <Button className="w-full" size="sm">
-          应用筛选 ({getActiveFiltersCount()})
-        </Button>
+        <div className="space-y-2">
+          <Button 
+            className="w-full" 
+            size="sm"
+            onClick={applyFilters}
+            disabled={isApplying}
+          >
+            {isApplying ? (
+              <>
+                <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                应用中...
+              </>
+            ) : (
+              `应用筛选 (${getActiveFiltersCount()})`
+            )}
+          </Button>
+          
+          {getActiveFiltersCount() > 0 && (
+            <div className="text-xs text-center text-gray-500 dark:text-gray-400">
+              已选择 {getActiveFiltersCount()} 个条件
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

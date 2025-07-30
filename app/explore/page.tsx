@@ -13,7 +13,21 @@ import {
   Loader2
 } from 'lucide-react';
 
-export default async function ExplorePage() {
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: {
+    search?: string;
+    gender?: string;
+    minAge?: string;
+    maxAge?: string;
+    sleepTime?: string;
+    studyHabit?: string;
+    lifestyle?: string;
+    cleanliness?: string;
+    mbti?: string;
+  };
+}) {
   const { user, session } = await getCurrentUser();
   
   if (!user) {
@@ -24,6 +38,15 @@ export default async function ExplorePage() {
   const hasProfile = !!user.user_profiles;
   const isProfileComplete = user.user_profiles?.isProfileComplete || false;
 
+  // 计算活跃筛选条件数量
+  const activeFiltersCount = Object.entries(searchParams).reduce((count, [key, value]) => {
+    if (!value) return count;
+    if (key === 'minAge' && value === '18') return count;
+    if (key === 'maxAge' && value === '30') return count;
+    if (key === 'gender' && value === 'all') return count;
+    return count + 1;
+  }, 0);
+
   return (
     <ProfileGuard>
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
@@ -32,6 +55,7 @@ export default async function ExplorePage() {
           <ExploreHeader 
             hasProfile={hasProfile}
             isProfileComplete={isProfileComplete}
+            activeFiltersCount={activeFiltersCount}
           />
 
           {/* 主要内容区域 */}
@@ -46,7 +70,10 @@ export default async function ExplorePage() {
             {/* 右侧用户卡片网格 */}
             <div className="lg:col-span-3">
               <Suspense fallback={<UserCardGridSkeleton />}>
-                <UserCardGrid currentUserId={user.users?.id} />
+                <UserCardGrid 
+                  currentUserId={user.users?.id} 
+                  searchParams={searchParams}
+                />
               </Suspense>
             </div>
           </div>

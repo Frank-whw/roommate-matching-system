@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// import { signToken, verifyToken } from '@/lib/auth/session';
 
 export async function middleware(request: NextRequest) {
-  // Basic middleware without session management for now
-  // TODO: Re-implement session management after fixing component issues
+  // Temporarily disabled middleware to debug component issues
   return NextResponse.next();
 }
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  runtime: 'nodejs'
 };
