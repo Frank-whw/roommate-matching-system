@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const foundUser = user[0];
 
     // 验证密码
-    const isPasswordValid = await comparePasswords(password, foundUser.hashedPassword);
+    const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: '学号或密码错误' },
