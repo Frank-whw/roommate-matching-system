@@ -81,10 +81,54 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     // 检查学号是否已被注册
     const existingUserByStudentId = await getUserByStudentId(studentId);
     if (existingUserByStudentId) {
-      return {
-        error: '该学号已被注册',
-        field: 'studentId'
-      };
+      // 如果用户已经设置了密码，则认为已完成注册
+      if (existingUserByStudentId.passwordHash && existingUserByStudentId.passwordHash.trim() !== '') {
+        return {
+          error: '该学号已被注册',
+          field: 'studentId'
+        };
+      } else {
+        // 如果用户存在但未设置密码，重新发送设置密码邮件
+        const passwordSetupToken = await signPasswordSetupToken(email, studentId);
+        
+        // 更新用户的验证令牌和过期时间
+        await db
+          .update(users)
+          .set({
+            emailVerificationToken: passwordSetupToken,
+            emailVerificationExpires: new Date(Date.now() + 10 * 60 * 1000), // 10分钟后过期
+            updatedAt: new Date()
+          })
+          .where(eq(users.id, existingUserByStudentId.id));
+
+        // 发送设置密码的邮件
+        const emailSent = await sendPasswordSetupEmail(email, passwordSetupToken, studentId);
+        if (!emailSent) {
+          console.warn('发送设置密码邮件失败');
+          return {
+            error: '邮件发送失败，请重试',
+          };
+        }
+
+        return {
+          success: true,
+          message: `设置密码的邮件已重新发送到 ${email}（开发环境下邮件内容显示在服务器控制台中），请在10分钟内完成密码设置。`,
+          data: {
+            resent: true,
+            user: {
+              id: existingUserByStudentId.id,
+              name: existingUserByStudentId.name,
+              email: existingUserByStudentId.email,
+              studentId: existingUserByStudentId.studentId,
+              isEmailVerified: existingUserByStudentId.isEmailVerified
+            },
+            emailSent,
+            passwordSetupRequired: true,
+            emailAddress: email,
+            note: '开发环境下，邮件内容会显示在服务器控制台中，请查看终端输出获取设置密码链接。'
+          }
+        };
+      }
     }
 
     // 检查邮箱是否已被注册
@@ -135,7 +179,10 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     return {
       success: true,
       message: `注册成功！设置密码的邮件已发送至 ${email}，请在10分钟内完成密码设置。`,
-      userId: createdUser.id
+      data: {
+        resent: false,
+        userId: createdUser.id
+      }
     };
 
   } catch (error) {

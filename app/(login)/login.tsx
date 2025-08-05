@@ -43,7 +43,9 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   }
 
   if (isSuccess && mode === 'signup') {
-    return <RegistrationSuccess message={state.message || ''} />;
+    // 检查是否是重新发送的情况
+    const isResent = state.data?.resent === true;
+    return <RegistrationSuccess message={state.message || ''} isResent={isResent} />;
   }
 
   return (
@@ -329,32 +331,51 @@ function EmailVerificationForm({
 }
 
 // 注册成功组件
-function RegistrationSuccess({ message }: { message: string }) {
+function RegistrationSuccess({ message, isResent }: { message: string; isResent?: boolean }) {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <CheckCircle className="h-16 w-16 text-green-500" />
+          {isResent ? (
+            <Mail className="h-16 w-16 text-blue-500" />
+          ) : (
+            <CheckCircle className="h-16 w-16 text-green-500" />
+          )}
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-          注册成功！
+          {isResent ? '邮件已重新发送！' : '注册成功！'}
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">欢迎加入室友匹配系统</CardTitle>
+            <CardTitle className="text-center">
+              {isResent ? '请查收您的邮箱' : '欢迎加入室友匹配系统'}
+            </CardTitle>
           </CardHeader>
           
           <CardContent className="text-center space-y-4">
-            <Alert className="border-green-500">
-              <CheckCircle className="h-4 w-4" />
+            <Alert className={isResent ? "border-blue-500" : "border-green-500"}>
+              {isResent ? (
+                <Mail className="h-4 w-4" />
+              ) : (
+                <CheckCircle className="h-4 w-4" />
+              )}
               <AlertDescription>{message}</AlertDescription>
             </Alert>
             
+            {isResent && (
+              <Alert className="border-yellow-500">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  我们检测到您之前已经注册过但未完成密码设置，因此重新发送了设置密码的邮件。
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <p className="text-sm text-muted-foreground">
-              请检查您的邮箱（包括垃圾邮件文件夹），点击验证链接后即可登录使用。
+              请检查您的邮箱（包括垃圾邮件文件夹），点击邮件中的链接完成密码设置后即可登录使用。
             </p>
           </CardContent>
 
