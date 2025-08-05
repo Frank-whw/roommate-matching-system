@@ -30,21 +30,21 @@ export default async function DashboardPage() {
       title: '基本信息',
       description: '完善个人基本信息',
       completed: !!user.users?.name,
-      href: '/profile/basic'
+      href: '/profile'
     },
     {
       id: 'preferences',
       title: '生活偏好',
       description: '设置作息习惯、MBTI等',
       completed: false, // 需要检查 userProfiles 表
-      href: '/profile/preferences'
+      href: '/profile'
     },
     {
       id: 'roommate_expectations',
       title: '室友期待',
       description: '描述理想室友特征',
       completed: false,
-      href: '/profile/expectations'
+      href: '/profile'
     }
   ];
 
