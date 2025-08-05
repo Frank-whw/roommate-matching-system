@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, sql } from 'drizzle-orm';
+import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, sql, gte, lte, ilike } from 'drizzle-orm';
 import { db } from './drizzle';
 import { 
   activityLogs, 
@@ -226,7 +226,7 @@ export async function getUsersForMatching(
 
   // 应用筛选条件
   if (filters.gender && filters.gender !== 'all') {
-    whereConditions.push(eq(userProfiles.gender, filters.gender));
+    whereConditions.push(eq(userProfiles.gender, filters.gender as 'male' | 'female' | 'other'));
   }
 
   if (filters.minAge !== undefined) {
@@ -238,19 +238,19 @@ export async function getUsersForMatching(
   }
 
   if (filters.studyHabit && filters.studyHabit.length > 0) {
-    whereConditions.push(inArray(userProfiles.studyHabit, filters.studyHabit));
+    whereConditions.push(inArray(userProfiles.studyHabit, filters.studyHabit as ('early_bird' | 'night_owl' | 'flexible')[]));
   }
 
   if (filters.lifestyle && filters.lifestyle.length > 0) {
-    whereConditions.push(inArray(userProfiles.lifestyle, filters.lifestyle));
+    whereConditions.push(inArray(userProfiles.lifestyle, filters.lifestyle as ('quiet' | 'social' | 'balanced')[]));
   }
 
   if (filters.cleanliness && filters.cleanliness.length > 0) {
-    whereConditions.push(inArray(userProfiles.cleanliness, filters.cleanliness));
+    whereConditions.push(inArray(userProfiles.cleanliness, filters.cleanliness as ('very_clean' | 'clean' | 'moderate')[]));
   }
 
   if (filters.mbti && filters.mbti.length > 0) {
-    whereConditions.push(inArray(userProfiles.mbti, filters.mbti));
+    whereConditions.push(inArray(userProfiles.mbti, filters.mbti as ('INTJ' | 'INTP' | 'ENTJ' | 'ENTP' | 'INFJ' | 'INFP' | 'ENFJ' | 'ENFP' | 'ISTJ' | 'ISFJ' | 'ESTJ' | 'ESFJ' | 'ISTP' | 'ISFP' | 'ESTP' | 'ESFP')[]));
   }
 
   // 关键词搜索（在个人简介、专业、爱好中搜索）
@@ -259,9 +259,10 @@ export async function getUsersForMatching(
     whereConditions.push(
       or(
         ilike(userProfiles.bio, searchTerm),
-        ilike(userProfiles.major, searchTerm),
-        ilike(userProfiles.hobbies, searchTerm)
-      )
+        ilike(userProfiles.hobbies, searchTerm),
+        ilike(userProfiles.roommateExpectations, searchTerm),
+        ilike(users.name, searchTerm)
+      )!
     );
   }
 

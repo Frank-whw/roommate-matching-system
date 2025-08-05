@@ -26,16 +26,16 @@ export async function GET(
 
     // 返回用户信息（隐藏敏感信息）
     const safeUserData = {
-      id: targetUser.id,
-      name: targetUser.name,
-      email: targetUser.email ? targetUser.email.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
-      studentId: targetUser.studentId ? targetUser.studentId.replace(/(.{3}).*(.{2})/, '$1***$2') : null,
-      profile: targetUser.userProfiles ? {
-        ...targetUser.userProfiles,
+      id: targetUser.users.id,
+      name: targetUser.users.name,
+      email: targetUser.users.email ? targetUser.users.email.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
+      studentId: targetUser.users.studentId ? targetUser.users.studentId.replace(/(.{3}).*(.{2})/, '$1***$2') : null,
+      profile: targetUser.user_profiles ? {
+        ...targetUser.user_profiles,
         wechatId: undefined, // 隐藏微信号
       } : null,
-      createdAt: targetUser.createdAt,
-      isEmailVerified: targetUser.isEmailVerified
+      createdAt: targetUser.users.createdAt,
+      isEmailVerified: targetUser.users.isEmailVerified
     };
 
     return NextResponse.json({

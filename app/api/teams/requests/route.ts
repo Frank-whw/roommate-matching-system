@@ -91,11 +91,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      data: {
-        request: result.request,
-        member: result.member
-      }
+      message: result.message
     });
 
   } catch (error) {

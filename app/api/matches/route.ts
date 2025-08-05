@@ -49,8 +49,9 @@ export async function POST(request: NextRequest) {
       success: true,
       message: result.message,
       data: {
-        isMatch: result.isMatch,
-        like: result.like
+        matchCreated: result.matchCreated,
+        matchId: result.matchId,
+        action: result.action
       }
     });
 

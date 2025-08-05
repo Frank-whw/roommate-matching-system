@@ -76,7 +76,12 @@ export function useFormValidation<T>(schema: z.ZodSchema<T>) {
     try {
       // 尝试创建一个部分对象来验证单个字段
       const partialData = { [fieldName]: value };
-      schema.partial().parse(partialData);
+      if (typeof (schema as any).partial === 'function') {
+        (schema as any).partial().parse(partialData);
+      } else {
+        // 如果没有 partial 方法，直接验证整个表单
+        return;
+      }
       
       // 验证成功，移除错误
       setErrors(prev => {

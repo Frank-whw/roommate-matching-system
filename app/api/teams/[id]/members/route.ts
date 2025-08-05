@@ -40,8 +40,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      data: result.updatedMember || result.oldLeader
+      message: result.message
     });
 
   } catch (error) {

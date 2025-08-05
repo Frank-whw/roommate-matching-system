@@ -1,6 +1,6 @@
 // 统一的API调用Hook
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AppError } from '@/lib/errors/types';
 import { handleApiCall, logError } from '@/lib/errors/handler';
 
@@ -147,7 +147,7 @@ export function useFetch<T = any>(
   }, [api, url]);
 
   // 自动获取数据
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoFetch && url) {
       fetch();
     }
