@@ -117,11 +117,11 @@ function SetPasswordContent() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md" suppressHydrationWarning>
         <div className="flex justify-center">
           <Lock className="h-16 w-16 text-primary" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground" suppressHydrationWarning>
           {success ? '设置成功' : '设置密码'}
         </h2>
       </div>
@@ -129,7 +129,7 @@ function SetPasswordContent() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">
+            <CardTitle className="text-center" suppressHydrationWarning>
               {success ? '密码设置成功' : '请设置您的登录密码'}
             </CardTitle>
             <CardDescription className="text-center">
