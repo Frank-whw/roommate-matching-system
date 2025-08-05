@@ -58,8 +58,48 @@ export async function POST(request: NextRequest) {
           );
         }
       } else {
-        // 如果用户存在但未设置密码，删除旧记录，允许重新注册
-        await db.delete(users).where(eq(users.id, user.id));
+        // 如果用户存在但未设置密码，重新发送设置密码邮件
+        const passwordSetupToken = await signPasswordSetupToken(email, studentId);
+        
+        // 更新用户的验证令牌和过期时间
+        await db
+          .update(users)
+          .set({
+            emailVerificationToken: passwordSetupToken,
+            emailVerificationExpires: new Date(Date.now() + 10 * 60 * 1000), // 10分钟后过期
+            updatedAt: new Date()
+          })
+          .where(eq(users.id, user.id));
+
+        // 发送设置密码的邮件
+        const emailSent = await sendPasswordSetupEmail(email, passwordSetupToken, studentId);
+
+        if (!emailSent) {
+          console.warn('发送设置密码邮件失败');
+          return NextResponse.json(
+            { error: '邮件发送失败，请重试' },
+            { status: 500 }
+          );
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: '设置密码的邮件已重新发送到 ' + email + '（开发环境下邮件内容显示在服务器控制台中），请在10分钟内完成密码设置。',
+          data: {
+            user: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              studentId: user.studentId,
+              isEmailVerified: user.isEmailVerified
+            },
+            emailSent,
+            passwordSetupRequired: true,
+            emailAddress: email,
+            note: '开发环境下，邮件内容会显示在服务器控制台中，请查看终端输出获取设置密码链接。',
+            resent: true
+          }
+        });
       }
     }
 

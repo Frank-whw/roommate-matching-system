@@ -5,6 +5,9 @@
  * 帮助将本地数据库迁移到云端生产环境
  */
 
+// 加载环境变量
+require('dotenv').config();
+
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
