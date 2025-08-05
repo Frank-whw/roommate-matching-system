@@ -25,7 +25,7 @@ function createTransporter() {
     return null;
   }
 
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     host: MAIL_SERVER,
     port: parseInt(MAIL_PORT || '587'),
     secure: parseInt(MAIL_PORT || '587') === 465, // true for 465, false for other ports
