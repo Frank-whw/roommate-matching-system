@@ -25,6 +25,7 @@ function createTransporter() {
     return null;
   }
 
+
   return nodemailer.createTransport({
     host: MAIL_SERVER,
     port: parseInt(MAIL_PORT || '587'),
