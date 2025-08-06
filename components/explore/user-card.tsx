@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { likeUser } from '@/app/explore/actions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,8 @@ import {
   Coffee,
   User,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Eye
 } from 'lucide-react';
 
 interface UserCardProps {
@@ -117,50 +119,58 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
       <CardContent className="p-0">
-        {/* 用户头部信息 */}
-        <div className="p-4 sm:p-6 pb-3 sm:pb-4">
-          <div className="flex items-start space-x-3 sm:space-x-4">
-            <div className="relative flex-shrink-0">
-              <Avatar className="w-12 h-12 sm:w-16 sm:h-16 ring-2 ring-pink-100 dark:ring-pink-900">
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=f97316&color=fff`} />
-                <AvatarFallback className="bg-gradient-to-br from-pink-400 to-purple-500 text-white">
-                  {user.name ? user.name.substring(0, 2) : user.email.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              {/* 在线状态指示器 */}
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between">
-                <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate pr-2">
-                  {user.name || '用户' + user.id}
-                </h3>
-                <Badge variant="outline" className="text-xs bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200 flex-shrink-0">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  <span className="hidden sm:inline">新用户</span>
-                  <span className="sm:hidden">新</span>
-                </Badge>
+        {/* 用户头部信息 - 可点击查看详情 */}
+        <Link href={`/users/${user.id}`} className="block">
+          <div className="p-4 sm:p-6 pb-3 sm:pb-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+            <div className="flex items-start space-x-3 sm:space-x-4">
+              <div className="relative flex-shrink-0">
+                <Avatar className="w-12 h-12 sm:w-16 sm:h-16 ring-2 ring-pink-100 dark:ring-pink-900">
+                  <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=f97316&color=fff`} />
+                  <AvatarFallback className="bg-gradient-to-br from-pink-400 to-purple-500 text-white">
+                    {user.name ? user.name.substring(0, 2) : user.email.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {/* 在线状态指示器 */}
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
               </div>
-              
-              <div className="mt-1 space-y-1">
-                <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  <GraduationCap className="w-3 h-3 mr-1 flex-shrink-0" />
-                  <span className="truncate">{profile?.major || '未知专业'}</span>
-                  <span className="mx-1 flex-shrink-0">•</span>
-                  <span className="truncate">{profile?.grade || '未知年级'}</span>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between">
+                  <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate pr-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                    {user.name || '用户' + user.id}
+                  </h3>
+                  <Badge variant="outline" className="text-xs bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200 flex-shrink-0">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    <span className="hidden sm:inline">新用户</span>
+                    <span className="sm:hidden">新</span>
+                  </Badge>
                 </div>
                 
-                {profile?.dormArea && (
+                <div className="mt-1 space-y-1">
+                  <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    <GraduationCap className="w-3 h-3 mr-1 flex-shrink-0" />
+                    <span className="truncate">华东师范大学</span>
+                    <span className="mx-1 flex-shrink-0">•</span>
+                    <span className="truncate">学生</span>
+                  </div>
+                  
                   <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                     <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate">{profile.dormArea}</span>
+                    <span className="truncate">校园内</span>
                   </div>
-                )}
+                </div>
+              </div>
+            </div>
+            
+            {/* 查看详情提示 */}
+            <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center text-xs text-pink-600 dark:text-pink-400">
+                <Eye className="w-3 h-3 mr-1" />
+                点击查看详细资料
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* 用户标签和信息 */}
         <div className="px-4 sm:px-6 pb-3 sm:pb-4 space-y-3">
@@ -256,8 +266,11 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
               <span className="hidden sm:inline">{isLiking ? '喜欢中...' : '喜欢'}</span>
             </Button>
             
-            <Button variant="outline" size="sm" className="px-2 sm:px-3">
-              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+            <Button variant="outline" size="sm" className="px-2 sm:px-3" asChild>
+              <Link href={`/matches?userId=${user.id}`}>
+                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline sm:ml-1">私信</span>
+              </Link>
             </Button>
           </div>
         </div>
