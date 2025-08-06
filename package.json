@@ -11,7 +11,9 @@
     "db:studio": "drizzle-kit studio",
     "deploy:prepare": "node scripts/migrate-to-cloud.js",
     "test:email": "echo 'Please visit /test-email page to test email functionality'",
-    "production:check": "node scripts/production-check.js"
+    "production:check": "node scripts/production-check.js",
+    "check:env": "node scripts/check-env.js",
+    "setup:vercel": "node scripts/setup-vercel.js"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.14",

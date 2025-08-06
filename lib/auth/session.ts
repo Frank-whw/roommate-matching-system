@@ -77,8 +77,9 @@ export async function setSession(user: NewUser & { studentId?: string; isEmailVe
   (await cookies()).set('session', encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
+    path: '/',
   });
 }
 

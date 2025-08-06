@@ -63,3 +63,45 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+
+## Deployment
+
+### Deploy to Vercel
+
+This application is optimized for deployment on [Vercel](https://vercel.com). Follow these steps:
+
+1. **Quick Setup**
+   ```bash
+   npm run setup:vercel
+   ```
+   This will generate the environment variables configuration you need.
+
+2. **Deploy to Vercel**
+   - Push your code to GitHub
+   - Connect your repository to Vercel
+   - Configure environment variables in Vercel Dashboard
+   - Deploy!
+
+3. **Environment Variables**
+   Make sure to set these in your Vercel project settings:
+   - `POSTGRES_URL` - Your database connection string
+   - `AUTH_SECRET` - JWT signing secret (generate with the setup script)
+   - `BASE_URL` - Your Vercel app URL
+   - `MAIL_*` - Email service configuration
+
+4. **Detailed Guides**
+   - 📖 [Complete Deployment Guide](./VERCEL_DEPLOY_GUIDE.md)
+   - 🔧 [Troubleshooting Guide](./VERCEL_TROUBLESHOOTING.md)
+
+### Useful Commands
+
+```bash
+# Check environment variables
+npm run check:env
+
+# Generate Vercel configuration
+npm run setup:vercel
+
+# Test email functionality
+npm run test:email
+```
