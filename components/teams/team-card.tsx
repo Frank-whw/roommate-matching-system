@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +14,8 @@ import {
   Calendar,
   FileText,
   UserPlus,
-  MessageCircle
+  MessageCircle,
+  Eye
 } from 'lucide-react';
 
 interface TeamCardProps {
@@ -71,86 +73,106 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <div className="flex items-center mb-2">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mr-3">
-                {team.name}
-              </h3>
-              <Badge 
-                variant="outline" 
-                className="bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
-              >
-                招募中
-              </Badge>
-            </div>
-            
-            {team.description && (
-              <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                {team.description}
-              </p>
-            )}
-            
-            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-              <Users className="w-4 h-4 mr-1" />
-              <span>{team.currentMembers}/{team.maxMembers} 成员</span>
-              <span className="mx-2">•</span>
-              <Calendar className="w-4 h-4 mr-1" />
-              <span>{formatDate(team.createdAt)}</span>
-            </div>
-
-            {team.dormArea && (
-              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-                <MapPin className="w-4 h-4 mr-1" />
-                <span>期望区域：{team.dormArea}</span>
+        {/* 队伍标题 - 可点击查看详情 */}
+        <Link href={`/teams/${team.id}`} className="block">
+          <div className="flex items-start justify-between mb-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 -m-2 p-2 rounded-lg transition-colors">
+            <div className="flex-1">
+              <div className="flex items-center mb-2">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mr-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {team.name}
+                </h3>
+                <Badge 
+                  variant="outline" 
+                  className="bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
+                >
+                  招募中
+                </Badge>
               </div>
-            )}
-          </div>
-
-          <div className="ml-4 text-center">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {team.maxMembers - team.currentMembers}
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
-              剩余位置
-            </div>
-          </div>
-        </div>
-
-        {/* 队长信息 */}
-        <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div className="relative">
-            <Avatar className="w-10 h-10">
-              <AvatarImage 
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.name || leader.email)}&background=3b82f6&color=fff`} 
-              />
-              <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white text-sm">
-                {leader.name ? leader.name.substring(0, 2) : leader.email.substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
-              <Crown className="w-2 h-2 text-white" />
-            </div>
-          </div>
-          
-          <div className="flex-1">
-            <div className="flex items-center">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {leader.name || '队长' + leader.id}
-              </p>
-              <Crown className="w-3 h-3 text-yellow-500 ml-1" />
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
-              {leaderProfile?.major && leaderProfile?.grade ? (
-                <span>{leaderProfile.major} • {leaderProfile.grade}</span>
-              ) : (
-                <span>队长</span>
+              
+              {team.description && (
+                <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                  {team.description}
+                </p>
               )}
+              
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <Users className="w-4 h-4 mr-1" />
+                <span>{team.currentMembers}/{team.maxMembers} 成员</span>
+                <span className="mx-2">•</span>
+                <Calendar className="w-4 h-4 mr-1" />
+                <span>{formatDate(team.createdAt)}</span>
+              </div>
+
+              {team.dormArea && (
+                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  <span>期望区域：{team.dormArea}</span>
+                </div>
+              )}
+              
+              {/* 查看详情提示 */}
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
+                  <Eye className="w-3 h-3 mr-1" />
+                  点击查看队伍详情
+                </div>
+              </div>
+            </div>
+
+            <div className="ml-4 text-center">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {team.maxMembers - team.currentMembers}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                剩余位置
+              </div>
             </div>
           </div>
-        </div>
+        </Link>
+
+        {/* 队长信息 - 可点击查看队长资料 */}
+        <Link href={`/users/${leader.id}`} className="block">
+          <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group/leader">
+            <div className="relative">
+              <Avatar className="w-10 h-10">
+                <AvatarImage 
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.name || leader.email)}&background=3b82f6&color=fff`} 
+                />
+                <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white text-sm">
+                  {leader.name ? leader.name.substring(0, 2) : leader.email.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                <Crown className="w-2 h-2 text-white" />
+              </div>
+            </div>
+            
+            <div className="flex-1">
+              <div className="flex items-center">
+                <p className="text-sm font-medium text-gray-900 dark:text-white group-hover/leader:text-blue-600 dark:group-hover/leader:text-blue-400 transition-colors">
+                  {leader.name || '队长' + leader.id}
+                </p>
+                <Crown className="w-3 h-3 text-yellow-500 ml-1" />
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {leaderProfile?.major && leaderProfile?.grade ? (
+                  <span>{leaderProfile.major} • {leaderProfile.grade}</span>
+                ) : (
+                  <span>队长</span>
+                )}
+              </div>
+            </div>
+            
+            {/* 查看队长资料提示 */}
+            <div className="opacity-0 group-hover/leader:opacity-100 transition-opacity">
+              <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
+                <Eye className="w-3 h-3" />
+              </div>
+            </div>
+          </div>
+        </Link>
 
         {/* 招募要求 */}
         {team.requirements && (
@@ -172,9 +194,11 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
           </div>
           
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" disabled>
-              <MessageCircle className="w-4 h-4 mr-1" />
-              私信队长
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/matches?teamId=${team.id}`}>
+                <MessageCircle className="w-4 h-4 mr-1" />
+                私信队长
+              </Link>
             </Button>
             
             <Button

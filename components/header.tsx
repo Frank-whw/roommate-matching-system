@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Users, Heart, Settings, Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { signOut } from '@/app/(login)/actions';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
@@ -98,9 +98,70 @@ function UserMenu() {
   );
 }
 
-export default function Header() {
+// 移动端导航菜单
+function MobileNav() {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/dashboard', label: '仪表板', icon: Home },
+    { href: '/explore', label: '匹配广场', icon: Heart },
+    { href: '/teams', label: '队伍广场', icon: Users },
+    { href: '/matches', label: '我的匹配', icon: Heart },
+    { href: '/profile', label: '个人资料', icon: Settings },
+  ];
+
   return (
-    <header className="border-b border-border bg-background">
+    <div className="md:hidden">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative"
+      >
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 bg-background border-b shadow-lg z-50">
+          <nav className="p-4 space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Header() {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/explore', label: '匹配广场' },
+    { href: '/teams', label: '队伍广场' },
+    { href: '/matches', label: '我的匹配' },
+  ];
+
+  return (
+    <header className="border-b border-border bg-background sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <Home className="h-6 w-6 text-primary" />
@@ -108,18 +169,27 @@ export default function Header() {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/explore" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            匹配广场
-          </Link>
-          <Link href="/teams" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            队伍广场
-          </Link>
-          <Link href="/matches" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            我的匹配
-          </Link>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-sm font-medium transition-colors px-3 py-2 rounded-lg ${
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
+        
         <div className="flex items-center space-x-4">
           <ThemeControls />
+          <MobileNav />
           <Suspense fallback={<div className="h-9" />}>
             <UserMenu />
           </Suspense>

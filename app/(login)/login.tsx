@@ -19,45 +19,44 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const redirect = searchParams.get('redirect');
   const [showResendForm, setShowResendForm] = useState(false);
   
+  const [state, setState] = useState<ActionState>({ error: '' });
   const [isPending, startTransition] = useTransition();
-  const [isResendPending, startResendTransition] = useTransition();
-  const [state, setState] = useState<any>({ error: '' });
-  const [resendState, setResendState] = useState<any>({ error: '' });
   
-  const formAction = async (formData: FormData) => {
+  const handleFormAction = (formData: FormData) => {
     startTransition(async () => {
-      const result = await (mode === 'signin' ? signIn : signUp)(state, formData);
-      setState(result);
+      const action = mode === 'signin' ? signIn : signUp;
+      const result = await action(state, formData);
+      setState(result as ActionState);
     });
   };
+
+  const [resendState, setResendState] = useState<ActionState>({ error: '' });
+  const [isResendPending, startResendTransition] = useTransition();
   
-  const resendAction = async (formData: FormData) => {
+  const handleResendAction = (formData: FormData) => {
     startResendTransition(async () => {
       const result = await resendVerificationEmail(resendState, formData);
-      setResendState(result);
+      setResendState(result as ActionState);
     });
   };
-  
-  const pending = isPending;
-  const resendPending = isResendPending;
 
   // 检查是否需要邮箱验证
-  const needsEmailVerification = state.needEmailVerification;
-  const isSuccess = state.success;
+  const needsEmailVerification = state?.needEmailVerification || false;
+  const isSuccess = state?.success || false;
 
   if (needsEmailVerification || showResendForm) {
     return <EmailVerificationForm 
       onBack={() => setShowResendForm(false)}
       resendState={resendState}
-      resendAction={resendAction}
-      resendPending={resendPending}
+      resendAction={handleResendAction}
+      resendPending={isResendPending}
     />;
   }
 
   if (isSuccess && mode === 'signup') {
     // 检查是否是重新发送的情况
-    const isResent = state.data?.resent === true;
-    return <RegistrationSuccess message={state.message || ''} isResent={isResent} />;
+    const isResent = state?.data?.resent === true;
+    return <RegistrationSuccess message={state?.message || ''} isResent={isResent} />;
   }
 
   return (
@@ -95,7 +94,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
           </CardHeader>
           
           <CardContent>
-            <form className="space-y-4" action={formAction}>
+            <form className="space-y-4" action={handleFormAction}>
               <input type="hidden" name="redirect" value={redirect || ''} />
               
               {mode === 'signup' && (
@@ -160,31 +159,28 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               {mode === 'signup' && (
                 <div className="flex items-center space-x-2">
                   <Checkbox id="agreeToTerms" name="agreeToTerms" value="true" required />
-                  <Label 
-                    htmlFor="agreeToTerms" 
-                    className="text-sm leading-relaxed cursor-pointer"
-                  >
-                    我已阅读并同意
-                    <Link href="/terms" className="text-primary hover:underline mx-1">
+                  <Label htmlFor="agreeToTerms" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    我同意
+                    <Link href="/terms" className="text-primary hover:underline ml-1">
                       用户协议
                     </Link>
                     和
-                    <Link href="/privacy" className="text-primary hover:underline mx-1">
+                    <Link href="/privacy" className="text-primary hover:underline ml-1">
                       隐私政策
                     </Link>
                   </Label>
                 </div>
               )}
 
-              {(state.error || state.message) && (
-                <Alert className={state.error ? 'border-destructive' : 'border-green-500'}>
-                  {state.error ? (
+              {(state?.error || state?.message) && (
+                <Alert className={state?.error ? 'border-destructive' : 'border-green-500'}>
+                  {state?.error ? (
                     <AlertCircle className="h-4 w-4" />
                   ) : (
                     <CheckCircle className="h-4 w-4" />
                   )}
                   <AlertDescription>
-                    {state.error || state.message}
+                    {state?.error || state?.message}
                   </AlertDescription>
                 </Alert>
               )}
@@ -192,9 +188,9 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={pending}
+                disabled={isPending}
               >
-                {pending ? (
+                {isPending ? (
                   <>
                     <Loader2 className="animate-spin mr-2 h-4 w-4" />
                     {mode === 'signin' ? '登录中...' : '注册中...'}
@@ -295,15 +291,15 @@ function EmailVerificationForm({
                 />
               </div>
 
-              {(resendState.error || resendState.message) && (
-                <Alert className={resendState.error ? 'border-destructive' : 'border-green-500'}>
-                  {resendState.error ? (
+              {(resendState?.error || resendState?.message) && (
+                <Alert className={resendState?.error ? 'border-destructive' : 'border-green-500'}>
+                  {resendState?.error ? (
                     <AlertCircle className="h-4 w-4" />
                   ) : (
                     <CheckCircle className="h-4 w-4" />
                   )}
                   <AlertDescription>
-                    {resendState.error || resendState.message}
+                    {resendState?.error || resendState?.message}
                   </AlertDescription>
                 </Alert>
               )}
@@ -329,8 +325,8 @@ function EmailVerificationForm({
           <CardFooter>
             <Button
               variant="ghost"
-              className="w-full"
               onClick={onBack}
+              className="w-full"
               type="button"
             >
               返回登录
@@ -343,58 +339,42 @@ function EmailVerificationForm({
 }
 
 // 注册成功组件
-function RegistrationSuccess({ message, isResent }: { message: string; isResent?: boolean }) {
+function RegistrationSuccess({ message, isResent }: { message: string; isResent: boolean }) {
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          {isResent ? (
-            <Mail className="h-16 w-16 text-blue-500" />
-          ) : (
-            <CheckCircle className="h-16 w-16 text-green-500" />
-          )}
+          <CheckCircle className="h-16 w-16 text-green-500" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-          {isResent ? '邮件已重新发送！' : '注册成功！'}
+          {isResent ? '验证邮件已重新发送' : '注册申请已提交'}
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">
-              {isResent ? '请查收您的邮箱' : '欢迎加入室友匹配系统'}
+            <CardTitle className="text-center text-green-600">
+              🎉 操作成功！
             </CardTitle>
           </CardHeader>
           
           <CardContent className="text-center space-y-4">
-            <Alert className={isResent ? "border-blue-500" : "border-green-500"}>
-              {isResent ? (
-                <Mail className="h-4 w-4" />
-              ) : (
-                <CheckCircle className="h-4 w-4" />
-              )}
-              <AlertDescription>{message}</AlertDescription>
-            </Alert>
-            
-            {isResent && (
-              <Alert className="border-yellow-500">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  我们检测到您之前已经注册过但未完成密码设置，因此重新发送了设置密码的邮件。
-                </AlertDescription>
-              </Alert>
-            )}
-            
             <p className="text-sm text-muted-foreground">
-              请检查您的邮箱（包括垃圾邮件文件夹），点击邮件中的链接完成密码设置后即可登录使用。
+              {message}
             </p>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                💡 提示：请检查您的邮箱（包括垃圾邮件文件夹），点击验证链接完成注册。
+              </p>
+            </div>
           </CardContent>
 
           <CardFooter>
-            <Button asChild className="w-full">
+            <Button variant="outline" asChild className="w-full">
               <Link href="/sign-in">
-                前往登录
+                返回登录
               </Link>
             </Button>
           </CardFooter>

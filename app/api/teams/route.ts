@@ -62,8 +62,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: result.message,
       data: {
-        team: result.team,
-        member: result.member
+        teamId: result.teamId
       }
     });
 
