@@ -41,8 +41,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   };
 
   // 检查是否需要邮箱验证
-  const needsEmailVerification = state.needEmailVerification;
-  const isSuccess = state.success;
+  const needsEmailVerification = state?.needEmailVerification || false;
+  const isSuccess = state?.success || false;
 
   if (needsEmailVerification || showResendForm) {
     return <EmailVerificationForm 
@@ -55,8 +55,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
 
   if (isSuccess && mode === 'signup') {
     // 检查是否是重新发送的情况
-    const isResent = state.data?.resent === true;
-    return <RegistrationSuccess message={state.message || ''} isResent={isResent} />;
+    const isResent = state?.data?.resent === true;
+    return <RegistrationSuccess message={state?.message || ''} isResent={isResent} />;
   }
 
   return (
@@ -172,15 +172,15 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 </div>
               )}
 
-              {(state.error || state.message) && (
-                <Alert className={state.error ? 'border-destructive' : 'border-green-500'}>
-                  {state.error ? (
+              {(state?.error || state?.message) && (
+                <Alert className={state?.error ? 'border-destructive' : 'border-green-500'}>
+                  {state?.error ? (
                     <AlertCircle className="h-4 w-4" />
                   ) : (
                     <CheckCircle className="h-4 w-4" />
                   )}
                   <AlertDescription>
-                    {state.error || state.message}
+                    {state?.error || state?.message}
                   </AlertDescription>
                 </Alert>
               )}
@@ -291,15 +291,15 @@ function EmailVerificationForm({
                 />
               </div>
 
-              {(resendState.error || resendState.message) && (
-                <Alert className={resendState.error ? 'border-destructive' : 'border-green-500'}>
-                  {resendState.error ? (
+              {(resendState?.error || resendState?.message) && (
+                <Alert className={resendState?.error ? 'border-destructive' : 'border-green-500'}>
+                  {resendState?.error ? (
                     <AlertCircle className="h-4 w-4" />
                   ) : (
                     <CheckCircle className="h-4 w-4" />
                   )}
                   <AlertDescription>
-                    {resendState.error || resendState.message}
+                    {resendState?.error || resendState?.message}
                   </AlertDescription>
                 </Alert>
               )}
