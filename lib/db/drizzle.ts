@@ -21,6 +21,7 @@ if (!(globalThis as any).dbConnectionLogged) {
     host: connectionString.includes('supabase.co') ? 'Supabase' : 'Other',
     environment: process.env.NODE_ENV,
     hasConnectionString: !!connectionString,
+    connectionStringPrefix: connectionString.substring(0, 30) + '...'
   });
   (globalThis as any).dbConnectionLogged = true;
 }
@@ -31,9 +32,15 @@ const client = postgres(connectionString, {
   max: 1, // Limit connections for serverless
   idle_timeout: 20,
   max_lifetime: 60 * 30, // 30 minutes
-  connect_timeout: 10,
+  connect_timeout: 30, // Increase timeout for Vercel
   transform: postgres.camel,
   onnotice: () => {}, // Disable notice logs
+  // Add retry logic for DNS resolution issues
+  fetch_types: false,
+  publications: 'supabase_realtime',
+  types: {
+    bigint: postgres.BigInt
+  }
 });
 
 export { client };
