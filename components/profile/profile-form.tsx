@@ -39,6 +39,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [formData, setFormData] = useState({
     // 基本信息
+    nickname: initialProfile?.nickname || '',
     wechatId: initialProfile?.wechatId || '',
     gender: initialProfile?.gender || '',
     age: initialProfile?.age || '',
@@ -78,7 +79,8 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
     const submitData = {
       ...formData,
       age: formData.age ? parseInt(formData.age) : undefined,
-      // 移除空字符串，让验证器处理为 undefined
+    // 移除空字符串，让验证器处理为 undefined
+      nickname: formData.nickname || undefined,
       wechatId: formData.wechatId || undefined,
       gender: formData.gender || undefined,
       sleepTime: formData.sleepTime || undefined,
@@ -114,7 +116,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
 
   // 计算完成进度
   const requiredFields = [
-    formData.wechatId, formData.gender, formData.age,
+    formData.nickname, formData.wechatId, formData.gender, formData.age,
     formData.sleepTime, formData.wakeTime, formData.studyHabit,
     formData.lifestyle, formData.cleanliness, formData.mbti,
     formData.roommateExpectations, formData.hobbies
@@ -165,6 +167,18 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <Label htmlFor="nickname">昵称</Label>
+              <Input
+                id="nickname"
+                type="text"
+                placeholder="请输入您的昵称，比如：Frank"
+                value={formData.nickname}
+                onChange={(e) => handleInputChange('nickname', e.target.value)}
+                maxLength={50}
+              />
+            </div>
+
             <div>
               <Label htmlFor="wechatId">微信号</Label>
               <Input
@@ -247,9 +261,9 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                   <SelectValue placeholder="请选择学习习惯" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="early_bird">早起学习</SelectItem>
-                  <SelectItem value="night_owl">夜猫子</SelectItem>
-                  <SelectItem value="flexible">灵活安排</SelectItem>
+                  <SelectItem value="library">常在图书馆</SelectItem>
+                  <SelectItem value="dormitory">常在寝室</SelectItem>
+                  <SelectItem value="flexible">灵活</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -291,9 +305,9 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                   <SelectValue placeholder="请选择清洁习惯" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="very_clean">非常整洁</SelectItem>
-                  <SelectItem value="clean">比较整洁</SelectItem>
-                  <SelectItem value="moderate">一般</SelectItem>
+                  <SelectItem value="extremely_clean">极爱干净</SelectItem>
+                  <SelectItem value="regularly_tidy">定期收拾</SelectItem>
+                  <SelectItem value="acceptable">过得去就行</SelectItem>
                 </SelectContent>
               </Select>
             </div>

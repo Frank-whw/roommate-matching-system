@@ -19,9 +19,9 @@ export const mbtiEnum = pgEnum('mbti', [
   'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
   'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ]);
-export const studyHabitEnum = pgEnum('study_habit', ['early_bird', 'night_owl', 'flexible']);
+export const studyHabitEnum = pgEnum('study_habit', ['library', 'dormitory', 'flexible']);
 export const lifestyleEnum = pgEnum('lifestyle', ['quiet', 'social', 'balanced']);
-export const cleanlinessEnum = pgEnum('cleanliness', ['very_clean', 'clean', 'moderate']);
+export const cleanlinessEnum = pgEnum('cleanliness', ['extremely_clean', 'regularly_tidy', 'acceptable']);
 export const teamStatusEnum = pgEnum('team_status', ['recruiting', 'full', 'disbanded']);
 export const matchStatusEnum = pgEnum('match_status', ['pending', 'matched', 'rejected']);
 
@@ -51,6 +51,7 @@ export const userProfiles = pgTable('user_profiles', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' })
     .unique(),
+  nickname: varchar('nickname', { length: 50 }), // 昵称，如：Frank
   wechatId: varchar('wechat_id', { length: 100 }), // 微信号
   gender: genderEnum('gender'),
   age: integer('age'),

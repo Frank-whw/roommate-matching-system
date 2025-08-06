@@ -22,6 +22,13 @@
       "when": 1753854943505,
       "tag": "0002_neat_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1754455363817,
+      "tag": "0003_unusual_rictor",
+      "breakpoints": true
     }
   ]
 }

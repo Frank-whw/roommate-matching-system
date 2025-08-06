@@ -161,9 +161,9 @@ export function FilterSidebar() {
                   <Label>学习习惯</Label>
                   <div className="space-y-2 mt-2">
                     {[
-                      { value: 'early_bird', label: '早起学习' },
-                      { value: 'night_owl', label: '夜猫子' },
-                      { value: 'flexible', label: '灵活安排' }
+                      { value: 'library', label: '常在图书馆' },
+                      { value: 'dormitory', label: '常在寝室' },
+                      { value: 'flexible', label: '灵活' }
                     ].map((item) => (
                       <div key={item.value} className="flex items-center space-x-2">
                         <Checkbox
@@ -219,9 +219,9 @@ export function FilterSidebar() {
                   <Label>清洁习惯</Label>
                   <div className="space-y-2 mt-2">
                     {[
-                      { value: 'very_clean', label: '非常整洁' },
-                      { value: 'clean', label: '比较整洁' },
-                      { value: 'moderate', label: '一般' }
+                      { value: 'extremely_clean', label: '极爱干净' },
+                      { value: 'regularly_tidy', label: '定期收拾' },
+                      { value: 'acceptable', label: '过得去就行' }
                     ].map((item) => (
                       <div key={item.value} className="flex items-center space-x-2">
                         <Checkbox

@@ -20,6 +20,7 @@ interface EnhancedProfileFormProps {
 export function EnhancedProfileForm({ user, hasProfile, initialProfile }: EnhancedProfileFormProps) {
   const [formData, setFormData] = useState({
     // 基本信息
+    nickname: initialProfile?.nickname || '',
     wechatId: initialProfile?.wechatId || '',
     gender: initialProfile?.gender || '',
     age: initialProfile?.age || '',
@@ -70,6 +71,7 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
       ...formData,
       age: formData.age ? parseInt(formData.age.toString()) : undefined,
       // 空字符串转为undefined
+      nickname: formData.nickname || undefined,
       wechatId: formData.wechatId || undefined,
       gender: formData.gender || undefined,
       sleepTime: formData.sleepTime || undefined,
@@ -96,7 +98,7 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
 
   // 计算完成进度
   const requiredFields = [
-    formData.wechatId, formData.gender, formData.age,
+    formData.nickname, formData.wechatId, formData.gender, formData.age,
     formData.sleepTime, formData.wakeTime, formData.studyHabit,
     formData.lifestyle, formData.cleanliness, formData.mbti,
     formData.roommateExpectations, formData.hobbies
@@ -111,9 +113,9 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
   ];
 
   const studyHabitOptions = [
-    { value: 'early_bird', label: '早起型' },
-    { value: 'night_owl', label: '夜猫子型' },
-    { value: 'flexible', label: '灵活型' }
+    { value: 'library', label: '常在图书馆' },
+    { value: 'dormitory', label: '常在寝室' },
+    { value: 'flexible', label: '灵活' }
   ];
 
   const lifestyleOptions = [
@@ -123,9 +125,9 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
   ];
 
   const cleanlinessOptions = [
-    { value: 'very_clean', label: '非常整洁' },
-    { value: 'clean', label: '比较整洁' },
-    { value: 'moderate', label: '一般整洁' }
+    { value: 'extremely_clean', label: '极爱干净' },
+    { value: 'regularly_tidy', label: '定期收拾' },
+    { value: 'acceptable', label: '过得去就行' }
   ];
 
   const mbtiOptions = [
@@ -183,6 +185,15 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
         <CardContent className="space-y-6">
           {/* 基本信息 */}
           <div className="space-y-4">
+            <InputField
+              label="昵称"
+              value={formData.nickname}
+              onChange={(value) => handleFieldChange('nickname', value)}
+              placeholder="请输入昵称，比如：Frank"
+              error={validation.errors.nickname}
+              description="用于在系统中显示的称呼"
+            />
+
             <InputField
               label="微信号"
               value={formData.wechatId}

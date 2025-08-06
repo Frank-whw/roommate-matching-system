@@ -10,6 +10,7 @@ import { revalidatePath } from 'next/cache';
 // 个人资料更新schema
 const profileSchema = z.object({
   // 基本信息
+  nickname: z.string().min(2, '昵称至少需要2个字符').max(50, '昵称不能超过50个字符').optional(),
   wechatId: z.string().max(100, '微信号不能超过100个字符').optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   age: z.number().int().min(16, '年龄不能小于16').max(35, '年龄不能大于35').optional(),
@@ -17,11 +18,11 @@ const profileSchema = z.object({
   // 作息习惯
   sleepTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '睡觉时间格式不正确').optional(),
   wakeTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '起床时间格式不正确').optional(),
-  studyHabit: z.enum(['early_bird', 'night_owl', 'flexible']).optional(),
+  studyHabit: z.enum(['library', 'dormitory', 'flexible']).optional(),
   
   // 生活习惯
   lifestyle: z.enum(['quiet', 'social', 'balanced']).optional(),
-  cleanliness: z.enum(['very_clean', 'clean', 'moderate']).optional(),
+  cleanliness: z.enum(['extremely_clean', 'regularly_tidy', 'acceptable']).optional(),
   mbti: z.enum([
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
@@ -64,7 +65,7 @@ export async function updateProfile(rawData: any) {
 
     // 计算资料完整度
     const requiredFields = [
-      data.wechatId, data.gender, data.age,
+      data.nickname, data.wechatId, data.gender, data.age,
       data.sleepTime, data.wakeTime, data.studyHabit,
       data.lifestyle, data.cleanliness, data.mbti,
       data.roommateExpectations, data.hobbies
