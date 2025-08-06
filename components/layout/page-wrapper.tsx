@@ -10,30 +10,6 @@ interface PageWrapperProps {
   withAnimation?: boolean;
 }
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-    scale: 0.98
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-    scale: 1
-  },
-  out: {
-    opacity: 0,
-    y: -20,
-    scale: 1.02
-  }
-};
-
-const pageTransition = {
-  type: 'tween',
-  ease: 'anticipate',
-  duration: 0.3
-};
-
 export default function PageWrapper({ 
   children, 
   breadcrumbItems, 
@@ -43,13 +19,7 @@ export default function PageWrapper({
   const content = (
     <div className={className}>
       {breadcrumbItems && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-        >
-          <Breadcrumb items={breadcrumbItems} className="mb-4" />
-        </motion.div>
+        <Breadcrumb items={breadcrumbItems} className="mb-4" />
       )}
       {children}
     </div>
@@ -61,11 +31,9 @@ export default function PageWrapper({
 
   return (
     <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="w-full"
     >
       {content}
