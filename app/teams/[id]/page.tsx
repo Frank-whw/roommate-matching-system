@@ -1,6 +1,9 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentUser, getTeamWithMembers, getUserTeam } from '@/lib/db/queries';
+
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

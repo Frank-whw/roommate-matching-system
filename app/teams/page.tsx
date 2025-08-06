@@ -22,6 +22,9 @@ import { ProfileGuard } from '@/components/profile/profile-guard';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export default async function TeamsPage() {
   const { user, session } = await getCurrentUser();
   

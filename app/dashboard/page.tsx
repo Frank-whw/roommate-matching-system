@@ -17,6 +17,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const { user, session } = await getCurrentUser();
   

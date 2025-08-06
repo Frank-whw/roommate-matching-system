@@ -15,6 +15,9 @@ import { ProfileForm } from '@/components/profile/profile-form';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   const { user, session } = await getCurrentUser();
   
