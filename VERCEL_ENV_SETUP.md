@@ -1,18 +1,20 @@
 # Vercel环境变量配置指南
 
-## 紧急修复Supabase连接问题
+## 🚨 紧急修复Supabase连接问题
 
-### 1. 在Vercel项目设置中添加以下环境变量：
+根据最新错误 `db.your-project.supabase.co`，需要更新环境变量。
+
+### 1. 在Vercel项目设置中更新环境变量：
 
 访问 [Vercel Dashboard](https://vercel.com/dashboard) → 选择项目 → Settings → Environment Variables
 
-**必需添加的环境变量：**
+**必需更新的环境变量：**
 
 ```bash
-# 数据库连接（最重要）
-POSTGRES_URL=postgresql://postgres:YOUR_DB_PASSWORD@db.your-project.supabase.co:5432/postgres
+# 数据库连接（使用新的Supabase项目ID）
+POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres
 
-# 基础URL（改为你的Vercel域名）
+# 基础URL（改为你的实际Vercel域名）
 BASE_URL=https://roommate-matching-system.vercel.app
 
 # 认证密钥
@@ -27,37 +29,64 @@ MAIL_FROM_NAME=室友匹配系统
 MAIL_FROM_ADDRESS=your-email@stu.ecnu.edu.cn
 ```
 
-### 2. 检查Supabase项目状态
+### 2. 🔧 自动连接池优化
 
-1. 访问 [Supabase Dashboard](https://supabase.com/dashboard)
-2. 检查项目 `wxvnzmgegotkikfurywf` 是否处于活跃状态
-3. 如果项目被暂停，需要重新激活或使用新的数据库
+代码已更新，在生产环境会自动尝试使用Supabase连接池：
+- 直接连接：`db.your-project.supabase.co:5432`
+- 连接池：`aws-0-ap-southeast-1.pooler.supabase.com:6543`
 
-### 3. 可能的解决方案
+### 3. 🐛 调试API端点
 
-#### 方案A: 使用Supabase连接池
-如果直接连接失败，尝试使用连接池URL：
-```bash
-POSTGRES_URL=postgresql://postgres:YOUR_DB_PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+部署后可访问以下端点调试连接问题：
+```
+https://your-domain.vercel.app/api/debug/db-connection
 ```
 
-#### 方案B: 创建新的Supabase项目
-1. 在Supabase创建新项目
-2. 更新`POSTGRES_URL`为新项目的连接字符串
-3. 运行数据库迁移：`npm run db:migrate`
+### 4. 📝 检查清单
 
-### 4. 验证步骤
+- [ ] 在Vercel中添加所有环境变量
+- [ ] 确认`POSTGRES_URL`使用正确的项目ID (`zbpyawwealsugnvkmlon`)
+- [ ] 更新`BASE_URL`为实际Vercel域名
+- [ ] 重新部署项目
+- [ ] 访问调试API检查连接状态
 
-在Vercel部署后，检查函数日志：
-- 查看是否有数据库连接成功的日志
-- 确认所有环境变量已正确设置
+### 5. 🚀 可能的连接字符串格式
 
-### 5. 常见错误诊断
+如果直接连接仍然失败，尝试以下格式：
 
-- `ENOTFOUND` 错误 → DNS解析失败，检查连接字符串
-- `ECONNREFUSED` 错误 → 端口或SSL配置问题
-- `timeout` 错误 → 网络延迟，增加超时时间
+#### 选项A：连接池URL
+```bash
+POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+```
 
-## 部署后立即测试
+#### 选项B：IPv6支持
+```bash
+POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres?sslmode=require
+```
 
-部署完成后访问：`https://your-domain.vercel.app/api/auth/login`
+#### 选项C：完整参数
+```bash
+POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres?sslmode=require&connect_timeout=60
+```
+
+### 6. ⚠️ 常见问题
+
+**ENOTFOUND错误**：
+- 确认Supabase项目处于活跃状态
+- 检查项目ID是否正确：`zbpyawwealsugnvkmlon`
+- 尝试使用连接池URL
+
+**超时错误**：
+- 连接超时已增加到60秒
+- Vercel函数执行时间限制为10秒（Hobby）/15秒（Pro）
+
+### 7. 📞 立即测试步骤
+
+1. 更新Vercel环境变量
+2. 触发重新部署
+3. 访问 `/api/debug/db-connection` 查看连接信息
+4. 尝试注册新用户测试功能
+
+---
+
+**重要提醒**: 替换 `YOUR_PASSWORD` 为实际的数据库密码！
