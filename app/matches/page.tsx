@@ -5,7 +5,8 @@ import { MatchesList } from '@/components/matches/matches-list';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProfileGuard } from '@/components/profile/profile-guard';
-import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
+import Breadcrumb from '@/components/navigation/breadcrumb';
+import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
   Heart,
   Users,

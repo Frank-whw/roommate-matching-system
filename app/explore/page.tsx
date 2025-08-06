@@ -5,7 +5,8 @@ import { ExploreHeader } from '@/components/explore/explore-header';
 import { UserCardGrid } from '@/components/explore/user-card-grid';
 import { FilterSidebar } from '@/components/explore/filter-sidebar';
 import { ProfileGuard } from '@/components/profile/profile-guard';
-import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
+import Breadcrumb from '@/components/navigation/breadcrumb';
+import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
   Users, 
   Heart,

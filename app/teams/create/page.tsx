@@ -11,7 +11,8 @@ import {
   CheckCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
+import Breadcrumb from '@/components/navigation/breadcrumb';
+import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 
 export default async function CreateTeamPage() {
   const { user, session } = await getCurrentUser();

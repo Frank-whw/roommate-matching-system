@@ -19,7 +19,8 @@ import { TeamsList } from '@/components/teams/teams-list';
 import { MyTeam } from '@/components/teams/my-team';
 import { JoinRequests } from '@/components/teams/join-requests';
 import { ProfileGuard } from '@/components/profile/profile-guard';
-import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
+import Breadcrumb from '@/components/navigation/breadcrumb';
+import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 
 export default async function TeamsPage() {
   const { user, session } = await getCurrentUser();

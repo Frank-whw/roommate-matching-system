@@ -4,11 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
+import { BreadcrumbItem } from '@/lib/breadcrumb-configs';
 
 interface BreadcrumbProps {
   items?: BreadcrumbItem[];
@@ -107,26 +103,3 @@ function formatSegment(segment: string): string {
 }
 
 // 导出预定义的面包屑配置
-export const breadcrumbConfigs = {
-  profile: [
-    { label: '首页', href: '/' },
-    { label: '个人资料' },
-  ],
-  explore: [
-    { label: '首页', href: '/' },
-    { label: '匹配广场' },
-  ],
-  teams: [
-    { label: '首页', href: '/' },
-    { label: '队伍广场' },
-  ],
-  createTeam: [
-    { label: '首页', href: '/' },
-    { label: '队伍广场', href: '/teams' },
-    { label: '创建队伍' },
-  ],
-  matches: [
-    { label: '首页', href: '/' },
-    { label: '我的匹配' },
-  ],
-};

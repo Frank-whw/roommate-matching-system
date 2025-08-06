@@ -12,7 +12,8 @@ import {
   Save
 } from 'lucide-react';
 import { ProfileForm } from '@/components/profile/profile-form';
-import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
+import Breadcrumb from '@/components/navigation/breadcrumb';
+import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 
 export default async function ProfilePage() {
   const { user, session } = await getCurrentUser();
