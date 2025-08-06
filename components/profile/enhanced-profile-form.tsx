@@ -169,215 +169,157 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
       {/* 错误显示 */}
       <ErrorDisplay error={error} onDismiss={() => {}} />
 
-      {/* 基本信息 */}
+      {/* 个人资料 */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <User className="w-5 h-5 mr-2" />
-            基本信息
+            个人资料
           </CardTitle>
           <CardDescription>
-            请填写您的基本信息，这将帮助系统为您匹配合适的室友
+            请填写您的详细信息，这将帮助系统为您匹配合适的室友
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <InputField
-            label="微信号"
-            value={formData.wechatId}
-            onChange={(value) => handleFieldChange('wechatId', value)}
-            placeholder="请输入微信号"
-            error={validation.errors.wechatId}
-            description="方便室友联系您"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField
-              label="性别"
-              value={formData.gender}
-              onChange={(value) => handleFieldChange('gender', value)}
-              options={genderOptions}
-              error={validation.errors.gender}
-              required
-            />
-
+        <CardContent className="space-y-6">
+          {/* 基本信息 */}
+          <div className="space-y-4">
             <InputField
-              label="年龄"
-              type="number"
-              value={formData.age}
-              onChange={(value) => handleFieldChange('age', value)}
-              placeholder="请输入年龄"
-              min={16}
-              max={35}
-              error={validation.errors.age}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 作息习惯 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Clock className="w-5 h-5 mr-2" />
-            作息习惯
-          </CardTitle>
-          <CardDescription>
-            了解您的作息时间有助于匹配生活节奏相近的室友
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="睡觉时间"
-              type="time"
-              value={formData.sleepTime}
-              onChange={(value) => handleFieldChange('sleepTime', value)}
-              error={validation.errors.sleepTime}
-              description="例如：23:00"
+              label="微信号"
+              value={formData.wechatId}
+              onChange={(value) => handleFieldChange('wechatId', value)}
+              placeholder="请输入微信号"
+              error={validation.errors.wechatId}
+              description="方便室友联系您"
             />
 
-            <InputField
-              label="起床时间"
-              type="time"
-              value={formData.wakeTime}
-              onChange={(value) => handleFieldChange('wakeTime', value)}
-              error={validation.errors.wakeTime}
-              description="例如：07:00"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <SelectField
+                label="性别"
+                value={formData.gender}
+                onChange={(value) => handleFieldChange('gender', value)}
+                options={genderOptions}
+                error={validation.errors.gender}
+                required
+              />
+
+              <InputField
+                label="年龄"
+                type="number"
+                value={formData.age}
+                onChange={(value) => handleFieldChange('age', value)}
+                placeholder="请输入年龄"
+                min={16}
+                max={35}
+                error={validation.errors.age}
+              />
+            </div>
           </div>
 
-          <SelectField
-            label="学习习惯"
-            value={formData.studyHabit}
-            onChange={(value) => handleFieldChange('studyHabit', value)}
-            options={studyHabitOptions}
-            error={validation.errors.studyHabit}
-            description="您更偏向什么时候学习"
-          />
-        </CardContent>
-      </Card>
+          {/* 作息时间 */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                label="睡觉时间"
+                type="time"
+                value={formData.sleepTime}
+                onChange={(value) => handleFieldChange('sleepTime', value)}
+                error={validation.errors.sleepTime}
+                description="例如：23:00"
+              />
 
-      {/* 生活习惯 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Home className="w-5 h-5 mr-2" />
-            生活习惯
-          </CardTitle>
-          <CardDescription>
-            这些信息有助于匹配生活方式相容的室友
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField
-              label="生活方式"
-              value={formData.lifestyle}
-              onChange={(value) => handleFieldChange('lifestyle', value)}
-              options={lifestyleOptions}
-              error={validation.errors.lifestyle}
-            />
+              <InputField
+                label="起床时间"
+                type="time"
+                value={formData.wakeTime}
+                onChange={(value) => handleFieldChange('wakeTime', value)}
+                error={validation.errors.wakeTime}
+                description="例如：07:00"
+              />
+            </div>
 
             <SelectField
-              label="整洁程度"
-              value={formData.cleanliness}
-              onChange={(value) => handleFieldChange('cleanliness', value)}
-              options={cleanlinessOptions}
-              error={validation.errors.cleanliness}
+              label="学习习惯"
+              value={formData.studyHabit}
+              onChange={(value) => handleFieldChange('studyHabit', value)}
+              options={studyHabitOptions}
+              error={validation.errors.studyHabit}
+              description="您更偏向什么时候学习"
             />
           </div>
-        </CardContent>
-      </Card>
 
-      {/* 性格特征 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Brain className="w-5 h-5 mr-2" />
-            性格特征
-          </CardTitle>
-          <CardDescription>
-            MBTI性格类型有助于匹配性格互补的室友
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SelectField
-            label="MBTI性格类型"
-            value={formData.mbti}
-            onChange={(value) => handleFieldChange('mbti', value)}
-            options={mbtiOptions}
-            placeholder="请选择您的MBTI类型"
-            error={validation.errors.mbti}
-            description="如果不确定，可以在网上进行MBTI测试"
-          />
-        </CardContent>
-      </Card>
+          {/* 生活方式 */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <SelectField
+                label="生活方式"
+                value={formData.lifestyle}
+                onChange={(value) => handleFieldChange('lifestyle', value)}
+                options={lifestyleOptions}
+                error={validation.errors.lifestyle}
+              />
 
-      {/* 室友期待和兴趣 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Heart className="w-5 h-5 mr-2" />
-            室友期待与兴趣
-          </CardTitle>
-          <CardDescription>
-            详细的期待和兴趣描述有助于找到更合适的室友
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <TextareaField
-            label="室友期待"
-            value={formData.roommateExpectations}
-            onChange={(value) => handleFieldChange('roommateExpectations', value)}
-            placeholder="描述您对室友的期待，例如：希望室友作息规律，爱干净..."
-            rows={3}
-            maxLength={1000}
-            error={validation.errors.roommateExpectations}
-          />
+              <SelectField
+                label="整洁程度"
+                value={formData.cleanliness}
+                onChange={(value) => handleFieldChange('cleanliness', value)}
+                options={cleanlinessOptions}
+                error={validation.errors.cleanliness}
+              />
+            </div>
 
-          <TextareaField
-            label="兴趣爱好"
-            value={formData.hobbies}
-            onChange={(value) => handleFieldChange('hobbies', value)}
-            placeholder="分享您的兴趣爱好，例如：阅读、运动、看电影、编程..."
-            rows={3}
-            maxLength={500}
-            error={validation.errors.hobbies}
-          />
+            <SelectField
+              label="MBTI性格类型"
+              value={formData.mbti}
+              onChange={(value) => handleFieldChange('mbti', value)}
+              options={mbtiOptions}
+              placeholder="请选择您的MBTI类型"
+              error={validation.errors.mbti}
+              description="如果不确定，可以在网上进行MBTI测试"
+            />
+          </div>
 
-          <TextareaField
-            label="不可接受的行为"
-            value={formData.dealBreakers}
-            onChange={(value) => handleFieldChange('dealBreakers', value)}
-            placeholder="描述您绝对不能接受的室友行为，例如：吸烟、大声喧哗..."
-            rows={3}
-            maxLength={500}
-            error={validation.errors.dealBreakers}
-          />
-        </CardContent>
-      </Card>
+          {/* 详细描述 */}
+          <div className="space-y-4">
+            <TextareaField
+              label="室友期待"
+              value={formData.roommateExpectations}
+              onChange={(value) => handleFieldChange('roommateExpectations', value)}
+              placeholder="描述您对室友的期待，例如：希望室友作息规律，爱干净..."
+              rows={3}
+              maxLength={1000}
+              error={validation.errors.roommateExpectations}
+            />
 
-      {/* 个人简介 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <MessageSquare className="w-5 h-5 mr-2" />
-            个人简介
-          </CardTitle>
-          <CardDescription>
-            简单介绍一下自己，让潜在室友更了解您
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <TextareaField
-            label="个人简介"
-            value={formData.bio}
-            onChange={(value) => handleFieldChange('bio', value)}
-            placeholder="简单介绍一下自己的性格、专业、生活状态等..."
-            rows={4}
-            maxLength={500}
-            error={validation.errors.bio}
-          />
+            <TextareaField
+              label="兴趣爱好"
+              value={formData.hobbies}
+              onChange={(value) => handleFieldChange('hobbies', value)}
+              placeholder="分享您的兴趣爱好，例如：阅读、运动、看电影、编程..."
+              rows={3}
+              maxLength={500}
+              error={validation.errors.hobbies}
+            />
+
+            <TextareaField
+              label="不可接受的行为"
+              value={formData.dealBreakers}
+              onChange={(value) => handleFieldChange('dealBreakers', value)}
+              placeholder="描述您绝对不能接受的室友行为，例如：吸烟、大声喧哗..."
+              rows={3}
+              maxLength={500}
+              error={validation.errors.dealBreakers}
+            />
+
+            <TextareaField
+              label="个人简介"
+              value={formData.bio}
+              onChange={(value) => handleFieldChange('bio', value)}
+              placeholder="简单介绍一下自己的性格、专业、生活状态等..."
+              rows={4}
+              maxLength={500}
+              error={validation.errors.bio}
+            />
+          </div>
         </CardContent>
       </Card>
 

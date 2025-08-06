@@ -28,7 +28,6 @@ import {
 
 interface FilterState {
   search: string;
-  gender: string;
   ageRange: [number, number];
   sleepTimeRange: string;
   studyHabit: string[];
@@ -39,7 +38,6 @@ interface FilterState {
 
 const initialFilters: FilterState = {
   search: '',
-  gender: '',
   ageRange: [18, 30],
   sleepTimeRange: '',
   studyHabit: [],
@@ -78,7 +76,6 @@ export function FilterSidebar() {
   const getActiveFiltersCount = () => {
     let count = 0;
     if (filters.search) count++;
-    if (filters.gender && filters.gender !== 'all') count++;
     if (filters.sleepTimeRange) count++;
     count += filters.studyHabit.length;
     count += filters.lifestyle.length;
@@ -144,22 +141,9 @@ export function FilterSidebar() {
           </h4>
           
           <div className="space-y-3">
-            <div>
-              <Label>性别</Label>
-              <Select value={filters.gender} onValueChange={(value) => handleFilterChange('gender', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择性别" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">不限</SelectItem>
-                  <SelectItem value="male">男</SelectItem>
-                  <SelectItem value="female">女</SelectItem>
-                  <SelectItem value="other">其他</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              💡 匹配广场只显示与您相同性别的用户和队伍
             </div>
-
-
           </div>
         </div>
 

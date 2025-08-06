@@ -5,7 +5,7 @@ import { unmatchUser } from '@/app/explore/actions';
 // 取消匹配
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -13,7 +13,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const matchId = parseInt(params.id);
+    const { id } = await params;
+    const matchId = parseInt(id);
     if (isNaN(matchId)) {
       return NextResponse.json({ error: 'Invalid match ID' }, { status: 400 });
     }

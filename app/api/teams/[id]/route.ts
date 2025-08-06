@@ -5,7 +5,7 @@ import { updateTeam, disbandTeam } from '@/app/teams/actions';
 // 获取特定队伍的详细信息
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -13,7 +13,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
@@ -41,7 +42,7 @@ export async function GET(
 // 更新队伍信息
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -49,7 +50,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
@@ -78,7 +80,7 @@ export async function PUT(
 // 解散队伍
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -86,7 +88,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }

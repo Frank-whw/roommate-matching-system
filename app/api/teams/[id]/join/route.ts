@@ -5,7 +5,7 @@ import { joinTeam, leaveTeam } from '@/app/teams/actions';
 // 申请加入队伍
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -13,7 +13,8 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
@@ -41,7 +42,7 @@ export async function POST(
 // 退出队伍
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -49,7 +50,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
