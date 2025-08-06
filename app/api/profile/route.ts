@@ -6,7 +6,7 @@ import { updateProfile } from '@/app/profile/actions';
 export const dynamic = 'force-dynamic';
 
 // 获取当前用户的完整个人资料
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { user } = await getCurrentUser();
     if (!user || !user.users) {

@@ -57,30 +57,42 @@ export async function verifyToken(input: string) {
 }
 
 export async function getSession() {
-  const session = (await cookies()).get('session')?.value;
-  if (!session) return null;
-  return await verifyToken(session);
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get('session')?.value;
+    if (!session) return null;
+    return await verifyToken(session);
+  } catch (error) {
+    console.error('Error in getSession:', error);
+    return null;
+  }
 }
 
 export async function setSession(user: NewUser & { studentId?: string; isEmailVerified?: boolean }) {
-  const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const session: SessionData = {
-    user: { 
-      id: user.id!,
-      studentId: user.studentId,
-      email: user.email,
-      isEmailVerified: user.isEmailVerified
-    },
-    expires: expiresInOneDay.toISOString(),
-  };
-  const encryptedSession = await signToken(session);
-  (await cookies()).set('session', encryptedSession, {
-    expires: expiresInOneDay,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-  });
+  try {
+    const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const session: SessionData = {
+      user: { 
+        id: user.id!,
+        studentId: user.studentId,
+        email: user.email,
+        isEmailVerified: user.isEmailVerified
+      },
+      expires: expiresInOneDay.toISOString(),
+    };
+    const encryptedSession = await signToken(session);
+    const cookieStore = await cookies();
+    cookieStore.set('session', encryptedSession, {
+      expires: expiresInOneDay,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+  } catch (error) {
+    console.error('Error in setSession:', error);
+    throw error;
+  }
 }
 
 // 生成邮箱验证令牌

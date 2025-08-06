@@ -381,11 +381,13 @@ export async function signOut() {
     if (user) {
       await logActivity(user.id, ActivityType.SIGN_OUT);
     }
-    (await cookies()).delete('session');
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
     redirect('/login');
   } catch (error) {
     console.error('登出出错:', error);
-    (await cookies()).delete('session');
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
     redirect('/login');
   }
 }
@@ -482,7 +484,8 @@ export const deleteAccount = validatedActionWithUser(
       await logActivity(user.id, ActivityType.DELETE_ACCOUNT);
 
       // 清除会话
-      (await cookies()).delete('session');
+      const cookieStore = await cookies();
+      cookieStore.delete('session');
 
       redirect('/');
 

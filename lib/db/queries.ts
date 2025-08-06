@@ -16,63 +16,75 @@ import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
 export async function getUser() {
-  const sessionCookie = (await cookies()).get('session');
-  if (!sessionCookie || !sessionCookie.value) {
+  try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('session');
+    if (!sessionCookie || !sessionCookie.value) {
+      return null;
+    }
+
+    const sessionData = await verifyToken(sessionCookie.value);
+    if (
+      !sessionData ||
+      !sessionData.user ||
+      typeof sessionData.user.id !== 'number'
+    ) {
+      return null;
+    }
+
+    if (new Date(sessionData.expires) < new Date()) {
+      return null;
+    }
+
+    const user = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
+      .limit(1);
+
+    if (user.length === 0) {
+      return null;
+    }
+
+    return user[0];
+  } catch (error) {
+    console.error('Error in getUser:', error);
     return null;
   }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'number'
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
-    return null;
-  }
-
-  const user = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
-    .limit(1);
-
-  if (user.length === 0) {
-    return null;
-  }
-
-  return user[0];
 }
 
 // 获取当前用户（包含session信息）
 export async function getCurrentUser() {
-  const sessionCookie = (await cookies()).get('session');
-  if (!sessionCookie || !sessionCookie.value) {
+  try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('session');
+    if (!sessionCookie || !sessionCookie.value) {
+      return { user: null, session: null };
+    }
+
+    const sessionData = await verifyToken(sessionCookie.value);
+    if (
+      !sessionData ||
+      !sessionData.user ||
+      typeof sessionData.user.id !== 'number'
+    ) {
+      return { user: null, session: null };
+    }
+
+    if (new Date(sessionData.expires) < new Date()) {
+      return { user: null, session: null };
+    }
+
+    const user = await getUserWithProfile(sessionData.user.id);
+    
+    return {
+      user: user,
+      session: sessionData
+    };
+  } catch (error) {
+    console.error('Error in getCurrentUser:', error);
     return { user: null, session: null };
   }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'number'
-  ) {
-    return { user: null, session: null };
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
-    return { user: null, session: null };
-  }
-
-  const user = await getUserWithProfile(sessionData.user.id);
-  
-  return {
-    user: user,
-    session: sessionData
-  };
 }
 
 export async function getActivityLogs() {
@@ -249,7 +261,7 @@ export async function getUsersForMatching(
   }
 
   if (filters.studyHabit && filters.studyHabit.length > 0) {
-    whereConditions.push(inArray(userProfiles.studyHabit, filters.studyHabit as ('early_bird' | 'night_owl' | 'flexible')[]));
+    whereConditions.push(inArray(userProfiles.studyHabit, filters.studyHabit as ('library' | 'dormitory' | 'flexible')[]));
   }
 
   if (filters.lifestyle && filters.lifestyle.length > 0) {
@@ -257,7 +269,7 @@ export async function getUsersForMatching(
   }
 
   if (filters.cleanliness && filters.cleanliness.length > 0) {
-    whereConditions.push(inArray(userProfiles.cleanliness, filters.cleanliness as ('very_clean' | 'clean' | 'moderate')[]));
+    whereConditions.push(inArray(userProfiles.cleanliness, filters.cleanliness as ('extremely_clean' | 'regularly_tidy' | 'acceptable')[]));
   }
 
   if (filters.mbti && filters.mbti.length > 0) {
