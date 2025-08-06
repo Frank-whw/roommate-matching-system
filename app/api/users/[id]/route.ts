@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getUserWithProfile } from '@/lib/db/queries';
 import { z } from 'zod';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取特定用户的详细信息
 export async function GET(
   request: NextRequest,

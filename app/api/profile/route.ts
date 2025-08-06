@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getUserProfileData } from '@/lib/db/queries';
 import { updateProfile } from '@/app/profile/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取当前用户的完整个人资料
 export async function GET() {
   try {

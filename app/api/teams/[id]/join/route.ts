@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/db/queries';
 import { joinTeam, leaveTeam } from '@/app/teams/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 申请加入队伍
 export async function POST(
   request: NextRequest,

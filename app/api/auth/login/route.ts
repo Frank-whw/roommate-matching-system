@@ -5,6 +5,9 @@ import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { comparePasswords, setSession } from '@/lib/auth/session';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 const loginSchema = z.object({
   studentId: z.string().min(1, '学号不能为空'),
   password: z.string().min(1, '密码不能为空'),

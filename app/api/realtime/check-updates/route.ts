@@ -12,6 +12,9 @@ import {
 } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/db/queries';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { user } = await getCurrentUser();

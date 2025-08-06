@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/db/queries';
 import { likeUser, getUserMatches, unmatchUser } from '@/app/explore/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取当前用户的匹配列表
 export async function GET() {
   try {

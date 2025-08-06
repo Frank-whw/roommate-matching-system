@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getUsersForMatching } from '@/lib/db/queries';
 import { z } from 'zod';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取用户列表（用于匹配）
 export async function GET(request: NextRequest) {
   try {

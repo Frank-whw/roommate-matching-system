@@ -5,6 +5,9 @@ import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, users, userProfiles, teams, teamMembers } from '@/lib/db/schema';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取待审核的加入申请
 export async function GET() {
   try {

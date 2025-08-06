@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getAvailableTeams, getUserTeam } from '@/lib/db/queries';
 import { createTeam } from '@/app/teams/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 获取可用队伍列表
 export async function GET(request: NextRequest) {
   try {

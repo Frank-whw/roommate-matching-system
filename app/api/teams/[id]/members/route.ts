@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/db/queries';
 import { removeMember, transferLeadership } from '@/app/teams/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 移除队员或转移队长
 export async function POST(
   request: NextRequest,

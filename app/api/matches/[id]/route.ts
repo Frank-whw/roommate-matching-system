@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/db/queries';
 import { unmatchUser } from '@/app/explore/actions';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 // 取消匹配
 export async function DELETE(
   request: NextRequest,
