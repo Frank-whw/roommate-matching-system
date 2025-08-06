@@ -76,7 +76,7 @@ export default async function ProfilePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-500">学号</label>
                 <p className="text-base font-semibold">{user.users?.studentId}</p>
@@ -84,10 +84,6 @@ export default async function ProfilePage() {
               <div>
                 <label className="text-sm font-medium text-gray-500">邮箱</label>
                 <p className="text-base font-semibold">{user.users?.email}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">姓名</label>
-                <p className="text-base font-semibold">{user.users?.name}</p>
               </div>
             </div>
           </CardContent>
