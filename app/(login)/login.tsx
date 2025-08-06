@@ -65,16 +65,18 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         <div className="flex justify-center">
           <div className="flex items-center space-x-2">
             <Home className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-primary">{siteConfig.name}</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {siteConfig.name}
+            </span>
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-          {mode === 'signin' ? '登录您的账户' : '注册新账户'}
+          {mode === 'signin' ? '🎉 欢迎回来！' : '🚀 开启你的匹配之旅'}
         </h2>
         <p className="mt-2 text-center text-sm text-muted-foreground">
           {mode === 'signin' 
-            ? '找到理想室友，从登录开始' 
-            : '开始您的室友匹配之旅'
+            ? '继续寻找你的理想室友吧' 
+            : '几分钟创建账户，遇见最合拍的室友'
           }
         </p>
       </div>
@@ -83,12 +85,12 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         <Card>
           <CardHeader>
             <CardTitle>
-              {mode === 'signin' ? '用户登录' : '用户注册'}
+              {mode === 'signin' ? '🔐 立即登录' : '✨ 创建账户'}
             </CardTitle>
             <CardDescription>
               {mode === 'signin' 
-                ? '使用学号或邮箱登录' 
-                : '请填写以下信息完成注册'
+                ? '使用你的华师大学号或邮箱快速登录' 
+                : '加入RoomieSync社区，开始智能匹配'
               }
             </CardDescription>
           </CardHeader>
@@ -101,20 +103,20 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 <>
                   <div>
                     <Label htmlFor="studentId" className="text-sm font-medium">
-                      学号 <span className="text-destructive">*</span>
+                      🎓 华师大学号 <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="studentId"
                       name="studentId"
                       type="text"
-                      placeholder="请输入学号 (102*55014**格式)"
+                      placeholder="例如：1020055014XX"
                       required
                       maxLength={20}
                       className="mt-1"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      学号格式：102开头，55014结尾，如：1020055014XX<br/>
-                      邮箱将自动生成为：学号@stu.ecnu.edu.cn
+                      💡 输入你的学号，我们会自动为你生成华师大邮箱<br/>
+                      格式：102开头，55014结尾 → 学号@stu.ecnu.edu.cn
                     </p>
                   </div>
                 </>
@@ -123,13 +125,13 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               {mode === 'signin' && (
                 <div>
                   <Label htmlFor="identifier" className="text-sm font-medium">
-                    学号/邮箱 <span className="text-destructive">*</span>
+                    🔑 学号或邮箱 <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="identifier"
                     name="identifier"
                     type="text"
-                    placeholder="请输入学号或邮箱"
+                    placeholder="输入学号或邮箱地址"
                     required
                     maxLength={255}
                     className="mt-1"
@@ -329,7 +331,7 @@ function EmailVerificationForm({
               className="w-full"
               type="button"
             >
-              返回登录
+              ⬅️ 返回登录
             </Button>
           </CardFooter>
         </Card>

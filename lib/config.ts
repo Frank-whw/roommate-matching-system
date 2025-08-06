@@ -1,7 +1,9 @@
 export const siteConfig = {
-  name: "室友匹配系统",
-  title: "室友匹配系统 - 找到理想室友",
-  description: "基于Next.js构建的智能室友匹配平台。"
+  name: "RoomieSync",
+  title: "RoomieSync - 智能室友匹配平台",
+  description: "基于AI算法的新一代室友匹配神器，让找室友变得简单而有趣！",
+  slogan: "遇见最佳室友，开启精彩校园生活",
+  version: "1.0.0"
 };
 
 export const authConfig = {
