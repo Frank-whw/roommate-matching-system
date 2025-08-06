@@ -1,0 +1,21 @@
+{
+  "name": "RoomieSync",
+  "short_name": "RoomieSync",
+  "description": "智能室友匹配系统 - 为华东师范大学学生提供最佳室友匹配服务",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
