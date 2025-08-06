@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Home, LogOut, User as UserIcon, Users, Heart, Settings, Menu, X, Search } from 'lucide-react';
 import { NotificationCenter, NotificationBadge } from '@/components/realtime/notification-center';
@@ -174,6 +176,7 @@ function UserMenu() {
 
 export default function ResponsiveHeader() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -191,19 +194,34 @@ export default function ResponsiveHeader() {
           <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link 
               href="/explore" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
+              className={cn(
+                "text-sm font-medium transition-colors px-2 py-1 rounded-md hover:bg-accent",
+                pathname?.startsWith('/explore') 
+                  ? "text-foreground bg-accent border-b-2 border-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               匹配广场
             </Link>
             <Link 
               href="/teams" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
+              className={cn(
+                "text-sm font-medium transition-colors px-2 py-1 rounded-md hover:bg-accent",
+                pathname?.startsWith('/teams') 
+                  ? "text-foreground bg-accent border-b-2 border-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               队伍广场
             </Link>
             <Link 
               href="/matches" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
+              className={cn(
+                "text-sm font-medium transition-colors px-2 py-1 rounded-md hover:bg-accent",
+                pathname?.startsWith('/matches') 
+                  ? "text-foreground bg-accent border-b-2 border-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               我的匹配
             </Link>

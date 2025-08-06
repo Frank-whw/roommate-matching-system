@@ -3,6 +3,10 @@ import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import { siteConfig } from '@/lib/config';
 import { RealtimeProvider } from '@/contexts/realtime-context';
+import ResponsiveHeader from '@/components/header-responsive';
+import BottomNav from '@/components/navigation/bottom-nav';
+import LoadingIndicator from '@/components/navigation/loading-indicator';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -28,9 +32,14 @@ export default function RootLayout({
       <body className="min-h-[100dvh] bg-background text-foreground">
         <RealtimeProvider>
           <div className="flex flex-col min-h-screen">
-            <main className="flex-1">
+            <LoadingIndicator />
+            <Suspense fallback={<div className="h-16 bg-background border-b" />}>
+              <ResponsiveHeader />
+            </Suspense>
+            <main className="flex-1 pb-16 md:pb-0">
               {children}
             </main>
+            <BottomNav />
           </div>
         </RealtimeProvider>
       </body>

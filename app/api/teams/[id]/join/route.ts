@@ -27,8 +27,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      data: result.joinRequest
+      message: result.message || 'Join request submitted',
+      data: (result as any).joinRequest || null
     });
 
   } catch (error) {

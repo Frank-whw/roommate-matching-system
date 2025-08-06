@@ -41,8 +41,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      data: result.updatedMember || result.oldLeader
+      message: result.message || 'Operation completed',
+      data: (result as any).updatedMember || (result as any).oldLeader || null
     });
 
   } catch (error) {

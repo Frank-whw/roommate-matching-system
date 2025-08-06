@@ -47,10 +47,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: result.message,
+      message: result.message || 'Operation completed',
       data: {
-        isMatch: result.isMatch,
-        like: result.like
+        isMatch: (result as any).isMatch || false,
+        like: (result as any).like || null
       }
     });
 

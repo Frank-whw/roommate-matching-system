@@ -65,8 +65,8 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      data: result.team
+      message: result.message || 'Operation completed',
+      data: (result as any).team || null
     });
 
   } catch (error) {

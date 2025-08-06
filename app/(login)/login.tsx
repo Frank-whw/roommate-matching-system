@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,15 +19,27 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const redirect = searchParams.get('redirect');
   const [showResendForm, setShowResendForm] = useState(false);
   
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    mode === 'signin' ? signIn : signUp,
-    { error: '' }
-  );
-
-  const [resendState, resendAction, resendPending] = useActionState<ActionState, FormData>(
-    resendVerificationEmail,
-    { error: '' }
-  );
+  const [isPending, startTransition] = useTransition();
+  const [isResendPending, startResendTransition] = useTransition();
+  const [state, setState] = useState<any>({ error: '' });
+  const [resendState, setResendState] = useState<any>({ error: '' });
+  
+  const formAction = async (formData: FormData) => {
+    startTransition(async () => {
+      const result = await (mode === 'signin' ? signIn : signUp)(state, formData);
+      setState(result);
+    });
+  };
+  
+  const resendAction = async (formData: FormData) => {
+    startResendTransition(async () => {
+      const result = await resendVerificationEmail(resendState, formData);
+      setResendState(result);
+    });
+  };
+  
+  const pending = isPending;
+  const resendPending = isResendPending;
 
   // 检查是否需要邮箱验证
   const needsEmailVerification = state.needEmailVerification;

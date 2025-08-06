@@ -19,6 +19,7 @@ import { TeamsList } from '@/components/teams/teams-list';
 import { MyTeam } from '@/components/teams/my-team';
 import { JoinRequests } from '@/components/teams/join-requests';
 import { ProfileGuard } from '@/components/profile/profile-guard';
+import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
 
 export default async function TeamsPage() {
   const { user, session } = await getCurrentUser();
@@ -31,6 +32,9 @@ export default async function TeamsPage() {
     <ProfileGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* 面包屑导航 */}
+        <Breadcrumb items={breadcrumbConfigs.teams} className="mb-4" />
+        
         {/* 页面标题 */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

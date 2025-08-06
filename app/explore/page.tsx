@@ -5,6 +5,7 @@ import { ExploreHeader } from '@/components/explore/explore-header';
 import { UserCardGrid } from '@/components/explore/user-card-grid';
 import { FilterSidebar } from '@/components/explore/filter-sidebar';
 import { ProfileGuard } from '@/components/profile/profile-guard';
+import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
 import { 
   Users, 
   Heart,
@@ -28,6 +29,9 @@ export default async function ExplorePage() {
     <ProfileGuard>
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          {/* 面包屑导航 */}
+          <Breadcrumb items={breadcrumbConfigs.explore} className="mb-4" />
+          
           {/* 页面头部 */}
           <ExploreHeader 
             hasProfile={hasProfile}

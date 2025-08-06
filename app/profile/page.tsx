@@ -12,6 +12,7 @@ import {
   Save
 } from 'lucide-react';
 import { ProfileForm } from '@/components/profile/profile-form';
+import Breadcrumb, { breadcrumbConfigs } from '@/components/navigation/breadcrumb';
 
 export default async function ProfilePage() {
   const { user, session } = await getCurrentUser();
@@ -26,6 +27,9 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* 面包屑导航 */}
+        <Breadcrumb items={breadcrumbConfigs.profile} className="mb-4" />
+        
         {/* 页面标题 */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
