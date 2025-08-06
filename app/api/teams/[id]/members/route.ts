@@ -5,7 +5,7 @@ import { removeMember, transferLeadership } from '@/app/teams/actions';
 // 移除队员或转移队长
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -13,7 +13,8 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const teamId = parseInt(params.id);
+    const { id } = await params;
+    const teamId = parseInt(id);
     if (isNaN(teamId)) {
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }

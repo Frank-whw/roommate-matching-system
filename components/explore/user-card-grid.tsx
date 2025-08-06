@@ -14,7 +14,6 @@ interface UserCardGridProps {
   limit?: number;
   searchParams?: {
     search?: string;
-    gender?: string;
     minAge?: string;
     maxAge?: string;
     sleepTime?: string;
@@ -38,10 +37,9 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
   }
 
   try {
-    // 构建筛选条件
+    // 构建筛选条件（移除gender筛选）
     const filters = {
       search: searchParams?.search,
-      gender: searchParams?.gender,
       minAge: searchParams?.minAge ? parseInt(searchParams.minAge) : undefined,
       maxAge: searchParams?.maxAge ? parseInt(searchParams.maxAge) : undefined,
       sleepTime: searchParams?.sleepTime,
@@ -87,13 +85,17 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
                 )}
               </p>
               <div className="flex space-x-3 justify-center">
-                <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  刷新页面
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/explore" className="inline-flex items-center">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    刷新页面
+                  </a>
                 </Button>
                 {hasFilters && (
-                  <Button variant="outline" size="sm" onClick={() => window.location.href = '/explore'}>
-                    清空筛选
+                  <Button variant="outline" size="sm" asChild>
+                    <a href="/explore" className="inline-flex items-center">
+                      清空筛选
+                    </a>
                   </Button>
                 )}
               </div>
@@ -111,9 +113,11 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
             <Users className="w-4 h-4" />
             <span>找到 {users.length} 位匹配的用户</span>
           </div>
-          <Button variant="ghost" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            刷新
+          <Button variant="ghost" size="sm" asChild>
+            <a href="/explore" className="inline-flex items-center">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              刷新
+            </a>
           </Button>
         </div>
 
@@ -132,9 +136,9 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
         {/* 加载更多 */}
         {users.length >= limit && (
           <div className="text-center pt-6">
-            <Button variant="outline">
-              加载更多用户
-            </Button>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              显示了前 {limit} 位用户，请使用筛选条件缩小范围
+            </p>
           </div>
         )}
       </div>

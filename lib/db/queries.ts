@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, sql } from 'drizzle-orm';
+import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, sql, gte, lte, ilike } from 'drizzle-orm';
 import { db } from './drizzle';
 import { 
   activityLogs, 
@@ -202,6 +202,20 @@ export async function getUsersForMatching(
   limit = 20, 
   filters: MatchingFilters = {}
 ) {
+  // 获取当前用户的性别信息
+  const currentUserProfile = await db
+    .select({ gender: userProfiles.gender })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, currentUserId))
+    .limit(1);
+
+  if (!currentUserProfile[0] || !currentUserProfile[0].gender) {
+    // 如果当前用户没有性别信息，返回空数组
+    return [];
+  }
+
+  const currentUserGender = currentUserProfile[0].gender;
+
   // 获取当前用户已经点赞或跳过的用户ID
   const interactedUsers = await db
     .select({ userId: userLikes.toUserId })
@@ -210,13 +224,14 @@ export async function getUsersForMatching(
   
   const interactedUserIds = interactedUsers.map(u => u.userId);
   
-  // 基本筛选条件
+  // 基本筛选条件（包含同性别过滤）
   let whereConditions = [
     eq(users.isActive, true),
     eq(users.isEmailVerified, true),
     eq(userProfiles.isProfileComplete, true),
     isNull(users.deletedAt),
-    ne(users.id, currentUserId)
+    ne(users.id, currentUserId),
+    eq(userProfiles.gender, currentUserGender) // 只显示同性别用户
   ];
   
   // 排除已互动用户
@@ -224,11 +239,7 @@ export async function getUsersForMatching(
     whereConditions.push(notInArray(users.id, interactedUserIds));
   }
 
-  // 应用筛选条件
-  if (filters.gender && filters.gender !== 'all') {
-    whereConditions.push(eq(userProfiles.gender, filters.gender));
-  }
-
+  // 应用其他筛选条件（移除gender过滤，因为已经强制同性别）
   if (filters.minAge !== undefined) {
     whereConditions.push(gte(userProfiles.age, filters.minAge));
   }
@@ -324,6 +335,20 @@ export async function getTeamWithMembers(teamId: number) {
 }
 
 export async function getAvailableTeams(userId: number, limit = 20) {
+  // 获取当前用户的性别信息
+  const currentUserProfile = await db
+    .select({ gender: userProfiles.gender })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
+
+  if (!currentUserProfile[0] || !currentUserProfile[0].gender) {
+    // 如果当前用户没有性别信息，返回空数组
+    return [];
+  }
+
+  const currentUserGender = currentUserProfile[0].gender;
+
   // 排除用户已在的队伍和已申请的队伍
   const userTeam = await getUserTeam(userId);
   const excludeTeamIds = [];
@@ -353,18 +378,54 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     conditions.push(notInArray(teams.id, excludeTeamIds));
   }
   
-  return await db
+  // 获取所有符合条件的队伍
+  const allTeams = await db
     .select({
       team: teams,
       leader: users,
+      leaderProfile: userProfiles,
       memberCount: count(teamMembers.id)
     })
     .from(teams)
     .leftJoin(users, eq(teams.leaderId, users.id))
+    .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .leftJoin(teamMembers, eq(teams.id, teamMembers.teamId))
     .where(and(...conditions))
-    .groupBy(teams.id, users.id)
-    .limit(limit);
+    .groupBy(teams.id, users.id, userProfiles.id)
+    .limit(limit * 2); // 多获取一些，因为需要进一步过滤
+
+  // 过滤出同性别队伍（检查队伍领队和所有成员的性别）
+  const sameGenderTeams = [];
+  
+  for (const teamData of allTeams) {
+    // 检查队伍领队的性别
+    if (teamData.leaderProfile && teamData.leaderProfile.gender === currentUserGender) {
+      // 获取队伍所有成员的性别信息
+      const members = await db
+        .select({ gender: userProfiles.gender })
+        .from(teamMembers)
+        .innerJoin(userProfiles, eq(teamMembers.userId, userProfiles.userId))
+        .where(eq(teamMembers.teamId, teamData.team.id));
+      
+      // 检查所有成员是否都是同性别
+      const allSameGender = members.every(member => member.gender === currentUserGender);
+      
+      if (allSameGender) {
+        sameGenderTeams.push({
+          team: teamData.team,
+          leader: teamData.leader,
+          memberCount: teamData.memberCount
+        });
+      }
+    }
+    
+    // 如果已经找到足够的同性别队伍，就停止搜索
+    if (sameGenderTeams.length >= limit) {
+      break;
+    }
+  }
+  
+  return sameGenderTeams;
 }
 
 // 个人资料相关查询
