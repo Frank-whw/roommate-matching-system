@@ -1,26 +1,43 @@
 # Vercel环境变量配置指南
 
-## 🚨 紧急修复Supabase连接问题
+## 🚨 紧急修复：Tenant or user not found (XX000)
 
-根据最新错误 `db.your-project.supabase.co`，需要更新环境变量。
+错误代码 `XX000` 表示Supabase项目或认证有问题。
 
-### 1. 在Vercel项目设置中更新环境变量：
+### 🔥 立即解决步骤：
 
-访问 [Vercel Dashboard](https://vercel.com/dashboard) → 选择项目 → Settings → Environment Variables
+#### 1. 检查Supabase项目状态
+访问 [Supabase Dashboard](https://supabase.com/dashboard)：
+- 确认项目 `zbpyawwealsugnvkmlon` 是否存在且活跃
+- 检查项目是否被暂停（显示"Paused"状态）
+- 如果项目被删除，需要创建新项目
 
-**必需更新的环境变量：**
+#### 2. 重置数据库密码
+在Supabase Dashboard中：
+1. 进入项目设置 → Database
+2. 点击"Reset database password"
+3. 生成新密码
+4. 更新Vercel中的 `POSTGRES_URL`
 
+#### 3. 获取正确的连接字符串
+在Supabase项目中：
+1. Settings → Database → Connection string → URI
+2. 复制完整的连接字符串
+3. 确保包含正确的密码
+
+### 📋 Vercel环境变量配置：
+
+**使用新的连接字符串：**
 ```bash
-# 数据库连接（使用新的Supabase项目ID）
-POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres
+# 从Supabase Dashboard复制的完整连接字符串
+POSTGRES_URL=postgresql://postgres:[YOUR-PASSWORD]@db.your-project.supabase.co:5432/postgres
 
-# 基础URL（改为你的实际Vercel域名）
+# 或者如果项目暂停，使用连接池：
+POSTGRES_URL=postgresql://postgres:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+
+# 其他必需变量
 BASE_URL=https://roommate-matching-system.vercel.app
-
-# 认证密钥
 AUTH_SECRET=your-auth-secret-key-here
-
-# 邮件服务配置
 MAIL_SERVER=smtp.exmail.qq.com
 MAIL_PORT=465
 MAIL_USERNAME=your-email@stu.ecnu.edu.cn
@@ -29,64 +46,41 @@ MAIL_FROM_NAME=室友匹配系统
 MAIL_FROM_ADDRESS=your-email@stu.ecnu.edu.cn
 ```
 
-### 2. 🔧 自动连接池优化
+### 🆘 如果项目已删除，创建新项目：
 
-代码已更新，在生产环境会自动尝试使用Supabase连接池：
-- 直接连接：`db.your-project.supabase.co:5432`
-- 连接池：`aws-0-ap-southeast-1.pooler.supabase.com:6543`
+1. **在Supabase创建新项目**
+2. **获取新的连接字符串**
+3. **更新Vercel环境变量**
+4. **运行数据库初始化**：
+   ```bash
+   # 本地运行迁移
+   npm run db:migrate
+   npm run db:seed
+   ```
 
-### 3. 🐛 调试API端点
+### 🔍 诊断工具
 
-部署后可访问以下端点调试连接问题：
+部署后访问调试端点检查连接状态：
 ```
 https://your-domain.vercel.app/api/debug/db-connection
 ```
 
-### 4. 📝 检查清单
+### ⚠️ 常见XX000错误原因：
 
-- [ ] 在Vercel中添加所有环境变量
-- [ ] 确认`POSTGRES_URL`使用正确的项目ID (`zbpyawwealsugnvkmlon`)
-- [ ] 更新`BASE_URL`为实际Vercel域名
-- [ ] 重新部署项目
-- [ ] 访问调试API检查连接状态
+1. **项目已暂停** → 重新激活或升级计划
+2. **密码不正确** → 重置数据库密码
+3. **项目已删除** → 创建新项目
+4. **区域不匹配** → 确认使用正确的区域连接字符串
+5. **IP限制** → 检查数据库访问设置
 
-### 5. 🚀 可能的连接字符串格式
+### 🎯 快速验证步骤：
 
-如果直接连接仍然失败，尝试以下格式：
-
-#### 选项A：连接池URL
-```bash
-POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
-```
-
-#### 选项B：IPv6支持
-```bash
-POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres?sslmode=require
-```
-
-#### 选项C：完整参数
-```bash
-POSTGRES_URL=postgresql://postgres:YOUR_PASSWORD@db.your-project.supabase.co:5432/postgres?sslmode=require&connect_timeout=60
-```
-
-### 6. ⚠️ 常见问题
-
-**ENOTFOUND错误**：
-- 确认Supabase项目处于活跃状态
-- 检查项目ID是否正确：`zbpyawwealsugnvkmlon`
-- 尝试使用连接池URL
-
-**超时错误**：
-- 连接超时已增加到60秒
-- Vercel函数执行时间限制为10秒（Hobby）/15秒（Pro）
-
-### 7. 📞 立即测试步骤
-
-1. 更新Vercel环境变量
-2. 触发重新部署
-3. 访问 `/api/debug/db-connection` 查看连接信息
-4. 尝试注册新用户测试功能
+1. [ ] 确认Supabase项目活跃
+2. [ ] 重置并更新数据库密码
+3. [ ] 更新Vercel环境变量
+4. [ ] 重新部署
+5. [ ] 访问调试API确认连接成功
+6. [ ] 测试用户注册功能
 
 ---
-
-**重要提醒**: 替换 `YOUR_PASSWORD` 为实际的数据库密码！
+**💡 提示**: XX000是Supabase特有的错误，通常表示项目认证失败。重置密码和确认项目状态是最有效的解决方案。
