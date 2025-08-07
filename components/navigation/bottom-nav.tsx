@@ -7,8 +7,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import useSWR from 'swr';
 import { User as UserType } from '@/lib/db/schema';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher, authSWRConfig } from '@/lib/auth/client';
 
 interface NavItem {
   href: string;
@@ -54,11 +53,36 @@ const navItems: NavItem[] = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const { data: user } = useSWR<UserType>('/api/user', fetcher);
+  const { data: user, error, isLoading } = useSWR<UserType>('/api/user', fetcher, authSWRConfig);
   
   // 如果在登录/注册页面，不显示底部导航
   if (pathname?.startsWith('/sign-') || pathname === '/verify-email' || pathname === '/set-password') {
     return null;
+  }
+  
+  // 在加载期间不重定向
+  if (isLoading) {
+    return (
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden">
+        <div className="grid grid-cols-5 h-16">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href || 
+              (item.href !== '/' && pathname?.startsWith(item.href));
+            
+            return (
+              <div
+                key={item.href}
+                className="flex flex-col items-center justify-center space-y-1 text-xs text-muted-foreground opacity-50"
+              >
+                <Icon className="h-5 w-5" />
+                <span className="font-medium">{item.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </nav>
+    );
   }
 
   return (

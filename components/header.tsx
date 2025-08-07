@@ -23,13 +23,28 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: user } = useSWR<User>('/api/user', fetcher);
+  const { data: user, error, isLoading } = useSWR<User>('/api/user', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+    errorRetryCount: 0,
+    shouldRetryOnError: false
+  });
   const router = useRouter();
 
   async function handleSignOut() {
     await signOut();
     mutate('/api/user');
     router.push('/');
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center space-x-4">
+        <div className="h-9 w-16 bg-muted animate-pulse rounded-full"></div>
+        <div className="h-9 w-16 bg-muted animate-pulse rounded-full"></div>
+      </div>
+    );
   }
 
   if (!user) {

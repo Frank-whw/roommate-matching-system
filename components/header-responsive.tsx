@@ -26,7 +26,13 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 // Mobile Navigation Component
 function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { data: user } = useSWR<User>('/api/user', fetcher);
+  const { data: user, error, isLoading } = useSWR<User>('/api/user', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+    errorRetryCount: 0,
+    shouldRetryOnError: false
+  });
 
   return (
     <div className={`
@@ -105,7 +111,13 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: user } = useSWR<User>('/api/user', fetcher);
+  const { data: user, error, isLoading } = useSWR<User>('/api/user', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+    errorRetryCount: 0,
+    shouldRetryOnError: false
+  });
   const router = useRouter();
 
   async function handleSignOut() {
