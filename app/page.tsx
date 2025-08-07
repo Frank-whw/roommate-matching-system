@@ -12,10 +12,10 @@ export default function HomePage() {
             <span className="block text-primary">{siteConfig.name}</span>
           </h1>
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
-            智能匹配，找到最适合的室友
+            寻找合适的室友，共同开启大学生活
           </p>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            基于生活习惯、学习偏好、MBTI性格等多维度信息，为您推荐最契合的室友候选人
+            为ECNU数据专业新生提供基础的生活习惯和学习偏好匹配服务
           </p>
           <div className="mt-8">
             <Button
