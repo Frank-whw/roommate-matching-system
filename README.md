@@ -1,24 +1,24 @@
-# Next.js App Starter
+# 室友匹配系统
 
-This is a starter template for building a application using **Next.js** with support for authentication, and a dashboard for logged-in users.
+这是一个基于 **Next.js** 构建的室友匹配应用程序，支持用户认证和登录用户的仪表板功能。
 
-## Features
+## 功能特性
 
-- Default landing page (`/`)
-- Site configuration in `lib/config.ts`, remember to update the name and description
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+- 默认首页 (`/`)
+- 站点配置文件 `lib/config.ts`，记得更新名称和描述
+- 基于邮箱/密码的身份认证，JWT 存储在 cookies 中
+- 全局中间件保护登录路由
+- 本地中间件保护 Server Actions 或验证 Zod 模式
+- 用户事件活动日志系统
 
-## Tech Stack
+## 技术栈
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
+- **框架**: [Next.js](https://nextjs.org/)
+- **数据库**: [Postgres](https://www.postgresql.org/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **UI 库**: [shadcn/ui](https://ui.shadcn.com/)
 
-## Getting Started
+## 快速开始
 
 ```bash
 git clone git@github.com:Frank-whw/roommate-matching-system.git
@@ -26,82 +26,18 @@ cd roommate-matching-system
 npm install
 ```
 
-## Theming
+## 本地运行
 
-This project comes with built-in theme support and light/dark mode toggle functionality. When developing, please use design tokens from the theme system instead of hardcoding colors. This ensures consistent styling and proper appearance in both light and dark modes.
+创建您的 `.env` 文件：
 
-For example, use CSS variables like `var(--color-primary)` or Tailwind classes like `bg-primary text-primary-foreground` instead of explicit color codes.
+数据库相关配置请联系 Frank-whw
 
-If you have color style preferences, you can define a new theme in the `contexts/theme-context.tsx` file to customize the application's appearance according to your brand or design requirements.
+SMTP 相关配置请联系 Frank-whw
 
-## Running Locally
-
-Use the included setup script to create your `.env` file:
-
-```bash
-npm run db:setup
-```
-
-Run the database migrations and seed the database with a default user:
-
-```bash
-npm run db:migrate
-npm run db:seed
-```
-
-This will create the following user and team:
-
-- User: `test@test.com`
-- Password: `admin123`
-
-You can also create new users through the `/sign-up` route.
-
-Finally, run the Next.js development server:
+最后，运行 Next.js 开发服务器：
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
-
-## Deployment
-
-### Deploy to Vercel
-
-This application is optimized for deployment on [Vercel](https://vercel.com). Follow these steps:
-
-1. **Quick Setup**
-   ```bash
-   npm run setup:vercel
-   ```
-   This will generate the environment variables configuration you need.
-
-2. **Deploy to Vercel**
-   - Push your code to GitHub
-   - Connect your repository to Vercel
-   - Configure environment variables in Vercel Dashboard
-   - Deploy!
-
-3. **Environment Variables**
-   Make sure to set these in your Vercel project settings:
-   - `POSTGRES_URL` - Your database connection string
-   - `AUTH_SECRET` - JWT signing secret (generate with the setup script)
-   - `BASE_URL` - Your Vercel app URL
-   - `MAIL_*` - Email service configuration
-
-4. **Detailed Guides**
-   - 📖 [Complete Deployment Guide](./VERCEL_DEPLOY_GUIDE.md)
-   - 🔧 [Troubleshooting Guide](./VERCEL_TROUBLESHOOTING.md)
-
-### Useful Commands
-
-```bash
-# Check environment variables
-npm run check:env
-
-# Generate Vercel configuration
-npm run setup:vercel
-
-# Test email functionality
-npm run test:email
-```
+在浏览器中打开 [http://localhost:3000](http://localhost:3000) 查看应用程序运行效果。
