@@ -109,14 +109,13 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                       id="studentId"
                       name="studentId"
                       type="text"
-                      placeholder="例如：1020055014XX"
+                      placeholder="例如：102X55014XX"
                       required
                       maxLength={20}
                       className="mt-1"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      💡 输入你的学号，我们会自动为你生成华师大邮箱<br/>
-                      格式：102开头，55014结尾 → 学号@stu.ecnu.edu.cn
+                      💡 输入你的学号，我们会发送邮件到教育邮箱<br/>
                     </p>
                   </div>
                 </>
