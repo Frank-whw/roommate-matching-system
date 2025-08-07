@@ -27,26 +27,30 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
+  // user 是 getUserWithProfile 的结果，包含 users 和 userProfiles 的 joined 数据
+  const userData = user.users;
+  const profileData = user.userProfiles;
+
   const profileCompletionSteps = [
     {
       id: 'basic_info',
       title: '基本信息',
       description: '完善个人基本信息',
-      completed: !!user.users?.name,
+      completed: !!userData?.name,
       href: '/profile'
     },
     {
       id: 'preferences',
       title: '生活偏好',
       description: '设置作息习惯、MBTI等',
-      completed: false, // 需要检查 userProfiles 表
+      completed: !!(profileData?.mbtiType && profileData?.sleepSchedule),
       href: '/profile'
     },
     {
       id: 'roommate_expectations',
       title: '室友期待',
       description: '描述理想室友特征',
-      completed: false,
+      completed: !!profileData?.roommateExpectations,
       href: '/profile'
     }
   ];
@@ -62,15 +66,15 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                欢迎回来，{user.users?.name}！
+                欢迎回来，{userData?.name || '用户'}！
               </h1>
               <p className="mt-2 text-gray-600 dark:text-gray-300">
-                学号：{user.users?.studentId} | 邮箱：{user.users?.email}
+                学号：{userData?.studentId} | 邮箱：{userData?.email}
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              <Badge variant={user.users?.isEmailVerified ? "default" : "destructive"}>
-                {user.users?.isEmailVerified ? (
+              <Badge variant={userData?.isEmailVerified ? "default" : "destructive"}>
+                {userData?.isEmailVerified ? (
                   <>
                     <CheckCircle className="w-3 h-3 mr-1" />
                     已验证
@@ -186,20 +190,20 @@ export default async function DashboardPage() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">邮箱验证</span>
-                  <Badge variant={user.users?.isEmailVerified ? "default" : "destructive"}>
-                    {user.users?.isEmailVerified ? "已验证" : "未验证"}
+                  <Badge variant={userData?.isEmailVerified ? "default" : "destructive"}>
+                    {userData?.isEmailVerified ? "已验证" : "未验证"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">账户状态</span>
-                  <Badge variant={user.users?.isActive ? "default" : "destructive"}>
-                    {user.users?.isActive ? "活跃" : "停用"}
+                  <Badge variant={userData?.isActive ? "default" : "destructive"}>
+                    {userData?.isActive ? "活跃" : "停用"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">注册时间</span>
                   <span className="text-sm text-gray-500">
-                    {user.users?.createdAt ? new Date(user.users.createdAt).toLocaleDateString('zh-CN') : '未知'}
+                    {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('zh-CN') : '未知'}
                   </span>
                 </div>
               </CardContent>
