@@ -1,5 +1,6 @@
 // 客户端认证工具
 import { User } from '@/lib/db/schema';
+import type { SWRConfiguration } from 'swr';
 
 export interface AuthState {
   user: User | null;
@@ -7,7 +8,7 @@ export interface AuthState {
   error: Error | null;
 }
 
-const fetcher = async (url: string): Promise<User | null> => {
+const fetcher = async (url: string) => {
   const response = await fetch(url, {
     credentials: 'include',
     cache: 'no-store'
@@ -15,28 +16,32 @@ const fetcher = async (url: string): Promise<User | null> => {
   
   if (!response.ok) {
     if (response.status === 401) {
-      return null; // 未认证，返回 null 而不是抛出错误
+      // 对于401错误，抛出特殊错误而不是返回null
+      throw new Error('UNAUTHORIZED');
     }
     throw new Error(`认证请求失败: ${response.status}`);
   }
   
   const data = await response.json();
-  return data || null;
+  if (!data) {
+    throw new Error('UNAUTHORIZED');
+  }
+  return data;
 };
 
 export { fetcher };
 
 // SWR 配置选项
-export const authSWRConfig = {
+export const authSWRConfig: SWRConfiguration = {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
   refreshInterval: 0,
-  errorRetryCount: 1,
-  shouldRetryOnError: (error: Error) => {
-    // 只在网络错误时重试，401 不重试
-    return !error.message.includes('401');
-  },
+  errorRetryCount: 0,
+  shouldRetryOnError: false,
   onError: (error: Error) => {
-    console.warn('Auth SWR error:', error.message);
+    // 静默处理认证错误，不在控制台显示
+    if (error.message !== 'UNAUTHORIZED') {
+      console.warn('Auth SWR error:', error.message);
+    }
   }
 };

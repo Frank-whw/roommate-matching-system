@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getCurrentUser, getTeamWithMembers, getUserTeam } from '@/lib/db/queries';
+import { getCurrentUser, getTeamWithMembers, getTeamWithMembersContact, getUserTeam } from '@/lib/db/queries';
+import { TeamMemberContact } from '@/components/teams/team-member-contact';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -53,6 +54,13 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
   // 检查用户是否已在队伍中
   const userTeam = await getUserTeam(currentUser.users.id);
   const canJoin = !userTeam;
+  const isTeamMember = team.members.some(member => member.user.id === currentUser.users.id);
+  
+  // 如果是队伍成员，获取包含联系信息的数据
+  let teamWithContact = null;
+  if (isTeamMember) {
+    teamWithContact = await getTeamWithMembersContact(teamId, currentUser.users.id);
+  }
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
@@ -69,6 +77,15 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
 
   const leader = team.members.find(member => member.membership.isLeader);
   const regularMembers = team.members.filter(member => !member.membership.isLeader);
+  
+  // 使用包含联系信息的数据（如果是队伍成员）
+  const displayTeam = teamWithContact || team;
+  const displayLeader = isTeamMember && teamWithContact 
+    ? teamWithContact.members.find(member => member.membership.isLeader) 
+    : leader;
+  const displayRegularMembers = isTeamMember && teamWithContact 
+    ? teamWithContact.members.filter(member => !member.membership.isLeader)
+    : regularMembers;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
@@ -234,117 +251,143 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                 <CardTitle className="flex items-center">
                   <Users className="w-5 h-5 mr-2" />
                   队伍成员 ({team.members.length}/{team.maxMembers})
+                  {isTeamMember && (
+                    <Badge variant="outline" className="ml-2 text-xs">
+                      联系信息已显示
+                    </Badge>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {/* 队长 */}
-                  {leader && (
-                    <div className="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                      <div className="flex items-center space-x-4">
-                        <div className="relative">
-                          <Link href={`/users/${leader.user.id}`} className="block hover:opacity-80 transition-opacity">
-                            <Avatar className="w-12 h-12">
-                              <AvatarImage 
-                                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.user.name || leader.user.email)}&background=f59e0b&color=fff`} 
-                              />
-                              <AvatarFallback className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
-                                {leader.user.name ? leader.user.name.substring(0, 2) : leader.user.email.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </Link>
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <Crown className="w-3 h-3 text-white" />
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <Link 
-                              href={`/users/${leader.user.id}`}
-                              className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                            >
-                              {leader.user.name || '队长' + leader.user.id}
-                            </Link>
-                            <Crown className="w-4 h-4 text-yellow-500" />
-                            <Badge variant="outline" className="text-xs bg-yellow-50 border-yellow-200 text-yellow-700">
-                              队长
-                            </Badge>
-                          </div>
-                          
-                          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            学生
-                          </div>
-                          
-                          {leader.profile?.bio && (
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
-                              {leader.profile.bio}
-                            </p>
-                          )}
-                        </div>
+                  {/* 使用新的联系信息组件 */}
+                  {isTeamMember && teamWithContact ? (
+                    <>
+                      {teamWithContact.members.map((member) => (
+                        <TeamMemberContact
+                          key={member.user.id}
+                          member={{
+                            ...member,
+                            membership: {
+                              role: member.membership.isLeader ? 'leader' : 'member',
+                              joinedAt: member.membership.joinedAt
+                            }
+                          }}
+                          isCurrentUser={member.user.id === currentUser.users.id}
+                        />
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {/* 队长 - 非成员视图 */}
+                      {leader && (
+                        <div className="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                          <div className="flex items-center space-x-4">
+                            <div className="relative">
+                              <Link href={`/users/${leader.user.id}`} className="block hover:opacity-80 transition-opacity">
+                                <Avatar className="w-12 h-12">
+                                  <AvatarImage 
+                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.user.name || leader.user.email)}&background=f59e0b&color=fff`} 
+                                  />
+                                  <AvatarFallback className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
+                                    {leader.user.name ? leader.user.name.substring(0, 2) : leader.user.email.substring(0, 2).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </Link>
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
+                                <Crown className="w-3 h-3 text-white" />
+                              </div>
+                            </div>
+                            
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <Link 
+                                  href={`/users/${leader.user.id}`}
+                                  className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                >
+                                  {leader.user.name || '队长' + leader.user.id}
+                                </Link>
+                                <Crown className="w-4 h-4 text-yellow-500" />
+                                <Badge variant="outline" className="text-xs bg-yellow-50 border-yellow-200 text-yellow-700">
+                                  队长
+                                </Badge>
+                              </div>
+                              
+                              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                学生
+                              </div>
+                              
+                              {leader.profile?.bio && (
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
+                                  {leader.profile.bio}
+                                </p>
+                              )}
+                            </div>
 
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href={`/users/${leader.user.id}`}>
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </Button>
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm" asChild>
+                                <Link href={`/users/${leader.user.id}`}>
+                                  <Eye className="w-4 h-4" />
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      )}
+
+                      {/* 普通成员 - 非成员视图 */}
+                      {regularMembers.map((member) => (
+                        <div key={member.user.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center space-x-4">
+                            <div className="relative">
+                              <Link href={`/users/${member.user.id}`} className="block hover:opacity-80 transition-opacity">
+                                <Avatar className="w-12 h-12">
+                                  <AvatarImage 
+                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.user.name || member.user.email)}&background=3b82f6&color=fff`} 
+                                  />
+                                  <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
+                                    {member.user.name ? member.user.name.substring(0, 2) : member.user.email.substring(0, 2).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </Link>
+                            </div>
+                            
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <Link 
+                                  href={`/users/${member.user.id}`}
+                                  className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                >
+                                  {member.user.name || '成员' + member.user.id}
+                                </Link>
+                                <Badge variant="outline" className="text-xs">
+                                  成员
+                                </Badge>
+                              </div>
+                              
+                              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                学生
+                              </div>
+                              
+                              {member.profile?.bio && (
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
+                                  {member.profile.bio}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm" asChild>
+                                <Link href={`/users/${member.user.id}`}>
+                                  <Eye className="w-4 h-4" />
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
                   )}
-
-                  {/* 普通成员 */}
-                  {regularMembers.map((member) => (
-                    <div key={member.user.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <div className="relative">
-                          <Link href={`/users/${member.user.id}`} className="block hover:opacity-80 transition-opacity">
-                            <Avatar className="w-12 h-12">
-                              <AvatarImage 
-                                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.user.name || member.user.email)}&background=3b82f6&color=fff`} 
-                              />
-                              <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
-                                {member.user.name ? member.user.name.substring(0, 2) : member.user.email.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </Link>
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <Link 
-                              href={`/users/${member.user.id}`}
-                              className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                            >
-                              {member.user.name || '成员' + member.user.id}
-                            </Link>
-                            <Badge variant="outline" className="text-xs">
-                              成员
-                            </Badge>
-                          </div>
-                          
-                          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            学生
-                          </div>
-                          
-                          {member.profile?.bio && (
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
-                              {member.profile.bio}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href={`/users/${member.user.id}`}>
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
 
                   {/* 空位提示 */}
                   {team.members.length < team.maxMembers && (

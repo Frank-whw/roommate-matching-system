@@ -60,30 +60,8 @@ export default function BottomNav() {
     return null;
   }
   
-  // 在加载期间不重定向
-  if (isLoading) {
-    return (
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden">
-        <div className="grid grid-cols-5 h-16">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || 
-              (item.href !== '/' && pathname?.startsWith(item.href));
-            
-            return (
-              <div
-                key={item.href}
-                className="flex flex-col items-center justify-center space-y-1 text-xs text-muted-foreground opacity-50"
-              >
-                <Icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </nav>
-    );
-  }
+  // 检查用户是否已登录（如果有错误或正在加载，视为未登录）
+  const isAuthenticated = user && !error && !isLoading;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden">
@@ -94,7 +72,7 @@ export default function BottomNav() {
             (item.href !== '/' && pathname?.startsWith(item.href));
           
           // 如果需要认证但用户未登录，显示但禁用
-          const isDisabled = item.requireAuth && !user;
+          const isDisabled = item.requireAuth && !isAuthenticated;
           
           return (
             <Link
