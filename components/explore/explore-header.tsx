@@ -58,11 +58,6 @@ export function ExploreHeader({
             </div>
           )}
           
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-            <Heart className="w-4 h-4" />
-            <span>今日匹配</span>
-            <Badge variant="secondary">42</Badge>
-          </div>
         </div>
       </div>
 
