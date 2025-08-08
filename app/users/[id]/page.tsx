@@ -168,36 +168,6 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
 
           {/* 右侧：详细信息 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* 学业信息 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <GraduationCap className="w-5 h-5 mr-2" />
-                  学业信息
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500 dark:text-gray-400">学院/专业</label>
-                    <p className="text-gray-900 dark:text-white">待完善</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500 dark:text-gray-400">年级</label>
-                    <p className="text-gray-900 dark:text-white">待完善</p>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    宿舍区域
-                  </label>
-                  <p className="text-gray-900 dark:text-white">待完善</p>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* 生活习惯 */}
             <Card>
               <CardHeader>
