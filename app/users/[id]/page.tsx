@@ -21,6 +21,7 @@ import {
   IdCard,
   Sun,
   Moon,
+  Sparkles,
   Coffee
 } from 'lucide-react';
 
