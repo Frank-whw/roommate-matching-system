@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Heart,
-  X,
   Clock,
   GraduationCap,
   Home,
@@ -59,15 +58,13 @@ const cleanlinessLabels: { [key: string]: string } = {
 export function UserCard({ user, profile, currentUserId }: UserCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
-  const [isPassing, setIsPassing] = useState(false);
 
   // 处理点赞
   const handleLike = async () => {
     setIsLiking(true);
     try {
       const result = await likeUser({
-        targetUserId: user.id,
-        isLike: true
+        targetUserId: user.id
       });
       
       if (result.error) {
@@ -86,29 +83,6 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
       alert('点赞失败，请重试');
     } finally {
       setIsLiking(false);
-    }
-  };
-
-  // 处理跳过
-  const handlePass = async () => {
-    setIsPassing(true);
-    try {
-      const result = await likeUser({
-        targetUserId: user.id,
-        isLike: false
-      });
-      
-      if (result.error) {
-        alert(result.error);
-      } else {
-        // 隐藏当前卡片或刷新页面
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('跳过失败:', error);
-      alert('跳过失败，请重试');
-    } finally {
-      setIsPassing(false);
     }
   };
 
@@ -243,28 +217,15 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
 
         {/* 操作按钮 */}
         <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-          <div className="flex space-x-2 sm:space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-xs sm:text-sm"
-              onClick={handlePass}
-              disabled={isPassing}
-            >
-              <X className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-              <span className="hidden sm:inline">{isPassing ? '跳过中...' : '跳过'}</span>
-            </Button>
-            
-            <Button
-              size="sm"
-              className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-xs sm:text-sm"
-              onClick={handleLike}
-              disabled={isLiking}
-            >
-              <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-              <span className="hidden sm:inline">{isLiking ? '喜欢中...' : '喜欢'}</span>
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-xs sm:text-sm"
+            onClick={handleLike}
+            disabled={isLiking}
+          >
+            <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+            <span className="hidden sm:inline">{isLiking ? '喜欢中...' : '喜欢'}</span>
+          </Button>
         </div>
 
         {/* 悬浮时的额外信息 */}

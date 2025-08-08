@@ -9,8 +9,7 @@ import { revalidatePath } from 'next/cache';
 
 // 点赞操作schema
 const likeActionSchema = z.object({
-  targetUserId: z.number().int().positive('目标用户ID不正确'),
-  isLike: z.boolean()
+  targetUserId: z.number().int().positive('目标用户ID不正确')
 });
 
 export async function likeUser(rawData: any) {
@@ -29,7 +28,7 @@ export async function likeUser(rawData: any) {
       return { error: result.error.errors[0].message };
     }
 
-    const { targetUserId, isLike } = result.data;
+    const { targetUserId } = result.data;
 
     // 检查是否是自己
     if (currentUserId === targetUserId) {
@@ -52,17 +51,17 @@ export async function likeUser(rawData: any) {
       return { error: '您已经对该用户进行过操作' };
     }
 
-    // 记录用户操作
+    // 记录点赞操作
     await db.insert(userLikes).values({
       fromUserId: currentUserId,
       toUserId: targetUserId,
-      isLike: isLike
+      isLike: true
     });
 
     // 记录活动日志
     await logActivity(
       currentUserId, 
-      isLike ? ActivityType.LIKE_USER : ActivityType.PASS_USER,
+      ActivityType.LIKE_USER,
       undefined,
       { targetUserId }
     );
@@ -70,63 +69,61 @@ export async function likeUser(rawData: any) {
     let matchCreated = false;
     let matchId = null;
 
-    // 如果是喜欢操作，检查是否形成互喜
-    if (isLike) {
-      const reciprocalLike = await db
+    // 检查是否形成互喜
+    const reciprocalLike = await db
+      .select()
+      .from(userLikes)
+      .where(
+        and(
+          eq(userLikes.fromUserId, targetUserId),
+          eq(userLikes.toUserId, currentUserId),
+          eq(userLikes.isLike, true)
+        )
+      )
+      .limit(1);
+
+    // 如果对方也喜欢，创建匹配记录
+    if (reciprocalLike.length > 0) {
+      // 检查是否已经有匹配记录
+      const existingMatch = await db
         .select()
-        .from(userLikes)
+        .from(matches)
         .where(
-          and(
-            eq(userLikes.fromUserId, targetUserId),
-            eq(userLikes.toUserId, currentUserId),
-            eq(userLikes.isLike, true)
+          or(
+            and(
+              eq(matches.user1Id, currentUserId),
+              eq(matches.user2Id, targetUserId)
+            ),
+            and(
+              eq(matches.user1Id, targetUserId),
+              eq(matches.user2Id, currentUserId)
+            )
           )
         )
         .limit(1);
 
-      // 如果对方也喜欢，创建匹配记录
-      if (reciprocalLike.length > 0) {
-        // 检查是否已经有匹配记录
-        const existingMatch = await db
-          .select()
-          .from(matches)
-          .where(
-            or(
-              and(
-                eq(matches.user1Id, currentUserId),
-                eq(matches.user2Id, targetUserId)
-              ),
-              and(
-                eq(matches.user1Id, targetUserId),
-                eq(matches.user2Id, currentUserId)
-              )
-            )
-          )
-          .limit(1);
+      if (existingMatch.length === 0) {
+        // 创建新的匹配记录
+        const newMatch = await db.insert(matches).values({
+          user1Id: Math.min(currentUserId, targetUserId), // 小的ID作为user1
+          user2Id: Math.max(currentUserId, targetUserId), // 大的ID作为user2
+          status: 'matched'
+        }).returning();
 
-        if (existingMatch.length === 0) {
-          // 创建新的匹配记录
-          const newMatch = await db.insert(matches).values({
-            user1Id: Math.min(currentUserId, targetUserId), // 小的ID作为user1
-            user2Id: Math.max(currentUserId, targetUserId), // 大的ID作为user2
-            status: 'matched'
-          }).returning();
+        matchCreated = true;
+        matchId = newMatch[0].id;
 
-          matchCreated = true;
-          matchId = newMatch[0].id;
-
-          // 记录匹配活动日志
-          await Promise.all([
-            logActivity(currentUserId, ActivityType.MATCH_SUCCESS, undefined, { 
-              matchId: matchId, 
-              partnerId: targetUserId 
-            }),
-            logActivity(targetUserId, ActivityType.MATCH_SUCCESS, undefined, { 
-              matchId: matchId, 
-              partnerId: currentUserId 
-            })
-          ]);
-        }
+        // 记录匹配活动日志
+        await Promise.all([
+          logActivity(currentUserId, ActivityType.MATCH_SUCCESS, undefined, { 
+            matchId: matchId, 
+            partnerId: targetUserId 
+          }),
+          logActivity(targetUserId, ActivityType.MATCH_SUCCESS, undefined, { 
+            matchId: matchId, 
+            partnerId: currentUserId 
+          })
+        ]);
       }
     }
 
@@ -136,10 +133,10 @@ export async function likeUser(rawData: any) {
 
     return {
       success: true,
-      message: isLike ? '点赞成功！' : '已跳过该用户',
+      message: '点赞成功！',
       matchCreated,
       matchId,
-      action: isLike ? 'like' : 'pass'
+      action: 'like'
     };
 
   } catch (error) {
