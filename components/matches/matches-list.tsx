@@ -74,7 +74,7 @@ export async function MatchesList({ currentUserId }: MatchesListProps) {
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
                 去匹配广场寻找您的理想室友吧！<br />
-                当您和其他用户互相点赞时，就会产生匹配。
+                当您和其他用户互相邀请时，就会产生匹配。
               </p>
               <Button asChild>
                 <Link href="/explore">

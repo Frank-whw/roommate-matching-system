@@ -40,7 +40,7 @@ export default async function MatchesPage() {
                 我的匹配
               </h1>
               <p className="mt-2 text-gray-600 dark:text-gray-300">
-                与您互相喜欢的室友伙伴
+                与您互相邀请的室友伙伴
               </p>
             </div>
             

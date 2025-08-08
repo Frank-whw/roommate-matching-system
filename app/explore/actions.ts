@@ -133,7 +133,7 @@ export async function likeUser(rawData: any) {
 
     return {
       success: true,
-      message: '点赞成功！',
+      message: '邀请成功！',
       matchCreated,
       matchId,
       action: 'like'

@@ -156,7 +156,7 @@ export function RealtimeProvider({
             addNotification({
               type: NotificationType.NEW_MATCH,
               title: '🎉 新匹配！',
-              message: `你与 ${match.matchedUser?.name || '一位用户'} 互相喜欢了！`,
+              message: `你与 ${match.matchedUser?.name || '一位用户'} 互相邀请了！`,
               userId: userId,
               data: { matchId: match.id, matchedUserId: match.matchedUser?.id }
             });

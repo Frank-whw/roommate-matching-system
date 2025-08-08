@@ -71,16 +71,16 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
         alert(result.error);
       } else {
         if (result.matchCreated) {
-          alert('🎉 匹配成功！你们互相喜欢，现在可以看到对方的联系方式了！');
+          alert('🎉 匹配成功！你们互相邀请，现在可以看到对方的联系方式了！');
         } else {
-          alert('❤️ 已点赞，等待对方回应...');
+          alert('❤️ 已邀请，等待对方回应...');
         }
         // 隐藏当前卡片或刷新页面
         window.location.reload();
       }
     } catch (error) {
-      console.error('点赞失败:', error);
-      alert('点赞失败，请重试');
+      console.error('邀请失败:', error);
+      alert('邀请失败，请重试');
     } finally {
       setIsLiking(false);
     }
@@ -224,7 +224,7 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
             disabled={isLiking}
           >
             <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-            <span className="hidden sm:inline">{isLiking ? '喜欢中...' : '喜欢'}</span>
+            <span className="hidden sm:inline">{isLiking ? '邀请中...' : '邀请'}</span>
           </Button>
         </div>
 

@@ -152,7 +152,7 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
                 <div className="mt-6 space-y-3">
                   <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600">
                     <Heart className="w-4 h-4 mr-2" />
-                    喜欢Ta
+                    邀请Ta
                   </Button>
                   
                   <Button variant="outline" className="w-full" asChild>
