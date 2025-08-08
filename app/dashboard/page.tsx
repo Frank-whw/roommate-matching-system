@@ -27,9 +27,9 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  // user 是 getUserWithProfile 的结果，包含 users 和 userProfiles 的 joined 数据
+  // user 是 getUserWithProfile 的结果，包含 users 和 user_profiles 的 joined 数据
   const userData = user.users;
-  const profileData = user.userProfiles;
+  const profileData = user.user_profiles;
 
   const profileCompletionSteps = [
     {
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
       id: 'preferences',
       title: '生活偏好',
       description: '设置作息习惯、MBTI等',
-      completed: !!(profileData?.mbtiType && profileData?.sleepSchedule),
+      completed: !!(profileData?.mbti && profileData?.sleepTime),
       href: '/profile'
     },
     {
