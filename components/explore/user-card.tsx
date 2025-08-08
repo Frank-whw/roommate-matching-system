@@ -10,10 +10,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Heart,
   Clock,
-  GraduationCap,
   Home,
   Brain,
   MapPin,
+  Sparkles,
   Moon,
   Sun,
   Coffee,
@@ -113,18 +113,22 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
                   </h3>
                 </div>
                 
-                <div className="mt-1 space-y-1">
-                  <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    <GraduationCap className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate">华东师范大学</span>
-                    <span className="mx-1 flex-shrink-0">•</span>
-                    <span className="truncate">学生</span>
-                  </div>
+                {/* 基本信息优化：突出重要信息 */}
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                  {/* 年龄信息 */}
+                  {profile?.age && (
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
+                      <User className="w-3 h-3 mr-1" />
+                      <span>{profile.age}岁</span>
+                    </div>
+                  )}
                   
-                  <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate">校园内</span>
-                  </div>
+                  {/* 性别信息 */}
+                  {profile?.gender && (
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
+                      <span>{profile.gender === 'male' ? '男' : profile.gender === 'female' ? '女' : profile.gender}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -139,9 +143,9 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
           </div>
         </Link>
 
-        {/* 用户标签和信息 */}
-        <div className="px-4 sm:px-6 pb-3 sm:pb-4 space-y-3">
-          {/* MBTI和生活习惯标签 */}
+        {/* 用户信息和标签 */}
+        <div className="px-4 sm:px-6 pb-3 sm:pb-4 space-y-4">
+          {/* 特征标签 */}
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {profile?.mbti && (
               <Badge variant="outline" className="text-xs">
@@ -166,18 +170,36 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
                 <span className="sm:hidden">生活</span>
               </Badge>
             )}
+
+            {profile?.cleanliness && (
+              <Badge variant="outline" className="text-xs">
+                <Sparkles className="w-3 h-3 mr-1" />
+                <span className="hidden sm:inline">{cleanlinessLabels[profile.cleanliness]}</span>
+                <span className="sm:hidden">整洁</span>
+              </Badge>
+            )}
           </div>
 
-          {/* 作息时间 */}
-          {(profile?.sleepTime || profile?.wakeTime) && (
-            <div className="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-              <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">
-                <span className="hidden sm:inline">作息: </span>
-                {profile.sleepTime || '??:??'} - {profile.wakeTime || '??:??'}
-              </span>
-            </div>
-          )}
+          {/* 作息和生活信息 */}
+          <div className="space-y-2">
+            {/* 作息时间 */}
+            {(profile?.sleepTime || profile?.wakeTime) && (
+              <div className="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                <span className="truncate">
+                  作息: {profile.sleepTime || '??:??'} - {profile.wakeTime || '??:??'}
+                </span>
+              </div>
+            )}
+
+            {/* 兴趣爱好 */}
+            {profile?.hobbies && (
+              <div className="text-xs sm:text-sm">
+                <span className="text-gray-500 dark:text-gray-400">兴趣: </span>
+                <span className="text-gray-600 dark:text-gray-300">{profile.hobbies}</span>
+              </div>
+            )}
+          </div>
 
           {/* 个人简介 */}
           {profile?.bio && (
@@ -197,14 +219,6 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
                   )}
                 </button>
               )}
-            </div>
-          )}
-
-          {/* 兴趣爱好 */}
-          {profile?.hobbies && (
-            <div className="text-xs sm:text-sm">
-              <span className="text-gray-500 dark:text-gray-400">兴趣: </span>
-              <span className="text-gray-600 dark:text-gray-300 line-clamp-1">{profile.hobbies}</span>
             </div>
           )}
         </div>
