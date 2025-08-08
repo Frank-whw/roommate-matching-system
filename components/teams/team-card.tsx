@@ -14,7 +14,6 @@ import {
   Calendar,
   FileText,
   UserPlus,
-  MessageCircle,
   Eye
 } from 'lucide-react';
 
@@ -194,13 +193,6 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
           </div>
           
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/matches?teamId=${team.id}`}>
-                <MessageCircle className="w-4 h-4 mr-1" />
-                私信队长
-              </Link>
-            </Button>
-            
             <Button
               size="sm"
               onClick={handleJoinTeam}

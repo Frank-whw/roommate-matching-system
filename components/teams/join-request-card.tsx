@@ -9,9 +9,9 @@ import {
   Check,
   X,
   Clock,
-  MessageSquare,
   User,
-  GraduationCap
+  GraduationCap,
+  FileText
 } from 'lucide-react';
 
 interface JoinRequestCardProps {
@@ -124,7 +124,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {request.message && (
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-3">
               <div className="flex items-start">
-                <MessageSquare className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
+                <FileText className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   {request.message}
                 </p>

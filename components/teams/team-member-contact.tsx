@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
-  MessageCircle, 
   Copy, 
   Check, 
   Eye, 
   EyeOff,
-  Mail
+  Mail,
+  Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast-notifications';
@@ -132,7 +132,7 @@ export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactPr
                     {member.contactInfo?.wechatId && (
                       <div className="flex items-center justify-between space-x-2">
                         <div className="flex items-center space-x-2 min-w-0">
-                          <MessageCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          <Users className="h-4 w-4 text-green-600 flex-shrink-0" />
                           <div className="min-w-0">
                             <p className="text-xs text-muted-foreground">微信号</p>
                             <p className="text-sm font-mono text-foreground truncate">

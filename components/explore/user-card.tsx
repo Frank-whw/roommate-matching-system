@@ -15,7 +15,6 @@ import {
   Home,
   Brain,
   MapPin,
-  MessageCircle,
   Sparkles,
   Moon,
   Sun,
@@ -75,7 +74,7 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
         alert(result.error);
       } else {
         if (result.matchCreated) {
-          alert('🎉 匹配成功！你们互相喜欢，可以开始聊天了！');
+          alert('🎉 匹配成功！你们互相喜欢，现在可以看到对方的联系方式了！');
         } else {
           alert('❤️ 已点赞，等待对方回应...');
         }
@@ -264,13 +263,6 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
             >
               <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
               <span className="hidden sm:inline">{isLiking ? '喜欢中...' : '喜欢'}</span>
-            </Button>
-            
-            <Button variant="outline" size="sm" className="px-2 sm:px-3" asChild>
-              <Link href={`/matches?userId=${user.id}`}>
-                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline sm:ml-1">私信</span>
-              </Link>
             </Button>
           </div>
         </div>

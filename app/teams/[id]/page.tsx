@@ -18,7 +18,6 @@ import {
   Calendar,
   FileText,
   UserPlus,
-  MessageCircle,
   Eye,
   User,
   GraduationCap,
@@ -200,8 +199,8 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                   
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/matches?teamId=${team.id}`}>
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      联系队长
+                      <User className="w-4 h-4 mr-2" />
+                      查看队长信息
                     </Link>
                   </Button>
                 </div>

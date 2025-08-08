@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   ArrowLeft,
   Heart,
-  MessageCircle,
   GraduationCap,
   MapPin,
   Clock,
@@ -158,8 +157,8 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
                   
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/matches?userId=${user.id}`}>
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      发送私信
+                      <User className="w-4 h-4 mr-2" />
+                      查看详情
                     </Link>
                   </Button>
                 </div>

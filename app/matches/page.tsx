@@ -10,7 +10,6 @@ import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
   Heart,
   Users,
-  MessageCircle,
   Sparkles,
   Clock
 } from 'lucide-react';
@@ -51,17 +50,12 @@ export default async function MatchesPage() {
                 <span>总匹配</span>
                 <Badge variant="secondary">0</Badge>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                <MessageCircle className="w-4 h-4" />
-                <span>新消息</span>
-                <Badge variant="secondary">0</Badge>
-              </div>
             </div>
           </div>
         </div>
 
         {/* 匹配状态卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center text-lg">
@@ -72,22 +66,7 @@ export default async function MatchesPage() {
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">0</div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                等待开始对话
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-lg">
-                <MessageCircle className="w-5 h-5 mr-2 text-blue-500" />
-                活跃对话
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">0</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                正在聊天中
+                最近的成功匹配
               </p>
             </CardContent>
           </Card>
@@ -113,7 +92,7 @@ export default async function MatchesPage() {
           <CardHeader>
             <CardTitle>匹配列表</CardTitle>
             <CardDescription>
-              您的所有匹配记录和对话
+              您的所有匹配记录
             </CardDescription>
           </CardHeader>
           <CardContent>

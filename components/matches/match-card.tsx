@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { unmatchUser } from '@/app/explore/actions';
 import { 
-  MessageCircle,
   X,
   Calendar,
   Clock,
@@ -58,9 +57,9 @@ export function MatchCard({ match, matchedUser, matchedUserProfile, currentUserI
     }
   };
 
-  const handleMessage = () => {
-    // TODO: 实现消息功能
-    alert('消息功能即将上线，敬请期待！');
+  const handleViewMatch = () => {
+    // 显示匹配详情
+    alert('匹配详情功能');
   };
 
   const formatDate = (dateString: string) => {
@@ -200,12 +199,12 @@ export function MatchCard({ match, matchedUser, matchedUserProfile, currentUserI
             
             <Button
               size="sm"
-              onClick={handleMessage}
+              onClick={handleViewMatch}
               className="flex-1 sm:flex-initial bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-xs sm:text-sm"
             >
-              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-              <span className="hidden sm:inline">发送消息</span>
-              <span className="sm:hidden">消息</span>
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+              <span className="hidden sm:inline">查看匹配</span>
+              <span className="sm:hidden">查看</span>
             </Button>
           </div>
         </div>
