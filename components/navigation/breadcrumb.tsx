@@ -19,7 +19,6 @@ const pathMappings: Record<string, string> = {
   '/teams/create': '创建队伍',
   '/matches': '我的匹配',
   '/profile': '个人资料',
-  '/dashboard': '仪表板',
   '/sign-in': '登录',
   '/sign-up': '注册',
   '/verify-email': '邮箱验证',

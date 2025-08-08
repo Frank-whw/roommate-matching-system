@@ -119,7 +119,6 @@ function MobileNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/dashboard', label: '仪表板', icon: Home },
     { href: '/explore', label: '匹配广场', icon: Heart },
     { href: '/teams', label: '队伍广场', icon: Users },
     { href: '/matches', label: '我的匹配', icon: Heart },

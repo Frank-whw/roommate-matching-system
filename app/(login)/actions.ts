@@ -253,8 +253,8 @@ export const signIn = validatedAction(signInSchema, async (data) => {
     };
   }
 
-  // 登录成功后重定向到仪表板
-  redirect('/dashboard');
+  // 登录成功后重定向到匹配广场
+  redirect('/explore');
 });
 
 // 重新发送验证邮件

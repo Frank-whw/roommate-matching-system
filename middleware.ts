@@ -5,7 +5,6 @@ import { verifyToken } from '@/lib/auth/session';
 
 // 需要认证的路由
 const protectedRoutes = [
-  '/dashboard',
   '/profile',
   '/explore',
   '/matches',
@@ -61,7 +60,7 @@ export async function middleware(request: NextRequest) {
 
     // 如果是认证路由但用户已认证
     if (isAuthRoute && isAuthenticated) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return NextResponse.redirect(new URL('/explore', request.url));
     }
 
     return NextResponse.next();

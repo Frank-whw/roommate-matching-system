@@ -73,7 +73,6 @@ The system uses a comprehensive relational schema:
 ### Route Structure
 - `/app/(login)/`: Authentication pages (sign-in, sign-up)
 - `/app/api/`: API routes organized by feature
-- `/app/dashboard/`: Main user dashboard
 - `/app/explore/`: User discovery and browsing
 - `/app/matches/`: Match management
 - `/app/profile/`: Profile editing

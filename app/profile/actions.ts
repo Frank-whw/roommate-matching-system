@@ -102,7 +102,6 @@ export async function updateProfile(rawData: any) {
 
     // 重新验证页面缓存
     revalidatePath('/profile');
-    revalidatePath('/dashboard');
 
     return {
       success: true,
