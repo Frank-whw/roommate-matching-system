@@ -121,7 +121,7 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
           <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-amber-800 dark:text-amber-200">
-              队伍已达到最大人数 ({teamInfo.team.maxMembers} 人)，建议拒绝新的申请
+              队伍已达到4人满员，建议拒绝新的申请
             </AlertDescription>
           </Alert>
         )}

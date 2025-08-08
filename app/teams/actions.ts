@@ -12,7 +12,7 @@ const createTeamSchema = z.object({
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长'),
   description: z.string().optional(),
   requirements: z.string().optional(),
-  maxMembers: z.number().int().min(2).max(4).default(4),
+  // maxMembers 固定为 4，不再需要从客户端传入
 });
 
 // Join team request schema
@@ -55,7 +55,7 @@ const updateTeamSchema = z.object({
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长').optional(),
   description: z.string().optional(),
   requirements: z.string().optional(),
-  maxMembers: z.number().int().min(2).max(4).optional(),
+  // maxMembers 固定为 4，不允许修改
 });
 
 // Create a new team
@@ -74,7 +74,8 @@ export async function createTeam(rawData: any) {
       return { error: result.error.errors[0].message };
     }
 
-    const { name, description, requirements, maxMembers } = result.data;
+    const { name, description, requirements } = result.data;
+    const maxMembers = 4; // 固定为4人队伍
 
     // Check if user is already in a team
     const existingMembership = await db
@@ -913,7 +914,7 @@ export async function updateTeam(rawData: any) {
       return { error: result.error.errors[0].message };
     }
 
-    const { teamId, name, description, requirements, maxMembers } = result.data;
+    const { teamId, name, description, requirements } = result.data;
 
     // Check if current user is the team leader
     const leaderCheck = await db
@@ -936,13 +937,6 @@ export async function updateTeam(rawData: any) {
 
     const team = leaderCheck[0].team;
 
-    // Check if trying to reduce maxMembers below current count
-    if (maxMembers && maxMembers < team.currentMembers) {
-      return {
-        error: `最大成员数不能少于当前成员数 (${team.currentMembers})`
-      };
-    }
-
     // Prepare update data
     const updateData: any = {
       updatedAt: new Date(),
@@ -951,15 +945,7 @@ export async function updateTeam(rawData: any) {
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (requirements !== undefined) updateData.requirements = requirements;
-    if (maxMembers !== undefined) {
-      updateData.maxMembers = maxMembers;
-      // Update team status if it becomes full or has space
-      if (maxMembers === team.currentMembers) {
-        updateData.status = 'full';
-      } else if (team.status === 'full' && maxMembers > team.currentMembers) {
-        updateData.status = 'recruiting';
-      }
-    }
+    // maxMembers 固定为 4，不允许修改
 
     // Update team
     await db

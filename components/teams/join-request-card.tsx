@@ -165,7 +165,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {/* 队伍已满警告 */}
           {isTeamFull && (
             <div className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-              ⚠️ 队伍已达到最大人数，批准此申请需要先有成员退出
+              ⚠️ 队伍已达到4人满员，批准此申请需要先有成员退出
             </div>
           )}
         </div>

@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createTeam } from '@/app/teams/actions';
 import { useRouter } from 'next/navigation';
 import { 
@@ -31,7 +30,7 @@ export function CreateTeamForm() {
       name: formData.get('name') as string,
       description: formData.get('description') as string,
       requirements: formData.get('requirements') as string,
-      maxMembers: parseInt(formData.get('maxMembers') as string) || 4,
+      maxMembers: 4, // 固定为4人队伍
     };
 
     try {
@@ -101,28 +100,6 @@ export function CreateTeamForm() {
       </div>
 
 
-
-      {/* 最大成员数 */}
-      <div>
-        <Label htmlFor="maxMembers" className="flex items-center">
-          <Users className="w-4 h-4 mr-2" />
-          队伍规模
-        </Label>
-        <Select name="maxMembers" defaultValue="4">
-          <SelectTrigger className="mt-1">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="2">2人队伍</SelectItem>
-            <SelectItem value="3">3人队伍</SelectItem>
-            <SelectItem value="4">4人队伍</SelectItem>
-          </SelectContent>
-        </Select>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          包括您在内的队伍总人数
-        </p>
-      </div>
-
       {/* 招募要求 */}
       <div>
         <Label htmlFor="requirements" className="flex items-center">
@@ -176,7 +153,7 @@ export function CreateTeamForm() {
           <AlertCircle className="w-5 h-5 text-blue-500 mr-2 mt-0.5" />
           <div className="text-sm text-blue-700 dark:text-blue-200">
             <p className="font-medium mb-1">创建后您将成为队长</p>
-            <p>您可以管理队伍成员、审核加入申请，并在任何时候修改队伍信息。</p>
+            <p>您可以管理队伍成员、审核加入申请，并在任何时候修改队伍信息。队伍固定为4人制。</p>
           </div>
         </div>
       </div>

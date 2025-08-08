@@ -46,7 +46,7 @@ export default async function CreateTeamPage() {
                   创建队伍
                 </h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-300">
-                  成为队长，组建您的理想室友团队
+                  组建4人室友团队，找到最适合的室友
                 </p>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default async function CreateTeamPage() {
                   队伍信息
                 </CardTitle>
                 <CardDescription>
-                  填写队伍基本信息，吸引合适的室友加入
+                  填写队伍基本信息，组建4人室友团队
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -85,7 +85,7 @@ export default async function CreateTeamPage() {
               <CardContent className="text-sm text-blue-700 dark:text-blue-300">
                 <ul className="space-y-2">
                   <li>• 创建后您将自动成为队长</li>
-                  <li>• 队伍最多可容纳4名成员</li>
+                  <li>• 队伍固定为4名成员</li>
                   <li>• 您需要审核其他用户的加入申请</li>
                   <li>• 可以随时修改队伍信息</li>
                   <li>• 每人只能同时在一个队伍中</li>
