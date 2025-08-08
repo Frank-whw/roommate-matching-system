@@ -9,9 +9,7 @@ import {
   Heart,
   Search,
   AlertCircle,
-  Settings,
-  TrendingUp,
-  Filter
+  Settings
 } from 'lucide-react';
 
 interface ExploreHeaderProps {
@@ -52,7 +50,6 @@ export function ExploreHeader({
           
           {activeFiltersCount > 0 && (
             <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <Filter className="w-4 h-4" />
               <span>筛选条件</span>
               <Badge variant="outline">{activeFiltersCount}</Badge>
             </div>
@@ -80,41 +77,6 @@ export function ExploreHeader({
           </AlertDescription>
         </Alert>
       )}
-
-      {/* 快速操作栏 */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="sm">
-            <Filter className="w-4 h-4 mr-2" />
-            高级筛选
-          </Button>
-          <Button variant="outline" size="sm">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            推荐排序
-          </Button>
-        </div>
-        
-        <div className="flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
-          <span>显示模式:</span>
-          <div className="flex space-x-1">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <div className="grid grid-cols-2 gap-0.5 w-3 h-3">
-                <div className="bg-current rounded-sm"></div>
-                <div className="bg-current rounded-sm"></div>
-                <div className="bg-current rounded-sm"></div>
-                <div className="bg-current rounded-sm"></div>
-              </div>
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              <div className="grid grid-cols-3 gap-0.5 w-3 h-3">
-                {Array.from({length: 9}).map((_, i) => (
-                  <div key={i} className="bg-current rounded-sm"></div>
-                ))}
-              </div>
-            </Button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
