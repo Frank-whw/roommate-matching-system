@@ -14,7 +14,6 @@ import {
   Home,
   Brain,
   MapPin,
-  Sparkles,
   Moon,
   Sun,
   Coffee,
@@ -109,14 +108,9 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
-                  <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate pr-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                  <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
                     {user.name || '用户' + user.id}
                   </h3>
-                  <Badge variant="outline" className="text-xs bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200 flex-shrink-0">
-                    <Sparkles className="w-3 h-3 mr-1" />
-                    <span className="hidden sm:inline">新用户</span>
-                    <span className="sm:hidden">新</span>
-                  </Badge>
                 </div>
                 
                 <div className="mt-1 space-y-1">

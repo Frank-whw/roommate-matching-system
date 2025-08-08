@@ -16,7 +16,6 @@ import {
   Clock,
   Brain,
   Home,
-  Sparkles,
   User,
   Mail,
   IdCard,
@@ -113,14 +112,9 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
                 </div>
 
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                   {user.name || '用户' + user.id}
                 </h1>
-                
-                <Badge variant="outline" className="mb-4 bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  活跃用户
-                </Badge>
 
                 {/* 基本信息 */}
                 <div className="space-y-3 text-sm">
