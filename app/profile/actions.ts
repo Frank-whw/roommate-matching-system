@@ -90,14 +90,27 @@ export async function updateProfile(rawData: any) {
         .where(eq(userProfiles.userId, currentUser.id))
         .returning();
     } else {
-      // 创建新profile
-      result_data = await db
-        .insert(userProfiles)
-        .values({
-          userId: currentUser.id,
-          ...profileData
-        })
-        .returning();
+      // 创建新profile，使用ON CONFLICT处理可能的并发问题
+      try {
+        result_data = await db
+          .insert(userProfiles)
+          .values({
+            userId: currentUser.id,
+            ...profileData
+          })
+          .returning();
+      } catch (insertError: any) {
+        // 如果插入失败（可能是并发导致的重复），尝试更新
+        if (insertError.code === '23505') {
+          result_data = await db
+            .update(userProfiles)
+            .set(profileData)
+            .where(eq(userProfiles.userId, currentUser.id))
+            .returning();
+        } else {
+          throw insertError;
+        }
+      }
     }
 
     // 重新验证页面缓存
