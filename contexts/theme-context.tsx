@@ -64,6 +64,40 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeColor, setThemeColorState] = useState<ThemeColor>(themeColors[0]);
   const [mounted, setMounted] = useState(false);
 
+  // 为根元素添加 theme- 类，驱动全局主题变量（包括页面背景）
+  const applyThemeClass = (value: string) => {
+    const root = document.documentElement;
+    // 清除旧的 theme-* 类
+    root.classList.forEach((cls) => {
+      if (cls.startsWith('theme-')) root.classList.remove(cls);
+    });
+    root.classList.add(`theme-${value}`);
+  };
+
+  // 根据主题色和明暗模式应用页面背景（仅修改 --background，避免影响其他 token）
+  const applyBackgroundByTheme = (themeValue: string, currentMode: ThemeMode) => {
+    const root = document.documentElement;
+    const backgroundMap: Record<ThemeMode, Record<string, string>> = {
+      light: {
+        blue: '210 100% 98%',
+        green: '140 60% 97%',
+        orange: '30 100% 97%',
+        red: '0 100% 97%'
+      },
+      dark: {
+        blue: '222 47% 11%',
+        green: '150 6% 10%',
+        orange: '20 14% 10%',
+        red: '350 25% 10%'
+      }
+    };
+
+    const bg = backgroundMap[currentMode]?.[themeValue] || backgroundMap[currentMode]?.blue;
+    if (bg) {
+      root.style.setProperty('--background', bg);
+    }
+  };
+
   // Load theme preferences from localStorage
   useEffect(() => {
     const savedMode = localStorage.getItem('theme-mode') as ThemeMode;
@@ -91,6 +125,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const initialColor = savedColor ? themeColors.find(c => c.value === savedColor) || themeColors[0] : themeColors[0];
     root.style.setProperty('--primary', initialColor.primary);
     root.style.setProperty('--primary-foreground', initialColor.primaryForeground);
+    applyThemeClass(initialColor.value);
+    applyBackgroundByTheme(initialColor.value, savedMode || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   }, []); 
 
   // Apply theme changes to document
@@ -109,6 +145,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     // Apply theme color as CSS variables
     root.style.setProperty('--primary', themeColor.primary);
     root.style.setProperty('--primary-foreground', themeColor.primaryForeground);
+    // 应用主题类（影响页面背景等语义变量）
+    applyThemeClass(themeColor.value);
+    // 应用页面背景变量，确保页面背景随主题色变化
+    applyBackgroundByTheme(themeColor.value, mode);
     
     // Save to localStorage
     localStorage.setItem('theme-mode', mode);

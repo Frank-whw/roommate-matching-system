@@ -29,7 +29,7 @@ export default async function TeamsPage() {
 
   return (
     <ProfileGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-transparent">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 面包屑导航 */}
         <Breadcrumb items={breadcrumbConfigs.teams} className="mb-4" />
