@@ -26,7 +26,7 @@ export default async function MatchesPage() {
 
   return (
     <ProfileGuard>
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-transparent">
       <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 面包屑导航 */}
         <Breadcrumb items={breadcrumbConfigs.matches} className="mb-4" />
