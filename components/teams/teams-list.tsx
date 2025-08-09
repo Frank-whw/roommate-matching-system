@@ -1,6 +1,4 @@
-import { eq, and, ne } from 'drizzle-orm';
-import { db } from '@/lib/db/drizzle';
-import { teams, teamMembers, users, userProfiles } from '@/lib/db/schema';
+import { getAvailableTeams, getUserTeam } from '@/lib/db/queries';
 import { TeamCard } from './team-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -29,45 +27,11 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
   }
 
   try {
-    // 首先检查用户是否已经在队伍中
-    const userTeam = await db
-      .select()
-      .from(teamMembers)
-      .where(eq(teamMembers.userId, currentUserId))
-      .limit(1);
-
-    // 构建查询条件
-    let whereConditions = [
-      eq(teams.status, 'recruiting'),
-      ne(teams.currentMembers, teams.maxMembers), // 未满员
-      ne(teams.leaderId, currentUserId) // 不是自己创建的队伍
-    ];
+    // 检查用户是否已经在队伍中
+    const userTeam = await getUserTeam(currentUserId);
     
-    // 如果用户已经在队伍中，还要排除那个队伍
-    if (userTeam.length > 0) {
-      const userCurrentTeam = await db
-        .select()
-        .from(teams)
-        .where(eq(teams.id, userTeam[0].teamId))
-        .limit(1);
-      
-      if (userCurrentTeam.length > 0) {
-        whereConditions.push(ne(teams.id, userCurrentTeam[0].id));
-      }
-    }
-    
-    // 查询可加入的队伍
-    const availableTeams = await db
-      .select({
-        team: teams,
-        leader: users,
-        leaderProfile: userProfiles,
-      })
-      .from(teams)
-      .innerJoin(users, eq(teams.leaderId, users.id))
-      .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
-      .where(and(...whereConditions))
-      .orderBy(teams.createdAt);
+    // 使用 getAvailableTeams 函数获取可加入的队伍（已包含性别过滤）
+    const availableTeams = await getAvailableTeams(currentUserId, 10);
 
     if (availableTeams.length === 0) {
       return (
@@ -78,15 +42,15 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                {userTeam.length > 0 ? '暂无其他可加入的队伍' : '暂无可加入的队伍'}
+                {userTeam ? '暂无其他可加入的队伍' : '暂无可加入的队伍'}
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {userTeam.length > 0 
-                  ? '您已经在队伍中了，当前没有其他招募中的队伍' 
-                  : '当前没有正在招募的队伍，不如创建一个新队伍吧！'
+                {userTeam 
+                  ? '您已经在队伍中了，当前没有其他招募中的同性队伍' 
+                  : '当前没有正在招募的同性队伍，不如创建一个新队伍吧！'
                 }
               </p>
-              {userTeam.length === 0 && (
+              {!userTeam && (
                 <Button asChild>
                   <Link href="/teams/create">
                     <Plus className="w-4 h-4 mr-2" />
@@ -105,9 +69,9 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            找到 {availableTeams.length} 个可加入的队伍
+            找到 {availableTeams.length} 个可加入的同性队伍
           </p>
-          {userTeam.length > 0 && (
+          {userTeam && (
             <div className="bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full">
               <p className="text-xs text-amber-800 dark:text-amber-200">
                 您已在队伍中，仅供浏览
@@ -117,14 +81,14 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-6" id="teams-list">
-          {availableTeams.map(({ team, leader, leaderProfile }: any) => (
+          {availableTeams.map(({ team, leader }: any) => (
             <TeamCard
               key={team.id}
               team={team}
               leader={leader}
-              leaderProfile={leaderProfile}
+              leaderProfile={null} // getAvailableTeams 没有返回 leaderProfile
               currentUserId={currentUserId}
-              canJoin={userTeam.length === 0} // 只有没有队伍的用户才能申请加入
+              canJoin={!userTeam} // 只有没有队伍的用户才能申请加入
             />
           ))}
         </div>

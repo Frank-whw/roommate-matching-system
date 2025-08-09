@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/contexts/theme-context';
 import ResponsiveHeader from '@/components/header-responsive';
 import BottomNav from '@/components/navigation/bottom-nav';
 import LoadingIndicator from '@/components/navigation/loading-indicator';
+import ErrorFilter from '@/components/error-filter';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export default function RootLayout({
       className={`${manrope.className}`}
     >
       <body className="min-h-[100dvh] bg-background text-foreground">
+        <ErrorFilter />
         <ThemeProvider>
           <RealtimeProvider>
             <div className="flex flex-col min-h-screen">

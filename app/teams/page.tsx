@@ -199,8 +199,9 @@ export default async function TeamsPage() {
                 <ul className="space-y-2">
                   <li>• 每个用户只能加入一个队伍</li>
                   <li>• 队伍最多4人，包括队长</li>
-                  <li>• 队长可以审批新成员申请</li>
-                  <li>• 队长离开时会自动转交给其他成员</li>
+                  <li>• 只能查看和加入同性别队伍</li>
+                  <li>• 队长可以审批新成员申请和移除成员</li>
+                  <li>• 队长不能直接退出有其他成员的队伍</li>
                   <li>• 队伍解散后所有成员都可重新组队</li>
                 </ul>
               </CardContent>
