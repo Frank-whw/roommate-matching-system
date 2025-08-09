@@ -32,7 +32,7 @@ export default function RootLayout({
       lang="en"
       className={`${manrope.className}`}
     >
-      <body className="min-h-[100dvh] bg-background text-foreground">
+      <body className="min-h-[100dvh] bg-background text-foreground app-page-bg">
         <ErrorFilter />
         <ThemeProvider>
           <ToastProvider>

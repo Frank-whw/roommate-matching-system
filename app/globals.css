@@ -64,6 +64,19 @@
   body {
     font-family: "Manrope", Arial, Helvetica, sans-serif;
   }
+  /* 页面级背景：以 --background 为底色，叠加主色的轻度径向渐变，随主题色/明暗自动变化 */
+  .app-page-bg {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1400px 700px at 20% -10%, hsl(var(--primary) / 0.16), transparent 60%),
+      linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background)));
+  }
+  .dark .app-page-bg {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1400px 700px at 20% -10%, hsl(var(--primary) / 0.28), transparent 60%),
+      linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background)));
+  }
 }
 
 /* Theme transitions */
@@ -125,6 +138,19 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 5% 64.9%;
   }
+}
+
+/* 仅控制不同主题色的页面背景变量，确保切换主题时背景明显变化 */
+@layer base {
+  .theme-blue { --background: 210 100% 97%; }
+  .theme-green { --background: 140 60% 96%; }
+  .theme-orange { --background: 32 100% 96%; }
+  .theme-red { --background: 0 100% 96%; }
+
+  .dark.theme-blue { --background: 222 47% 9%; }
+  .dark.theme-green { --background: 150 6% 8%; }
+  .dark.theme-orange { --background: 20 14% 8%; }
+  .dark.theme-red { --background: 350 25% 8%; }
 }
 
 @layer base {

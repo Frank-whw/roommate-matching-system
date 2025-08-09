@@ -86,7 +86,7 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
   const StudyHabitIcon = profile?.studyHabit ? studyHabitLabels[profile.studyHabit]?.icon || Coffee : Coffee;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-transparent">
       <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 返回按钮 */}
         <div className="mb-6">
