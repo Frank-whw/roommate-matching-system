@@ -391,6 +391,40 @@ export async function getTeamWithMembersContact(teamId: number, currentUserId: n
   };
 }
 
+export async function getAllTeams(userId: number, limit = 20) {
+  // 获取当前用户的性别信息
+  const currentUserProfile = await db
+    .select({ gender: userProfiles.gender })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
+
+  if (!currentUserProfile[0] || !currentUserProfile[0].gender) {
+    // 如果当前用户没有性别信息，返回空数组
+    return [];
+  }
+
+  const currentUserGender = currentUserProfile[0].gender;
+
+  // 获取所有同性别队伍（包括已满的）
+  return await db
+    .select({
+      team: teams,
+      leader: users,
+      memberCount: count(teamMembers.id)
+    })
+    .from(teams)
+    .leftJoin(users, eq(teams.leaderId, users.id))
+    .leftJoin(teamMembers, eq(teams.id, teamMembers.teamId))
+    .where(and(
+      eq(teams.gender, currentUserGender), // 只显示同性别队伍
+      isNull(teams.deletedAt)
+    ))
+    .groupBy(teams.id, users.id)
+    .orderBy(desc(teams.createdAt))
+    .limit(limit);
+}
+
 export async function getAvailableTeams(userId: number, limit = 20) {
   // 获取当前用户的性别信息
   const currentUserProfile = await db

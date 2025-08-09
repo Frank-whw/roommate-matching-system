@@ -1,3 +1,5 @@
+'use client';
+
 // Toast通知系统Hook
 
 import { useState, useCallback, createContext, useContext } from 'react';

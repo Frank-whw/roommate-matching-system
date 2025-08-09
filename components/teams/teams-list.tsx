@@ -1,7 +1,8 @@
-import { getAvailableTeams, getUserTeam } from '@/lib/db/queries';
+import { getAvailableTeams, getAllTeams, getUserTeam } from '@/lib/db/queries';
 import { TeamCard } from './team-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Search,
   Users,
@@ -12,9 +13,10 @@ import Link from 'next/link';
 
 interface TeamsListProps {
   currentUserId?: number;
+  showAll?: boolean; // 是否显示所有队伍（包括已满的）
 }
 
-export async function TeamsList({ currentUserId }: TeamsListProps) {
+export async function TeamsList({ currentUserId, showAll = false }: TeamsListProps) {
   if (!currentUserId) {
     return (
       <Alert>
@@ -30,10 +32,12 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
     // 检查用户是否已经在队伍中
     const userTeam = await getUserTeam(currentUserId);
     
-    // 使用 getAvailableTeams 函数获取可加入的队伍（已包含性别过滤）
-    const availableTeams = await getAvailableTeams(currentUserId, 10);
+    // 根据showAll参数选择查询函数
+    const teams = showAll 
+      ? await getAllTeams(currentUserId, 20)
+      : await getAvailableTeams(currentUserId, 20);
 
-    if (availableTeams.length === 0) {
+    if (teams.length === 0) {
       return (
         <div className="text-center py-12">
           <div className="flex flex-col items-center space-y-4">
@@ -42,15 +46,18 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                {userTeam ? '暂无其他可加入的队伍' : '暂无可加入的队伍'}
+                {showAll ? '暂无队伍' : (userTeam ? '暂无其他可加入的队伍' : '暂无可加入的队伍')}
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {userTeam 
-                  ? '您已经在队伍中了，当前没有其他招募中的同性队伍' 
-                  : '当前没有正在招募的同性队伍，不如创建一个新队伍吧！'
+                {showAll 
+                  ? '当前没有任何同性队伍，不如创建一个新队伍吧！'
+                  : (userTeam 
+                    ? '您已经在队伍中了，当前没有其他招募中的同性队伍' 
+                    : '当前没有正在招募的同性队伍，不如创建一个新队伍吧！'
+                  )
                 }
               </p>
-              {!userTeam && (
+              {(!userTeam || showAll) && (
                 <Button asChild>
                   <Link href="/teams/create">
                     <Plus className="w-4 h-4 mr-2" />
@@ -69,26 +76,32 @@ export async function TeamsList({ currentUserId }: TeamsListProps) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            找到 {availableTeams.length} 个可加入的同性队伍
+            找到 {teams.length} 个{showAll ? '' : '可加入的'}同性队伍
           </p>
-          {userTeam && (
+          {userTeam && !showAll && (
             <div className="bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full">
               <p className="text-xs text-amber-800 dark:text-amber-200">
                 您已在队伍中，仅供浏览
               </p>
             </div>
           )}
+          {showAll && userTeam && (
+            <Badge variant="outline" className="text-green-600 border-green-200">
+              可浏览所有队伍
+            </Badge>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-6" id="teams-list">
-          {availableTeams.map(({ team, leader }: any) => (
+          {teams.map(({ team, leader, memberCount }: any) => (
             <TeamCard
               key={team.id}
               team={team}
               leader={leader}
-              leaderProfile={null} // getAvailableTeams 没有返回 leaderProfile
+              leaderProfile={null} // getAllTeams 没有返回 leaderProfile
               currentUserId={currentUserId}
-              canJoin={!userTeam} // 只有没有队伍的用户才能申请加入
+              canJoin={!userTeam && !showAll} // showAll模式下不能申请，只能浏览
+              showAll={showAll}
             />
           ))}
         </div>
