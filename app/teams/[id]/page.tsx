@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentUser, getTeamWithMembers, getTeamWithMembersContact, getUserTeam } from '@/lib/db/queries';
 import { TeamMemberContact } from '@/components/teams/team-member-contact';
+import { JoinTeamButton } from '@/components/teams/join-team-button';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -9,7 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { joinTeam } from '@/app/teams/actions';
 import { 
   ArrowLeft,
   Crown,
@@ -168,34 +168,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
 
                 {/* 操作按钮 */}
                 <div className="space-y-3">
-                  {canJoin ? (
-                    <Button 
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                      onClick={async () => {
-                        const message = prompt('请输入申请留言（可选）:');
-                        if (message !== null) {
-                          const result = await joinTeam({
-                            teamId: team.id,
-                            message: message || '',
-                          });
-                          if (result.error) {
-                            alert(result.error);
-                          } else {
-                            alert(result.message);
-                            window.location.reload();
-                          }
-                        }
-                      }}
-                    >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      申请加入
-                    </Button>
-                  ) : (
-                    <Button variant="outline" className="w-full" disabled>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      已在队伍中
-                    </Button>
-                  )}
+                  <JoinTeamButton teamId={team.id} canJoin={canJoin} />
                   
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/matches?teamId=${team.id}`}>

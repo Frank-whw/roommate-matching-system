@@ -1,24 +1,29 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, users, userProfiles } from '@/lib/db/schema';
+import { getUserContactInfo } from '@/lib/db/queries';
 import { TeamCard } from './team-card';
 import { TeamManagement } from './team-management';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Users,
   Crown,
   Plus,
   Search,
-  ArrowRight
+  ArrowRight,
+  MessageCircle,
+  Mail
 } from 'lucide-react';
 import Link from 'next/link';
 
 interface MyTeamProps {
   currentUserId?: number;
+  showContacts?: boolean; // 是否显示联系方式
 }
 
-export async function MyTeam({ currentUserId }: MyTeamProps) {
+export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProps) {
   if (!currentUserId) {
     return (
       <Alert>
@@ -64,9 +69,10 @@ export async function MyTeam({ currentUserId }: MyTeamProps) {
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="#teams-list">
+                  <Link href="/teams">
                     <Search className="w-4 h-4 mr-2" />
-                    寻找队伍
+                    浏览队伍
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
               </div>
@@ -89,6 +95,17 @@ export async function MyTeam({ currentUserId }: MyTeamProps) {
       .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
       .where(eq(teamMembers.teamId, teamInfo.team.id));
 
+    // 如果需要显示联系方式，获取每个队友的联系信息
+    let contactsInfo: Record<number, any> = {};
+    if (showContacts) {
+      for (const { user } of allTeamMembers) {
+        if (user.id !== currentUserId) {
+          const contact = await getUserContactInfo(currentUserId, user.id);
+          contactsInfo[user.id] = contact;
+        }
+      }
+    }
+
     return (
       <div className="space-y-6">
         {/* 队伍基本信息 */}
@@ -101,9 +118,9 @@ export async function MyTeam({ currentUserId }: MyTeamProps) {
                   {teamInfo.team.name}
                 </h3>
                 {teamInfo.membership.isLeader && (
-                  <span className="ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs rounded-full">
+                  <Badge variant="outline" className="ml-2 text-yellow-600 border-yellow-300">
                     队长
-                  </span>
+                  </Badge>
                 )}
               </div>
               
@@ -119,22 +136,17 @@ export async function MyTeam({ currentUserId }: MyTeamProps) {
                 <span className="mx-2">•</span>
                 <span>创建于 {new Date(teamInfo.team.createdAt).toLocaleDateString()}</span>
               </div>
-
-
             </div>
 
             <div className="ml-4">
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
-                teamInfo.team.status === 'recruiting' 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-                  : teamInfo.team.status === 'full'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-              }`}>
+              <Badge 
+                variant={teamInfo.team.status === 'recruiting' ? 'default' : 'secondary'}
+                className={teamInfo.team.status === 'recruiting' ? 'bg-green-100 text-green-800' : ''}
+              >
                 {teamInfo.team.status === 'recruiting' && '招募中'}
                 {teamInfo.team.status === 'full' && '已满员'}
                 {teamInfo.team.status === 'disbanded' && '已解散'}
-              </div>
+              </Badge>
             </div>
           </div>
         </div>
@@ -143,32 +155,73 @@ export async function MyTeam({ currentUserId }: MyTeamProps) {
         <div>
           <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
             队伍成员 ({allTeamMembers.length})
+            {showContacts && (
+              <Badge variant="outline" className="ml-2 text-green-600 border-green-300">
+                含联系方式
+              </Badge>
+            )}
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {allTeamMembers.map(({ member, user, profile }) => (
-              <div key={member.id} className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div key={member.id} className="flex items-start space-x-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
                 <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
                     {user.name ? user.name.substring(0, 2) : user.email.substring(0, 2).toUpperCase()}
                   </div>
                   {member.isLeader && (
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
-                      <Crown className="w-2 h-2 text-white" />
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <Crown className="w-3 h-3 text-white" />
                     </div>
                   )}
                 </div>
+                
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {user.name || '用户' + user.id}
-                    </p>
-                    {member.isLeader && (
-                      <span className="ml-2 text-xs text-yellow-600 dark:text-yellow-400">队长</span>
-                    )}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {user.name || '用户' + user.id}
+                        </p>
+                        {member.isLeader && (
+                          <Badge variant="outline" className="ml-2 text-xs text-yellow-600 border-yellow-300">
+                            队长
+                          </Badge>
+                        )}
+                        {user.id === currentUserId && (
+                          <Badge variant="outline" className="ml-2 text-xs text-blue-600 border-blue-300">
+                            您
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {profile?.nickname ? (
+                          <span>昵称：{profile.nickname} • 加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
+                        ) : (
+                          <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
-                  </div>
+
+                  {/* 显示联系方式 */}
+                  {showContacts && user.id !== currentUserId && contactsInfo[user.id] && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center space-x-4 text-sm">
+                        {contactsInfo[user.id].email && (
+                          <div className="flex items-center text-gray-600 dark:text-gray-300">
+                            <Mail className="w-4 h-4 mr-1" />
+                            <span className="truncate">{contactsInfo[user.id].email}</span>
+                          </div>
+                        )}
+                        {contactsInfo[user.id].wechatId && (
+                          <div className="flex items-center text-green-600 dark:text-green-400">
+                            <MessageCircle className="w-4 h-4 mr-1" />
+                            <span>{contactsInfo[user.id].wechatId}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

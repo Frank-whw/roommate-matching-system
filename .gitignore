@@ -41,3 +41,6 @@ postgres_data/
 .env*.local
 
 CLAUDE.md
+
+# scripts folder (cloud database, no need to track)
+scripts/

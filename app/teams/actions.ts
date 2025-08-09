@@ -38,12 +38,6 @@ const removeMemberSchema = z.object({
   memberId: z.number().int().positive('成员ID不正确'),
 });
 
-// Transfer leadership schema
-const transferLeadershipSchema = z.object({
-  teamId: z.number().int().positive('队伍ID不正确'),
-  newLeaderId: z.number().int().positive('新队长ID不正确'),
-});
-
 // Disband team schema
 const disbandTeamSchema = z.object({
   teamId: z.number().int().positive('队伍ID不正确'),
@@ -88,6 +82,17 @@ export async function createTeam(rawData: any) {
       return { error: '您已经在一个队伍中，请先退出当前队伍' };
     }
 
+    // Get user's gender for the team
+    const userProfile = await db
+      .select({ gender: userProfiles.gender })
+      .from(userProfiles)
+      .where(eq(userProfiles.userId, currentUserId))
+      .limit(1);
+
+    if (!userProfile[0] || !userProfile[0].gender) {
+      return { error: '请先完善个人资料中的性别信息' };
+    }
+
     // Create the team (within a transaction)
     const newTeam = await db.transaction(async (tx) => {
       // Create team
@@ -96,6 +101,7 @@ export async function createTeam(rawData: any) {
         description,
         requirements,
         leaderId: currentUserId,
+        gender: userProfile[0].gender, // 设置队伍性别为队长性别
         maxMembers,
         currentMembers: 1,
         status: 'recruiting',
@@ -186,6 +192,21 @@ export async function joinTeam(rawData: any) {
 
     if (team.leaderId === currentUserId) {
       return { error: '您不能申请加入自己创建的队伍' };
+    }
+
+    // 检查性别是否匹配（如果队伍有性别要求）
+    const applicantProfile = await db
+      .select({ gender: userProfiles.gender })
+      .from(userProfiles)
+      .where(eq(userProfiles.userId, currentUserId))
+      .limit(1);
+
+    if (!applicantProfile[0] || !applicantProfile[0].gender) {
+      return { error: '请先完善个人资料中的性别信息' };
+    }
+
+    if (team.gender && team.gender !== applicantProfile[0].gender) {
+      return { error: '性别不匹配，无法加入该队伍' };
     }
 
     // Check if user already has a pending request for this team
@@ -308,6 +329,8 @@ export async function reviewJoinRequest(rawData: any) {
 
         return { error: '该用户已加入其他队伍' };
       }
+
+      // 因为申请时已经过性别筛选，且队伍性别固定不变，这里不需要重复验证性别
 
       // Approve the request (within a transaction)
       await db.transaction(async (tx) => {
@@ -432,73 +455,9 @@ export async function leaveTeam(rawData: any) {
 
     const { team, membership } = teamInfo[0];
 
-    // If user is the leader and there are other members, transfer leadership or disband
+    // If user is the leader and there are other members, cannot leave (must disband or remove members first)
     if (membership.isLeader && team.currentMembers > 1) {
-      // Find another member to make leader
-      const otherMembers = await db
-        .select({
-          member: teamMembers,
-          user: users,
-        })
-        .from(teamMembers)
-        .innerJoin(users, eq(teamMembers.userId, users.id))
-        .where(
-          and(
-            eq(teamMembers.teamId, teamId),
-            ne(teamMembers.userId, currentUserId)
-          )
-        )
-        .limit(1);
-
-      if (otherMembers.length > 0) {
-        // Transfer leadership to the first available member
-        const newLeader = otherMembers[0];
-        
-        await db.transaction(async (tx) => {
-          // Update team leader
-          await tx
-            .update(teams)
-            .set({
-              leaderId: newLeader.member.userId,
-              currentMembers: team.currentMembers - 1,
-              updatedAt: new Date(),
-            })
-            .where(eq(teams.id, teamId));
-
-          // Update new leader status
-          await tx
-            .update(teamMembers)
-            .set({ isLeader: true })
-            .where(eq(teamMembers.id, newLeader.member.id));
-
-          // Remove current user from team
-          await tx
-            .delete(teamMembers)
-            .where(eq(teamMembers.id, membership.id));
-        });
-
-        // Log activities
-        await Promise.all([
-          logActivity(
-            currentUserId,
-            ActivityType.LEAVE_TEAM,
-            undefined,
-            { teamId, teamName: team.name }
-          ),
-          logActivity(
-            newLeader.member.userId,
-            ActivityType.BECOME_TEAM_LEADER,
-            undefined,
-            { teamId, teamName: team.name, previousLeaderId: currentUserId }
-          ),
-        ]);
-
-        revalidatePath('/teams');
-        return {
-          success: true,
-          message: `已退出队伍，队长已转交给 ${newLeader.user.name || newLeader.user.email}`,
-        };
-      }
+      return { error: '队长不能直接退出有成员的队伍，请先解散队伍或移除所有成员' };
     }
 
     // If user is the only member or not a leader, just remove them
@@ -660,126 +619,6 @@ export async function removeMember(rawData: any) {
     console.error('移除成员失败:', error);
     return {
       error: '移除成员失败，请重试',
-    };
-  }
-}
-
-// Transfer leadership (leader only)
-export async function transferLeadership(rawData: any) {
-  try {
-    const { user } = await getCurrentUser();
-    if (!user || !user.users) {
-      return { error: '用户未登录' };
-    }
-
-    const currentUserId = user.users.id;
-
-    // Validate data
-    const result = transferLeadershipSchema.safeParse(rawData);
-    if (!result.success) {
-      return { error: result.error.errors[0].message };
-    }
-
-    const { teamId, newLeaderId } = result.data;
-
-    // Check if current user is the team leader
-    const leaderCheck = await db
-      .select({
-        team: teams,
-        membership: teamMembers,
-      })
-      .from(teams)
-      .innerJoin(teamMembers, and(
-        eq(teamMembers.teamId, teams.id),
-        eq(teamMembers.userId, currentUserId),
-        eq(teamMembers.isLeader, true)
-      ))
-      .where(eq(teams.id, teamId))
-      .limit(1);
-
-    if (leaderCheck.length === 0) {
-      return { error: '只有队长才能转让队长职位' };
-    }
-
-    // Cannot transfer to yourself
-    if (currentUserId === newLeaderId) {
-      return { error: '不能转让给自己' };
-    }
-
-    // Check if new leader is in the team
-    const newLeaderMember = await db
-      .select({
-        member: teamMembers,
-        user: users,
-      })
-      .from(teamMembers)
-      .innerJoin(users, eq(teamMembers.userId, users.id))
-      .where(
-        and(
-          eq(teamMembers.teamId, teamId),
-          eq(teamMembers.userId, newLeaderId)
-        )
-      )
-      .limit(1);
-
-    if (newLeaderMember.length === 0) {
-      return { error: '新队长必须是队伍成员' };
-    }
-
-    const team = leaderCheck[0].team;
-    const currentLeaderMember = leaderCheck[0].membership;
-    const newLeader = newLeaderMember[0];
-
-    // Transfer leadership
-    await db.transaction(async (tx) => {
-      // Update team leader
-      await tx
-        .update(teams)
-        .set({
-          leaderId: newLeaderId,
-          updatedAt: new Date(),
-        })
-        .where(eq(teams.id, teamId));
-
-      // Update old leader status
-      await tx
-        .update(teamMembers)
-        .set({ isLeader: false })
-        .where(eq(teamMembers.id, currentLeaderMember.id));
-
-      // Update new leader status
-      await tx
-        .update(teamMembers)
-        .set({ isLeader: true })
-        .where(eq(teamMembers.id, newLeader.member.id));
-    });
-
-    // Log activities
-    await Promise.all([
-      logActivity(
-        currentUserId,
-        ActivityType.BECOME_TEAM_LEADER,
-        undefined,
-        { teamId, teamName: team.name, previousLeaderId: currentUserId, newLeaderId }
-      ),
-      logActivity(
-        newLeaderId,
-        ActivityType.BECOME_TEAM_LEADER,
-        undefined,
-        { teamId, teamName: team.name, previousLeaderId: currentUserId }
-      ),
-    ]);
-
-    revalidatePath('/teams');
-    return {
-      success: true,
-      message: `已将队长职位转让给 ${newLeader.user.name || newLeader.user.email}`,
-    };
-
-  } catch (error) {
-    console.error('转让队长失败:', error);
-    return {
-      error: '转让队长失败，请重试',
     };
   }
 }

@@ -89,6 +89,7 @@ export const teams = pgTable('teams', {
   leaderId: integer('leader_id')
     .notNull()
     .references(() => users.id), // 队长ID
+  gender: genderEnum('gender'), // 队伍性别（基于队长性别）
   maxMembers: integer('max_members').notNull().default(4), // 最大成员数
   currentMembers: integer('current_members').notNull().default(1), // 当前成员数
   status: teamStatusEnum('status').notNull().default('recruiting'), // 队伍状态
@@ -100,6 +101,7 @@ export const teams = pgTable('teams', {
 }, (table) => ({
   leaderIdIdx: index('team_leader_id_idx').on(table.leaderId),
   statusIdx: index('team_status_idx').on(table.status),
+  genderIdx: index('team_gender_idx').on(table.gender), // 添加性别索引以优化查询
 }));
 
 // Team members table - 队伍成员表

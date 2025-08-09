@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   removeMember, 
-  transferLeadership, 
   disbandTeam, 
   updateTeam 
 } from '@/app/teams/actions';
@@ -72,32 +71,6 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
     } catch (error) {
       console.error('移除成员失败:', error);
       alert('移除成员失败，请重试');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleTransferLeadership = async (newLeaderId: number, newLeaderName: string) => {
-    if (!confirm(`确定要将队长职位转让给 ${newLeaderName} 吗？转让后您将失去队长权限。`)) {
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      const result = await transferLeadership({
-        teamId: team.id,
-        newLeaderId,
-      });
-      
-      if (result.error) {
-        alert(result.error);
-      } else {
-        alert(result.message);
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('转让队长失败:', error);
-      alert('转让队长失败，请重试');
     } finally {
       setIsProcessing(false);
     }
@@ -206,7 +179,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
         <CardHeader>
           <CardTitle>成员管理 ({members.length})</CardTitle>
           <CardDescription>
-            管理队伍成员，转让队长职位或移除成员
+            管理队伍成员
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -278,14 +251,6 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                         <DropdownMenuSeparator />
                         
                         <DropdownMenuItem
-                          onClick={() => handleTransferLeadership(user.id, user.name || user.email)}
-                          className="text-blue-600"
-                        >
-                          <Crown className="w-4 h-4 mr-2" />
-                          转让队长
-                        </DropdownMenuItem>
-                        
-                        <DropdownMenuItem
                           onClick={() => handleRemoveMember(user.id, user.name || user.email)}
                           className="text-red-600"
                         >
@@ -316,7 +281,6 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                 <p className="font-medium mb-1">队长权限说明</p>
                 <ul className="space-y-1 text-xs">
                   <li>• 移除成员：将成员从队伍中删除</li>
-                  <li>• 转让队长：将队长职位转让给其他成员</li>
                   <li>• 解散队伍：永久删除整个队伍（不可撤销）</li>
                 </ul>
               </div>
