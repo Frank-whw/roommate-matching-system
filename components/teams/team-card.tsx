@@ -23,14 +23,19 @@ interface TeamCardProps {
   leaderProfile: any;
   currentUserId: number;
   canJoin: boolean;
+  showAll?: boolean; // 是否在显示所有队伍模式
 }
 
-export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }: TeamCardProps) {
+export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, showAll = false }: TeamCardProps) {
   const [isJoining, setIsJoining] = useState(false);
 
   const handleJoinTeam = async () => {
     if (!canJoin) {
-      alert('您已经在一个队伍中了');
+      if (showAll) {
+        alert('请前往队伍广场申请加入队伍');
+      } else {
+        alert('您已经在一个队伍中了');
+      }
       return;
     }
 
@@ -58,6 +63,26 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
     }
   };
 
+  // 获取按钮文本和状态
+  const getButtonText = () => {
+    if (isJoining) return '申请中...';
+    if (canJoin) return '申请加入';
+    
+    // 不能申请的情况
+    if (showAll) {
+      // 队伍广场模式：显示队伍状态
+      if (team.currentMembers >= team.maxMembers) {
+        return '队伍已满';
+      }
+      return '仅供浏览';
+    } else {
+      // 普通模式：用户已在队伍中
+      return '已在队伍中';
+    }
+  };
+
+  const isTeamFull = team.currentMembers >= team.maxMembers;
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -84,9 +109,13 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
                 </h3>
                 <Badge 
                   variant="outline" 
-                  className="bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
+                  className={
+                    isTeamFull 
+                      ? "bg-gray-50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                      : "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
+                  }
                 >
-                  招募中
+                  {isTeamFull ? '已满员' : '招募中'}
                 </Badge>
               </div>
               
@@ -197,10 +226,14 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin }
               size="sm"
               onClick={handleJoinTeam}
               disabled={isJoining || !canJoin}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+              className={
+                canJoin 
+                  ? "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }
             >
               <UserPlus className="w-4 h-4 mr-1" />
-              {isJoining ? '申请中...' : canJoin ? '申请加入' : '已在队伍中'}
+              {getButtonText()}
             </Button>
           </div>
         </div>
