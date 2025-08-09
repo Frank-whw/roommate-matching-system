@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,7 +29,8 @@ import {
 
 interface FilterState {
   search: string;
-  ageRange: [number, number];
+  minAge: number;
+  maxAge: number;
   sleepTimeRange: string;
   studyHabit: string[];
   lifestyle: string[];
@@ -38,7 +40,8 @@ interface FilterState {
 
 const initialFilters: FilterState = {
   search: '',
-  ageRange: [18, 30],
+  minAge: 18,
+  maxAge: 30,
   sleepTimeRange: '',
   studyHabit: [],
   lifestyle: [],
@@ -47,8 +50,26 @@ const initialFilters: FilterState = {
 };
 
 export function FilterSidebar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 从URL参数初始化筛选条件
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    setFilters({
+      search: params.get('search') || '',
+      minAge: parseInt(params.get('minAge') || '18'),
+      maxAge: parseInt(params.get('maxAge') || '30'),
+      sleepTimeRange: params.get('sleepTime') || '',
+      studyHabit: params.get('studyHabit')?.split(',').filter(Boolean) || [],
+      lifestyle: params.get('lifestyle')?.split(',').filter(Boolean) || [],
+      cleanliness: params.get('cleanliness')?.split(',').filter(Boolean) || [],
+      mbti: params.get('mbti')?.split(',').filter(Boolean) || []
+    });
+  }, [searchParams]);
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     setFilters(prev => ({
@@ -69,13 +90,51 @@ export function FilterSidebar() {
     });
   };
 
-  const resetFilters = () => {
+  const applyFilters = async () => {
+    setIsLoading(true);
+    const params = new URLSearchParams();
+    
+    if (filters.search.trim()) {
+      params.set('search', filters.search.trim());
+    }
+    if (filters.minAge !== 18) {
+      params.set('minAge', filters.minAge.toString());
+    }
+    if (filters.maxAge !== 30) {
+      params.set('maxAge', filters.maxAge.toString());
+    }
+    if (filters.sleepTimeRange) {
+      params.set('sleepTime', filters.sleepTimeRange);
+    }
+    if (filters.studyHabit.length > 0) {
+      params.set('studyHabit', filters.studyHabit.join(','));
+    }
+    if (filters.lifestyle.length > 0) {
+      params.set('lifestyle', filters.lifestyle.join(','));
+    }
+    if (filters.cleanliness.length > 0) {
+      params.set('cleanliness', filters.cleanliness.join(','));
+    }
+    if (filters.mbti.length > 0) {
+      params.set('mbti', filters.mbti.join(','));
+    }
+
+    const queryString = params.toString();
+    router.push(queryString ? `/explore?${queryString}` : '/explore');
+    setTimeout(() => setIsLoading(false), 500);
+  };
+
+  const resetFilters = async () => {
+    setIsLoading(true);
     setFilters(initialFilters);
+    router.push('/explore');
+    setTimeout(() => setIsLoading(false), 500);
   };
 
   const getActiveFiltersCount = () => {
     let count = 0;
-    if (filters.search) count++;
+    if (filters.search.trim()) count++;
+    if (filters.minAge !== 18 || filters.maxAge !== 30) count++;
     if (filters.sleepTimeRange) count++;
     count += filters.studyHabit.length;
     count += filters.lifestyle.length;
@@ -111,7 +170,7 @@ export function FilterSidebar() {
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            disabled={getActiveFiltersCount() === 0}
+            disabled={getActiveFiltersCount() === 0 || isLoading}
           >
             <RotateCcw className="w-3 h-3 mr-1" />
             重置
@@ -127,7 +186,7 @@ export function FilterSidebar() {
             关键词搜索
           </Label>
           <Input
-            placeholder="搜索专业、兴趣、简介..."
+            placeholder="搜索兴趣、简介..."
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
           />
@@ -144,6 +203,9 @@ export function FilterSidebar() {
             <div className="text-sm text-gray-500 dark:text-gray-400">
               💡 匹配广场只显示与您相同性别的用户和队伍
             </div>
+            
+            {/* 年龄范围 */}
+            
           </div>
         </div>
 
@@ -277,8 +339,20 @@ export function FilterSidebar() {
         )}
 
         {/* 应用筛选 */}
-        <Button className="w-full" size="sm">
-          应用筛选 ({getActiveFiltersCount()})
+        <Button 
+          className="w-full" 
+          size="sm"
+          onClick={applyFilters}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              应用中...
+            </>
+          ) : (
+            <>应用筛选 ({getActiveFiltersCount()})</>
+          )}
         </Button>
       </CardContent>
     </Card>

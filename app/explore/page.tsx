@@ -18,7 +18,20 @@ import {
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
 
-export default async function ExplorePage() {
+interface ExplorePageProps {
+  searchParams: {
+    search?: string;
+    minAge?: string;
+    maxAge?: string;
+    sleepTime?: string;
+    studyHabit?: string;
+    lifestyle?: string;
+    cleanliness?: string;
+    mbti?: string;
+  };
+}
+
+export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const { user, session } = await getCurrentUser();
   
   if (!user) {
@@ -54,7 +67,10 @@ export default async function ExplorePage() {
             {/* 右侧用户卡片网格 */}
             <div className="lg:col-span-3">
               <Suspense fallback={<UserCardGridSkeleton />}>
-                <UserCardGrid currentUserId={user.users?.id} />
+                <UserCardGrid 
+                  currentUserId={user.users?.id} 
+                  searchParams={searchParams}
+                />
               </Suspense>
             </div>
           </div>

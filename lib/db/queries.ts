@@ -428,6 +428,7 @@ export async function getAvailableTeams(userId: number, limit = 20) {
   
   const conditions = [
     eq(teams.status, 'recruiting'),
+    eq(teams.gender, currentUserGender), // 直接过滤同性别队伍
     isNull(teams.deletedAt)
   ];
   
@@ -435,54 +436,19 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     conditions.push(notInArray(teams.id, excludeTeamIds));
   }
   
-  // 获取所有符合条件的队伍
-  const allTeams = await db
+  // 获取符合条件的队伍
+  return await db
     .select({
       team: teams,
       leader: users,
-      leaderProfile: userProfiles,
       memberCount: count(teamMembers.id)
     })
     .from(teams)
     .leftJoin(users, eq(teams.leaderId, users.id))
-    .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .leftJoin(teamMembers, eq(teams.id, teamMembers.teamId))
     .where(and(...conditions))
-    .groupBy(teams.id, users.id, userProfiles.id)
-    .limit(limit * 2); // 多获取一些，因为需要进一步过滤
-
-  // 过滤出同性别队伍（检查队伍领队和所有成员的性别）
-  const sameGenderTeams = [];
-  
-  for (const teamData of allTeams) {
-    // 检查队伍领队的性别
-    if (teamData.leaderProfile && teamData.leaderProfile.gender === currentUserGender) {
-      // 获取队伍所有成员的性别信息
-      const members = await db
-        .select({ gender: userProfiles.gender })
-        .from(teamMembers)
-        .innerJoin(userProfiles, eq(teamMembers.userId, userProfiles.userId))
-        .where(eq(teamMembers.teamId, teamData.team.id));
-      
-      // 检查所有成员是否都是同性别
-      const allSameGender = members.every(member => member.gender === currentUserGender);
-      
-      if (allSameGender) {
-        sameGenderTeams.push({
-          team: teamData.team,
-          leader: teamData.leader,
-          memberCount: teamData.memberCount
-        });
-      }
-    }
-    
-    // 如果已经找到足够的同性别队伍，就停止搜索
-    if (sameGenderTeams.length >= limit) {
-      break;
-    }
-  }
-  
-  return sameGenderTeams;
+    .groupBy(teams.id, users.id)
+    .limit(limit);
 }
 
 // 个人资料相关查询
