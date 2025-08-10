@@ -54,18 +54,18 @@ export function CreateTeamForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <div className="bg-red-100/80 dark:bg-red-900/30 border border-red-300/80 dark:border-red-700/80 rounded-xl p-4 backdrop-blur-md">
           <div className="flex items-center">
-            <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
-            <span className="text-red-700 dark:text-red-200">{error}</span>
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
+            <span className="text-red-800 dark:text-red-200 font-medium">{error}</span>
           </div>
         </div>
       )}
 
       {/* 队伍名称 */}
-      <div>
-        <Label htmlFor="name" className="flex items-center">
-          <Crown className="w-4 h-4 mr-2" />
+      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
+        <Label htmlFor="name" className="flex items-center text-gray-900 dark:text-white font-semibold">
+          <Crown className="w-4 h-4 mr-2 text-blue-600" />
           队伍名称 <span className="text-red-500 ml-1">*</span>
         </Label>
         <Input
@@ -74,17 +74,17 @@ export function CreateTeamForm() {
           required
           maxLength={100}
           placeholder="例如：学霸联盟、夜猫子小队..."
-          className="mt-1"
+          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
           队伍名称将显示在队伍列表中，建议简洁有特色
         </p>
       </div>
 
       {/* 队伍描述 */}
-      <div>
-        <Label htmlFor="description" className="flex items-center">
-          <FileText className="w-4 h-4 mr-2" />
+      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
+        <Label htmlFor="description" className="flex items-center text-gray-900 dark:text-white font-semibold">
+          <FileText className="w-4 h-4 mr-2 text-blue-600" />
           队伍描述
         </Label>
         <Textarea
@@ -92,70 +92,83 @@ export function CreateTeamForm() {
           name="description"
           rows={4}
           placeholder="介绍您的队伍文化、氛围和特色..."
-          className="mt-1"
+          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
           详细的描述有助于吸引合适的室友加入
         </p>
       </div>
 
-
       {/* 招募要求 */}
-      <div>
-        <Label htmlFor="requirements" className="flex items-center">
-          <FileText className="w-4 h-4 mr-2" />
+      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
+        <Label htmlFor="requirements" className="flex items-center text-gray-900 dark:text-white font-semibold">
+          <FileText className="w-4 h-4 mr-2 text-blue-600" />
           招募要求
         </Label>
         <Textarea
           id="requirements"
           name="requirements"
-          rows={3}
-          placeholder="例如：作息规律、保持安静、共同维护卫生..."
-          className="mt-1"
+          rows={4}
+          placeholder="说明您希望招募什么样的室友，例如：作息时间、生活习惯、学习态度等..."
+          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          明确您的期望，帮助筛选合适的队友
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
+          明确的要求有助于找到更合适的室友
         </p>
       </div>
 
+      {/* 期望宿舍区域 */}
+      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
+        <Label htmlFor="dormArea" className="flex items-center text-gray-900 dark:text-white font-semibold">
+          <MapPin className="w-4 h-4 mr-2 text-blue-600" />
+          期望宿舍区域
+        </Label>
+        <Input
+          id="dormArea"
+          name="dormArea"
+          placeholder="例如：东区、西区、南区、北区..."
+          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
+        />
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
+          指定期望的宿舍区域，方便后续安排
+        </p>
+      </div>
+
+      {/* 队伍信息提示 */}
+      <div className="bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/60 dark:border-blue-700/60 rounded-xl p-6 backdrop-blur-2xl">
+        <div className="flex items-start">
+          <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5" />
+          <div>
+            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              队伍信息
+            </h4>
+            <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+              <li>• 队伍最多4人，包括队长</li>
+              <li>• 创建后可以邀请其他同学加入</li>
+              <li>• 队长可以管理队伍成员和设置</li>
+              <li>• 队伍创建后可以修改基本信息</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* 提交按钮 */}
-      <div className="flex items-center justify-end space-x-4 pt-6 border-t">
-        <Button 
-          type="button" 
-          variant="outline" 
+      <div className="flex items-center justify-end space-x-4 pt-4">
+        <Button
+          type="button"
+          variant="outline"
           onClick={() => router.back()}
-          disabled={isSubmitting}
+          className="border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         >
           取消
         </Button>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={isSubmitting}
-          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+          className="bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-8 py-2 font-medium backdrop-blur-md"
         >
-          {isSubmitting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              创建中...
-            </>
-          ) : (
-            <>
-              <Crown className="w-4 h-4 mr-2" />
-              创建队伍
-            </>
-          )}
+          {isSubmitting ? '创建中...' : '创建队伍'}
         </Button>
-      </div>
-
-      {/* 创建提醒 */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <div className="flex items-start">
-          <AlertCircle className="w-5 h-5 text-blue-500 mr-2 mt-0.5" />
-          <div className="text-sm text-blue-700 dark:text-blue-200">
-            <p className="font-medium mb-1">创建后您将成为队长</p>
-            <p>您可以管理队伍成员、审核加入申请，并在任何时候修改队伍信息。队伍固定为4人制。</p>
-          </div>
-        </div>
       </div>
     </form>
   );

@@ -39,16 +39,16 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
 
     if (teams.length === 0) {
       return (
-        <div className="text-center py-12">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <Search className="w-8 h-8 text-gray-400" />
+        <div className="text-center py-16">
+          <div className="flex flex-col items-center space-y-6">
+            <div className="w-20 h-20 bg-white/60 dark:bg-gray-800/60 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 dark:border-gray-700/60">
+              <Search className="w-8 h-8 text-gray-500 dark:text-gray-400" />
             </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <div className="max-w-md">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 {showAll ? '暂无队伍' : (userTeam ? '暂无其他可加入的队伍' : '暂无可加入的队伍')}
               </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 {showAll 
                   ? '当前没有任何同性队伍，不如创建一个新队伍吧！'
                   : (userTeam 
@@ -58,7 +58,7 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
                 }
               </p>
               {(!userTeam || showAll) && (
-                <Button asChild>
+                <Button asChild className="bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-6 py-2 font-medium backdrop-blur-md">
                   <Link href="/teams/create">
                     <Plus className="w-4 h-4 mr-2" />
                     创建队伍
@@ -74,25 +74,32 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
 
     return (
       <div className="space-y-6">
+        {/* 统计信息栏 */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            找到 {teams.length} 个{showAll ? '' : '可加入的'}同性队伍
-          </p>
-          {userTeam && !showAll && (
-            <div className="bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full">
-              <p className="text-xs text-amber-800 dark:text-amber-200">
-                您已在队伍中，仅供浏览
-              </p>
-            </div>
-          )}
-          {showAll && userTeam && (
-            <Badge variant="outline" className="text-green-600 border-green-200">
-              可浏览所有队伍
-            </Badge>
-          )}
+          <div className="flex items-center space-x-3">
+            <p className="text-sm text-gray-700 dark:text-gray-200 font-medium">
+              找到 <span className="text-blue-600 dark:text-blue-400 font-semibold">{teams.length}</span> 个{showAll ? '' : '可加入的'}同性队伍
+            </p>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            {userTeam && !showAll && (
+              <div className="bg-amber-100/80 dark:bg-amber-900/50 px-3 py-1.5 rounded-full border border-amber-300/80 dark:border-amber-700/80 backdrop-blur-md">
+                <p className="text-xs text-amber-800 dark:text-amber-200 font-medium">
+                  您已在队伍中，仅供浏览
+                </p>
+              </div>
+            )}
+            {showAll && userTeam && (
+              <Badge variant="outline" className="text-green-700 dark:text-green-300 border-green-300/80 dark:border-green-700/80 bg-green-100/80 dark:bg-green-900/50 backdrop-blur-md">
+                可浏览所有队伍
+              </Badge>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6" id="teams-list">
+        {/* 响应式网格布局 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="teams-list">
           {teams.map(({ team, leader, memberCount }: any) => (
             <TeamCard
               key={team.id}
