@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { getCurrentUser } from '@/lib/db/queries';
-import { MatchesList } from '@/components/matches/matches-list';
+
 import { MyTeam } from '@/components/teams/my-team';
 import { JoinRequests } from '@/components/teams/join-requests';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,6 @@ import { ProfileGuard } from '@/components/profile/profile-guard';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
-  Heart,
   Users,
   Crown,
   UserPlus,
@@ -44,10 +43,10 @@ export default async function MatchesPage() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center">
                 <Users className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-blue-500" />
-                我的匹配
+                队伍管理
               </h1>
               <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                管理您的队伍和室友匹配
+                管理您的队伍和邀请
               </p>
             </div>
             
@@ -84,32 +83,34 @@ export default async function MatchesPage() {
               </CardContent>
             </Card>
 
-            {/* 个人匹配功能 */}
+            {/* 队伍邀请管理 */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Heart className="w-5 h-5 mr-2 text-red-500" />
-                  个人匹配
+                  <UserPlus className="w-5 h-5 mr-2 text-blue-500" />
+                  队伍邀请
                 </CardTitle>
                 <CardDescription>
-                  与您互相邀请的室友伙伴
+                  管理您发送和接收的队伍邀请
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">0</div>
-                    <div className="text-sm text-yellow-700 dark:text-yellow-300">新匹配</div>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">0</div>
+                    <div className="text-sm text-blue-700 dark:text-blue-300">待处理邀请</div>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">0</div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">历史匹配</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300">已发送邀请</div>
                   </div>
                 </div>
 
-                <Suspense fallback={<MatchesListSkeleton />}>
-                  <MatchesList currentUserId={user.users?.id} />
-                </Suspense>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <UserPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>暂无队伍邀请</p>
+                  <p className="text-sm mt-2">去探索页面邀请其他用户加入您的队伍</p>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -204,22 +205,7 @@ function MyTeamSkeleton() {
   );
 }
 
-function MatchesListSkeleton() {
-  return (
-    <div className="space-y-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg animate-pulse">
-          <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-          <div className="flex-1">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-          </div>
-          <div className="w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
-        </div>
-      ))}
-    </div>
-  );
-}
+
 
 function JoinRequestsSkeleton() {
   return (

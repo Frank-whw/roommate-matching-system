@@ -24,6 +24,6 @@ export const breadcrumbConfigs = {
   ],
   matches: [
     { label: '首页', href: '/' },
-    { label: '我的匹配' },
+    { label: '队伍管理' },
   ],
 };
