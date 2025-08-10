@@ -4,6 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { verifyEmailVerificationToken } from '@/lib/auth/session';
+import { generateEmailFromStudentId } from '@/lib/db/queries';
 
 const verifyEmailSchema = z.object({
   token: z.string().min(1, 'Token不能为空'),
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     const user = await db
       .select()
       .from(users)
-      .where(eq(users.email, tokenData.email))
+      .where(eq(users.studentId, tokenData.studentId))
       .limit(1);
 
     if (user.length === 0) {
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest) {
         user: {
           id: updatedUser[0].id,
           name: updatedUser[0].name,
-          email: updatedUser[0].email,
+          email: generateEmailFromStudentId(updatedUser[0].studentId),
           studentId: updatedUser[0].studentId,
           isEmailVerified: updatedUser[0].isEmailVerified
         }

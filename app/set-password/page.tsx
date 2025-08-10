@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle, AlertCircle, Loader2, Lock } from 'lucide-react';
@@ -13,6 +14,8 @@ import { CheckCircle, AlertCircle, Loader2, Lock } from 'lucide-react';
 function SetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,18 @@ function SetPasswordContent() {
     
     if (!token) {
       setError('无效的设置密码链接');
+      return;
+    }
+
+    // 验证姓名
+    if (!name.trim()) {
+      setError('请输入姓名');
+      return;
+    }
+
+    // 验证性别
+    if (!gender) {
+      setError('请选择性别');
       return;
     }
 
@@ -61,6 +76,8 @@ function SetPasswordContent() {
         },
         body: JSON.stringify({
           token,
+          name: name.trim(),
+          gender,
           password,
           confirmPassword
         }),
@@ -135,7 +152,7 @@ function SetPasswordContent() {
             <CardDescription className="text-center">
               {success 
                 ? '您现在可以使用新密码登录系统'
-                : '密码需要至少8个字符，包含大小写字母和数字'
+                : '请填写基本信息并设置登录密码'
               }
             </CardDescription>
           </CardHeader>
@@ -143,6 +160,37 @@ function SetPasswordContent() {
           {!success ? (
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="name" className="text-sm font-medium">
+                    姓名 <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="请输入您的真实姓名"
+                    required
+                    maxLength={50}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="gender" className="text-sm font-medium">
+                    性别 <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={gender} onValueChange={setGender} required>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="请选择性别" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">男</SelectItem>
+                      <SelectItem value="female">女</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div>
                   <Label htmlFor="password" className="text-sm font-medium">
                     新密码 <span className="text-destructive">*</span>
@@ -213,7 +261,7 @@ function SetPasswordContent() {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={loading || !password || !confirmPassword}
+                  disabled={loading || !name.trim() || !gender || !password || !confirmPassword}
                 >
                   {loading ? (
                     <>

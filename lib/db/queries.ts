@@ -120,14 +120,16 @@ export async function getUserByStudentId(studentId: string) {
   return result[0] || null;
 }
 
+// 通过邮箱查找用户（邮箱通过学号生成）
 export async function getUserByEmail(email: string) {
-  const result = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.email, email), isNull(users.deletedAt)))
-    .limit(1);
-  
-  return result[0] || null;
+  // 从邮箱中提取学号
+  const studentId = email.replace('@stu.ecnu.edu.cn', '');
+  return await getUserByStudentId(studentId);
+}
+
+// 根据学号生成邮箱
+export function generateEmailFromStudentId(studentId: string): string {
+  return `${studentId}@stu.ecnu.edu.cn`;
 }
 
 // 创建新用户
@@ -588,7 +590,7 @@ export async function getUserContactInfo(currentUserId: number, targetUserId: nu
     return {
       id: user.id,
       name: user.name,
-      email: user.email,
+      email: generateEmailFromStudentId(user.studentId),
       wechatId: profile?.wechatId || null
     };
   } catch (error) {

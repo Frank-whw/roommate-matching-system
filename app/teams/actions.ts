@@ -5,6 +5,7 @@ import { eq, and, or, ne, count, desc } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { revalidatePath } from 'next/cache';
 
 // Create team schema
@@ -380,7 +381,7 @@ export async function reviewJoinRequest(rawData: any) {
       revalidatePath('/teams');
       return {
         success: true,
-        message: `已批准 ${applicant.name || applicant.email} 加入队伍`,
+        message: `已批准 ${applicant.name || generateEmailFromStudentId(applicant.studentId)} 加入队伍`,
       };
 
     } else {
@@ -612,7 +613,7 @@ export async function removeMember(rawData: any) {
     revalidatePath('/teams');
     return {
       success: true,
-      message: `已移除 ${memberInfo.user.name || memberInfo.user.email}`,
+      message: `已移除 ${memberInfo.user.name || generateEmailFromStudentId(memberInfo.user.studentId)}`,
     };
 
   } catch (error) {

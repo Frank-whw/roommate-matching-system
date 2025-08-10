@@ -20,7 +20,6 @@ interface EnhancedProfileFormProps {
 export function EnhancedProfileForm({ user, hasProfile, initialProfile }: EnhancedProfileFormProps) {
   const [formData, setFormData] = useState({
     // 基本信息
-    nickname: initialProfile?.nickname || '',
     wechatId: initialProfile?.wechatId || '',
     gender: initialProfile?.gender || '',
     age: initialProfile?.age || '',
@@ -71,7 +70,6 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
       ...formData,
       age: formData.age ? parseInt(formData.age.toString()) : undefined,
       // 空字符串转为undefined
-      nickname: formData.nickname || undefined,
       wechatId: formData.wechatId || undefined,
       gender: formData.gender || undefined,
       sleepTime: formData.sleepTime || undefined,
@@ -98,7 +96,7 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
 
   // 计算完成进度
   const requiredFields = [
-    formData.nickname, formData.wechatId, formData.gender, formData.age,
+    formData.wechatId, formData.gender, formData.age,
     formData.sleepTime, formData.wakeTime, formData.studyHabit,
     formData.lifestyle, formData.cleanliness, formData.mbti,
     formData.roommateExpectations, formData.hobbies
@@ -185,15 +183,6 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
         <CardContent className="space-y-6">
           {/* 基本信息 */}
           <div className="space-y-4">
-            <InputField
-              label="昵称"
-              value={formData.nickname}
-              onChange={(value) => handleFieldChange('nickname', value)}
-              placeholder="请输入昵称，比如：Frank"
-              error={validation.errors.nickname}
-              description="用于在系统中显示的称呼"
-            />
-
             <InputField
               label="微信号"
               value={formData.wechatId}

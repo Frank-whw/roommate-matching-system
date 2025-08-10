@@ -1,4 +1,4 @@
-import { getUsersForMatching } from '@/lib/db/queries';
+import { getUsersForMatching, getUserTeam } from '@/lib/db/queries';
 import { UserCard } from '@/components/explore/user-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,11 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
       mbti: searchParams?.mbti ? searchParams.mbti.split(',').filter(Boolean) : []
     };
     
-    const users = await getUsersForMatching(currentUserId, limit, filters);
+    // 获取用户列表和当前用户的队伍信息
+    const [users, currentUserTeam] = await Promise.all([
+      getUsersForMatching(currentUserId, limit, filters),
+      getUserTeam(currentUserId)
+    ]);
 
     if (users.length === 0) {
       const hasFilters = searchParams && Object.values(searchParams).some(value => value && value !== 'all');
@@ -129,6 +133,7 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
               user={user}
               profile={profile}
               currentUserId={currentUserId}
+              currentUserTeam={currentUserTeam}
             />
           ))}
         </div>

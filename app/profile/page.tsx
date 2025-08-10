@@ -2,7 +2,8 @@ import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getCurrentUser } from '@/lib/db/queries';
+import { getCurrentUser, getUserWithProfile } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { 
   User, 
   Settings, 
@@ -83,7 +84,7 @@ export default async function ProfilePage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500">邮箱</label>
-                <p className="text-base font-semibold">{user.users?.email}</p>
+                <p className="text-base font-semibold">{user.users?.studentId ? generateEmailFromStudentId(user.users.studentId) : ''}</p>
               </div>
             </div>
           </CardContent>

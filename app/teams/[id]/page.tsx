@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentUser, getTeamWithMembers, getTeamWithMembersContact, getUserTeam } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { TeamMemberContact } from '@/components/teams/team-member-contact';
 import { JoinTeamButton } from '@/components/teams/join-team-button';
 
@@ -240,6 +241,10 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                           key={member.user.id}
                           member={{
                             ...member,
+                            user: {
+                              ...member.user,
+                              email: generateEmailFromStudentId(member.user.studentId)
+                            },
                             membership: {
                               role: member.membership.isLeader ? 'leader' : 'member',
                               joinedAt: member.membership.joinedAt
@@ -259,10 +264,10 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                               <Link href={`/users/${leader.user.id}`} className="block hover:opacity-80 transition-opacity">
                                 <Avatar className="w-12 h-12">
                                   <AvatarImage 
-                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.user.name || leader.user.email)}&background=f59e0b&color=fff`} 
+                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.user.name || generateEmailFromStudentId(leader.user.studentId))}&background=f59e0b&color=fff`} 
                                   />
                                   <AvatarFallback className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
-                                    {leader.user.name ? leader.user.name.substring(0, 2) : leader.user.email.substring(0, 2).toUpperCase()}
+                                    {leader.user.name ? leader.user.name.substring(0, 2) : generateEmailFromStudentId(leader.user.studentId).substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                               </Link>
@@ -315,10 +320,10 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                               <Link href={`/users/${member.user.id}`} className="block hover:opacity-80 transition-opacity">
                                 <Avatar className="w-12 h-12">
                                   <AvatarImage 
-                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.user.name || member.user.email)}&background=3b82f6&color=fff`} 
+                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.user.name || generateEmailFromStudentId(member.user.studentId))}&background=3b82f6&color=fff`} 
                                   />
                                   <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
-                                    {member.user.name ? member.user.name.substring(0, 2) : member.user.email.substring(0, 2).toUpperCase()}
+                                    {member.user.name ? member.user.name.substring(0, 2) : generateEmailFromStudentId(member.user.studentId).substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                               </Link>

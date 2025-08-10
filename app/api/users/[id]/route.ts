@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser, getUserWithProfile } from '@/lib/db/queries';
+import { getCurrentUser, getUserWithProfile, generateEmailFromStudentId } from '@/lib/db/queries';
 import { z } from 'zod';
 
 // 强制动态渲染
@@ -29,10 +29,11 @@ export async function GET(
     }
 
     // 返回用户信息（隐藏敏感信息）
+    const email = generateEmailFromStudentId(targetUser.users.studentId);
     const safeUserData = {
       id: targetUser.users.id,
       name: targetUser.users.name,
-      email: targetUser.users.email ? targetUser.users.email.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
+      email: email ? email.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
       studentId: targetUser.users.studentId ? targetUser.users.studentId.replace(/(.{3}).*(.{2})/, '$1***$2') : null,
       profile: targetUser.user_profiles ? {
         ...targetUser.user_profiles,

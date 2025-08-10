@@ -29,7 +29,6 @@ export const matchStatusEnum = pgEnum('match_status', ['pending', 'matched', 're
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   studentId: varchar('student_id', { length: 20 }).notNull().unique(), // 学号 102*55014**格式
-  email: varchar('email', { length: 255 }).notNull().unique(), // 教育邮箱
   passwordHash: text('password_hash').notNull(),
   name: varchar('name', { length: 100 }),
   isActive: boolean('is_active').notNull().default(true), // 账户激活状态
@@ -41,7 +40,6 @@ export const users = pgTable('users', {
   deletedAt: timestamp('deleted_at'),
 }, (table) => ({
   studentIdIdx: index('student_id_idx').on(table.studentId),
-  emailIdx: index('email_idx').on(table.email),
 }));
 
 // User profiles table - 用户详细资料表
@@ -51,7 +49,6 @@ export const userProfiles = pgTable('user_profiles', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' })
     .unique(),
-  nickname: varchar('nickname', { length: 50 }), // 昵称，如：Frank
   wechatId: varchar('wechat_id', { length: 100 }), // 微信号
   gender: genderEnum('gender'),
   age: integer('age'),
