@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
-  Heart,
   Clock,
   Home,
   Brain,
@@ -61,7 +60,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
   const [isLiking, setIsLiking] = useState(false);
   
   // 检查当前用户是否为队长
-  const isTeamLeader = currentUserTeam?.team?.leaderId === currentUserId;
+  const isTeamLeader = currentUserTeam?.membership?.isLeader === true;
   const hasTeam = !!currentUserTeam;
   
   // 确定按钮状态

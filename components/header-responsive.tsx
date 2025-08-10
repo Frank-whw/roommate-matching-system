@@ -73,8 +73,8 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
             onClick={onClose}
           >
-            <Heart className="w-5 h-5 text-red-500" />
-            <span className="font-medium">我的匹配</span>
+            <Users className="w-5 h-5 text-blue-500" />
+            <span className="font-medium">队伍管理</span>
           </Link>
           
           {user && (
@@ -236,7 +236,7 @@ export default function ResponsiveHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              我的匹配
+              队伍管理
             </Link>
           </nav>
 

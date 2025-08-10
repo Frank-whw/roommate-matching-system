@@ -6,10 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Users, 
-  Heart,
   Search,
   AlertCircle,
-  Settings
+  Settings,
+  Crown,
+  UserPlus,
+  Shield
 } from 'lucide-react';
 
 interface ExploreHeaderProps {
@@ -17,14 +19,23 @@ interface ExploreHeaderProps {
   isProfileComplete: boolean;
   activeFiltersCount?: number;
   totalResults?: number;
+  currentUserTeam?: any;
 }
 
 export function ExploreHeader({ 
   hasProfile, 
   isProfileComplete, 
   activeFiltersCount = 0,
-  totalResults 
+  totalResults,
+  currentUserTeam
 }: ExploreHeaderProps) {
+  
+  // 检查用户队伍状态
+  const hasTeam = !!currentUserTeam;
+  const isTeamLeader = currentUserTeam?.membership?.isLeader === true;
+  const teamName = currentUserTeam?.team?.name;
+  const teamMemberCount = currentUserTeam?.team?.currentMembers || 0;
+  const teamMaxMembers = currentUserTeam?.team?.maxMembers || 0;
   return (
     <div className="space-y-6">
       {/* 页面标题和统计 */}
@@ -57,6 +68,52 @@ export function ExploreHeader({
           
         </div>
       </div>
+
+      {/* 队伍状态显示 */}
+      {hasTeam ? (
+        <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
+          <Crown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-blue-800 dark:text-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <span>
+                  {isTeamLeader ? (
+                    <>您是队伍「{teamName}」的队长，可以邀请其他用户加入队伍</>
+                  ) : (
+                    <>您已加入队伍「{teamName}」，只有队长可以邀请新成员</>
+                  )}
+                </span>
+                <Badge variant="secondary">
+                  {teamMemberCount}/{teamMaxMembers}人
+                </Badge>
+              </div>
+              <Button variant="outline" size="sm" asChild className="ml-4">
+                <Link href="/teams">
+                  <Users className="w-3 h-3 mr-1" />
+                  队伍管理
+                </Link>
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
+          <UserPlus className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+          <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+            <div className="flex items-center justify-between">
+              <span>
+                您还没有加入队伍，需要先创建或加入队伍才能邀请其他用户
+              </span>
+              <Button variant="outline" size="sm" asChild className="ml-4">
+                <Link href="/teams">
+                  <Shield className="w-3 h-3 mr-1" />
+                  创建/加入队伍
+                </Link>
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* 资料完善提醒 */}
       {!isProfileComplete && (

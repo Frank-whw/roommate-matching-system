@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import { getCurrentUser } from '@/lib/db/queries';
+import { getCurrentUser, getUserTeam } from '@/lib/db/queries';
 import { ExploreHeader } from '@/components/explore/explore-header';
 import { UserCardGrid } from '@/components/explore/user-card-grid';
 import { FilterSidebar } from '@/components/explore/filter-sidebar';
@@ -9,7 +9,6 @@ import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
   Users, 
-  Heart,
   Search,
   Filter,
   Loader2
@@ -41,6 +40,9 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   // 检查用户是否完成了基本资料
   const hasProfile = !!user.user_profiles;
   const isProfileComplete = user.user_profiles?.isProfileComplete || false;
+  
+  // 获取用户队伍信息
+  const currentUserTeam = user.users?.id ? await getUserTeam(user.users.id) : null;
 
   return (
     <ProfileGuard>
@@ -53,6 +55,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           <ExploreHeader 
             hasProfile={hasProfile}
             isProfileComplete={isProfileComplete}
+            currentUserTeam={currentUserTeam}
           />
 
           {/* 主要内容区域 */}
