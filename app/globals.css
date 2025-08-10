@@ -77,6 +77,130 @@
       radial-gradient(1400px 700px at 20% -10%, hsl(var(--primary) / 0.28), transparent 60%),
       linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--background)));
   }
+  
+  /* 首页特定优化 */
+  .homepage-hero {
+    min-height: calc(100vh - 8rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* 确保在小屏幕上文本不会过于拥挤 */
+  @media (max-width: 640px) {
+    .homepage-hero {
+      min-height: calc(100vh - 6rem);
+      padding: 1rem 0;
+    }
+  }
+  
+  /* 优化大屏幕上的显示效果 */
+  @media (min-width: 1280px) {
+    .homepage-hero {
+      min-height: calc(100vh - 10rem);
+    }
+  }
+  
+  /* 首页文本优化 */
+  .homepage-hero h1 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .homepage-hero p {
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* 副标题文本样式 */
+  .homepage-hero p.font-medium {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: hsl(var(--muted-foreground) / 0.9);
+  }
+  
+  /* 描述文本样式 */
+  .homepage-hero p.font-light {
+    font-weight: 300;
+    letter-spacing: 0.015em;
+    color: hsl(var(--muted-foreground) / 0.8);
+  }
+  
+  /* 按钮文本样式 */
+  .homepage-hero .font-semibold {
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+  
+  /* 优化字间距 */
+  .homepage-hero .tracking-wide {
+    letter-spacing: 0.025em;
+  }
+  
+  /* 新的圆润文本样式 */
+  .homepage-hero p.font-normal {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: hsl(var(--muted-foreground) / 0.85);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* 按钮圆润样式 */
+  .homepage-hero .font-medium {
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* 确保文本在移动端有合适的行高 */
+  @media (max-width: 640px) {
+    .homepage-hero h1 {
+      line-height: 1.1;
+    }
+    .homepage-hero p {
+      line-height: 1.6;
+    }
+    .homepage-hero p.font-medium {
+      line-height: 1.5;
+    }
+    .homepage-hero p.font-light {
+      line-height: 1.7;
+    }
+    .homepage-hero p.font-normal {
+      line-height: 1.65;
+    }
+  }
+  
+  /* 桌面端优化 */
+  @media (min-width: 641px) {
+    .homepage-hero p.font-normal {
+      line-height: 1.7;
+    }
+  }
+  
+  /* 优化按钮悬停效果 */
+  .homepage-hero .group:hover .transition-transform {
+    transform: translateX(0.25rem);
+  }
+  
+  /* 确保文本容器有合适的最大宽度 */
+  .homepage-hero .max-w-2xl {
+    max-width: 42rem;
+  }
+  
+  .homepage-hero .max-w-3xl {
+    max-width: 48rem;
+  }
 }
 
 /* Theme transitions */
