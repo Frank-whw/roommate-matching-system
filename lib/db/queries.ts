@@ -7,7 +7,6 @@ import {
   teams, 
   teamMembers, 
   teamJoinRequests, 
-  userLikes, 
   matches,
   ActivityType,
   NewUser
@@ -230,13 +229,19 @@ export async function getUsersForMatching(
 
   const currentUserGender = currentUserProfile[0].gender;
 
-  // 获取当前用户已经点赞或跳过的用户ID
-  const interactedUsers = await db
-    .select({ userId: userLikes.toUserId })
-    .from(userLikes)
-    .where(eq(userLikes.fromUserId, currentUserId));
+  // 获取当前用户已经发送邀请的用户ID（仅当用户是队长时）
+  const sentInviteUsers = await db
+    .select({ userId: teamJoinRequests.userId })
+    .from(teamJoinRequests)
+    .innerJoin(teams, eq(teamJoinRequests.teamId, teams.id))
+    .where(
+      and(
+        eq(teams.leaderId, currentUserId),
+        eq(teamJoinRequests.status, 'pending') // 只排除待处理的邀请
+      )
+    );
   
-  const interactedUserIds = interactedUsers.map(u => u.userId);
+  const interactedUserIds = sentInviteUsers.map(u => u.userId);
   
   // 基本筛选条件（包含同性别过滤）
   let whereConditions = [

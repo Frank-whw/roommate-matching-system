@@ -7,8 +7,7 @@ import {
   userProfiles, 
   teams, 
   teamJoinRequests, 
-  teamMembers,
-  userLikes 
+  teamMembers
 } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/db/queries';
 
@@ -32,7 +31,7 @@ export async function GET(request: NextRequest) {
     const updates: any = {
       newMatches: [],
       teamNotifications: [],
-      newLikes: []
+      teamInvitations: [] // 替换newLikes为队伍邀请
     };
 
     // 检查新匹配
@@ -166,28 +165,28 @@ export async function GET(request: NextRequest) {
 
     updates.teamNotifications = teamNotifications;
 
-    // 检查新的点赞（用户被点赞）
-    const newLikes = await db
+    // 检查新的队伍邀请（用户收到的邀请）
+    const teamInvitations = await db
       .select({
-        id: userLikes.id,
-        fromUser: users,
-        fromUserProfile: userProfiles,
-        createdAt: userLikes.createdAt,
-        isLike: userLikes.isLike
+        id: teamJoinRequests.id,
+        team: teams,
+        leaderName: users.name,
+        message: teamJoinRequests.message,
+        createdAt: teamJoinRequests.createdAt
       })
-      .from(userLikes)
-      .leftJoin(users, eq(userLikes.fromUserId, users.id))
-      .leftJoin(userProfiles, eq(userProfiles.userId, users.id))
+      .from(teamJoinRequests)
+      .leftJoin(teams, eq(teamJoinRequests.teamId, teams.id))
+      .leftJoin(users, eq(teams.leaderId, users.id))
       .where(
         and(
-          eq(userLikes.toUserId, userId),
-          eq(userLikes.isLike, true),
-          gte(userLikes.createdAt, since)
+          eq(teamJoinRequests.userId, userId),
+          eq(teamJoinRequests.status, 'pending'),
+          gte(teamJoinRequests.createdAt, since)
         )
       )
       .limit(5);
 
-    updates.newLikes = newLikes;
+    updates.teamInvitations = teamInvitations;
 
     return NextResponse.json(updates);
 
