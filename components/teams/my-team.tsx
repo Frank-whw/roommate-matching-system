@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, users, userProfiles } from '@/lib/db/schema';
 import { getUserContactInfo } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { TeamCard } from './team-card';
 import { TeamManagement } from './team-management';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -166,7 +167,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
               <div key={member.id} className="flex items-start space-x-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
-                    {user.name ? user.name.substring(0, 2) : user.email.substring(0, 2).toUpperCase()}
+                    {user.name ? user.name.substring(0, 2) : generateEmailFromStudentId(user.studentId).substring(0, 2).toUpperCase()}
                   </div>
                   {member.isLeader && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">

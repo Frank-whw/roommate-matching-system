@@ -18,6 +18,7 @@ import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
 import { siteConfig } from '@/lib/config';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -66,7 +67,7 @@ function UserMenu() {
         <Avatar className="cursor-pointer size-9">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback>
-            {user.email
+            {generateEmailFromStudentId(user.studentId)
               .split(' ')
               .map((n) => n[0])
               .join('')}
@@ -77,7 +78,7 @@ function UserMenu() {
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
             <UserIcon className="mr-2 h-4 w-4" />
-            <span className="truncate">{user.name || user.email}</span>
+            <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />

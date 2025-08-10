@@ -4,7 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { users, ActivityType } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword, verifyPasswordSetupToken } from '@/lib/auth/session';
-import { logActivity } from '@/lib/db/queries';
+import { logActivity, generateEmailFromStudentId } from '@/lib/db/queries';
 
 // 设置密码请求schema
 const setPasswordSchema = z.object({
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const foundUsers = await db
       .select()
       .from(users)
-      .where(eq(users.email, tokenData.email))
+      .where(eq(users.studentId, tokenData.studentId))
       .limit(1);
 
     if (foundUsers.length === 0) {
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         user: {
           id: updatedUser[0].id,
           name: updatedUser[0].name,
-          email: updatedUser[0].email,
+          email: generateEmailFromStudentId(updatedUser[0].studentId),
           studentId: updatedUser[0].studentId,
           isEmailVerified: updatedUser[0].isEmailVerified,
           isActive: updatedUser[0].isActive
