@@ -99,19 +99,19 @@ export function NotificationCenter() {
       <Button
         variant="ghost"
         size="sm"
-        className="relative"
+        className="relative h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         {state.unreadCount > 0 ? (
-          <BellRing className="w-5 h-5" />
+          <BellRing className="w-4 h-4 sm:w-5 sm:h-5" />
         ) : (
-          <Bell className="w-5 h-5" />
+          <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
         )}
         
         {state.unreadCount > 0 && (
           <Badge 
             variant="destructive" 
-            className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
+            className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center text-xs"
           >
             {state.unreadCount > 99 ? '99+' : state.unreadCount}
           </Badge>

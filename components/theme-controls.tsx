@@ -49,19 +49,19 @@ export default function ThemeControls() {
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-1 sm:space-x-2">
       {/* Theme Mode Toggle */}
       <Button
         variant="outline"
         size="sm"
         onClick={toggleMode}
-        className="rounded-full p-2 h-9 w-9"
+        className="rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9"
         title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       >
         {mode === 'light' ? (
-          <Moon className="h-4 w-4" />
+          <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         ) : (
-          <Sun className="h-4 w-4" />
+          <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         )}
       </Button>
 
@@ -71,10 +71,10 @@ export default function ThemeControls() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full p-2 h-9 w-9"
+            className="rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9"
             title="Change theme color"
           >
-            <Palette className="h-4 w-4" />
+            <Palette className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
