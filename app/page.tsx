@@ -31,7 +31,7 @@ export default function HomePage() {
             >
               <a href="/sign-up">
                 开始匹配
-                <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" style={{ fill: 'none', stroke: 'currentColor' }} />
               </a>
             </Button>
           </div>

@@ -28,7 +28,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
   if (!currentUserId) {
     return (
       <Alert>
-        <Users className="h-4 w-4" />
+        <Users className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         <AlertDescription>
           请先登录以查看队伍信息
         </AlertDescription>
@@ -53,7 +53,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
         <div className="text-center py-16">
           <div className="flex flex-col items-center space-y-6">
             <div className="w-20 h-20 bg-white/60 dark:bg-gray-800/60 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 dark:border-gray-700/60">
-              <Users className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+              <Users className="w-8 h-8 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
             </div>
             <div className="max-w-md">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
@@ -65,15 +65,15 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
               <div className="flex items-center justify-center space-x-4">
                 <Button asChild className="bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-6 py-2 font-medium backdrop-blur-md">
                   <Link href="/teams/create">
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     创建队伍
                   </Link>
                 </Button>
                 <Button variant="outline" asChild className="border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md">
                   <Link href="/teams">
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     浏览队伍
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   </Link>
                 </Button>
               </div>
@@ -114,7 +114,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center mb-3">
-                <Crown className="w-6 h-6 text-yellow-500 mr-3" />
+                <Crown className="w-6 h-6 text-yellow-500 mr-3" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {teamInfo.team.name}
                 </h3>
@@ -132,7 +132,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
               )}
               
               <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
-                <Users className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                <Users className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span>{teamInfo.team.currentMembers}/{teamInfo.team.maxMembers} 成员</span>
                 <span className="mx-3">•</span>
                 <span>创建于 {new Date(teamInfo.team.createdAt).toLocaleDateString()}</span>
@@ -175,7 +175,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
                   </div>
                   {member.isLeader && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center shadow-md">
-                      <Crown className="w-3 h-3 text-white" />
+                      <Crown className="w-3 h-3 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
                     </div>
                   )}
                 </div>
@@ -210,13 +210,13 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
                       <div className="flex items-center space-x-4 text-sm">
                         {contactsInfo[user.id].email && (
                           <div className="flex items-center text-gray-600 dark:text-gray-300">
-                            <Mail className="w-4 h-4 mr-1" />
+                            <Mail className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                             <span className="truncate">{contactsInfo[user.id].email}</span>
                           </div>
                         )}
                         {contactsInfo[user.id].wechatId && (
                           <div className="flex items-center text-green-600 dark:text-green-400">
-                            <MessageCircle className="w-4 h-4 mr-1" />
+                            <MessageCircle className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                             <span>{contactsInfo[user.id].wechatId}</span>
                           </div>
                         )}

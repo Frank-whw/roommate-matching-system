@@ -47,7 +47,7 @@ export function JoinTeamButton({ teamId, canJoin }: JoinTeamButtonProps) {
         className="w-full border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md cursor-not-allowed" 
         disabled
       >
-        <UserPlus className="w-4 h-4 mr-2" />
+        <UserPlus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
         已在队伍中
       </Button>
     );
@@ -59,7 +59,7 @@ export function JoinTeamButton({ teamId, canJoin }: JoinTeamButtonProps) {
       onClick={handleJoinTeam}
       disabled={isLoading}
     >
-      <UserPlus className="w-4 h-4 mr-2" />
+      <UserPlus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
       {isLoading ? '申请中...' : '申请加入'}
     </Button>
   );

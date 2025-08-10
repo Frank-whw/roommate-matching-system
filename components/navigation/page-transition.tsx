@@ -29,7 +29,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
           exit={{ opacity: 0 }}
           className="flex items-center justify-center min-h-[200px]"
         >
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
         </motion.div>
       ) : (
         <motion.div

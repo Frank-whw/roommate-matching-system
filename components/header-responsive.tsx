@@ -73,20 +73,20 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
-            <UserIcon className="mr-2 h-4 w-4" />
+            <UserIcon className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="w-full cursor-pointer sm:hidden" asChild>
           <Link href="/profile">
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>个人资料</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer hidden sm:flex" asChild>
           <Link href="/profile">
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>个人资料</span>
           </Link>
         </DropdownMenuItem>
@@ -94,7 +94,7 @@ function UserMenu() {
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
               <span>登出</span>
             </DropdownMenuItem>
           </button>
@@ -113,7 +113,7 @@ export default function ResponsiveHeader() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Home className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <Home className="h-5 w-5 sm:h-6 sm:w-6 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="ml-2 text-lg sm:text-xl font-semibold text-foreground truncate">
               {siteConfig.name}
             </span>

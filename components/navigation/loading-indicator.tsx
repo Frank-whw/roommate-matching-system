@@ -59,7 +59,7 @@ export function PageLoadingIndicator() {
       className="flex items-center justify-center min-h-[400px]"
     >
       <div className="text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         <p className="text-sm text-muted-foreground">页面加载中...</p>
       </div>
     </motion.div>
@@ -76,12 +76,12 @@ export function ComponentLoadingIndicator({ size = 'md' }: { size?: 'sm' | 'md' 
 
   return (
     <div className="flex items-center justify-center p-4">
-      <Loader2 className={`animate-spin text-primary ${sizeClasses[size]}`} />
+      <Loader2 className={`animate-spin text-primary ${sizeClasses[size]}`} style={{ fill: 'none', stroke: 'currentColor' }} />
     </div>
   );
 }
 
 // 按钮级加载指示器
 export function ButtonLoadingIndicator() {
-  return <Loader2 className="h-4 w-4 animate-spin mr-2" />;
+  return <Loader2 className="h-4 w-4 animate-spin mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />;
 }

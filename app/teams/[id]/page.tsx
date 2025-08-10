@@ -94,7 +94,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link href="/teams" className="inline-flex items-center">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               返回队伍广场
             </Link>
           </Button>
@@ -107,7 +107,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
               <CardContent className="p-6">
                 <div className="text-center mb-6">
                   <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                    <Users className="w-10 h-10 text-white" />
+                    <Users className="w-10 h-10 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
                   </div>
                   
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -173,7 +173,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                   
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/matches?teamId=${team.id}`}>
-                      <User className="w-4 h-4 mr-2" />
+                      <User className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                       查看队长信息
                     </Link>
                   </Button>
@@ -189,7 +189,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <FileText className="w-5 h-5 mr-2" />
+                    <FileText className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     队伍介绍
                   </CardTitle>
                 </CardHeader>
@@ -206,7 +206,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <FileText className="w-5 h-5 mr-2" />
+                    <FileText className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     招募要求
                   </CardTitle>
                 </CardHeader>
@@ -222,7 +222,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 mr-2" />
+                  <Users className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   队伍成员 ({team.members.length}/{team.maxMembers})
                   {isTeamMember && (
                     <Badge variant="outline" className="ml-2 text-xs">
@@ -272,7 +272,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                                 </Avatar>
                               </Link>
                               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
-                                <Crown className="w-3 h-3 text-white" />
+                                <Crown className="w-3 h-3 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
                               </div>
                             </div>
                             
@@ -284,7 +284,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                                 >
                                   {leader.user.name || '队长' + leader.user.id}
                                 </Link>
-                                <Crown className="w-4 h-4 text-yellow-500" />
+                                <Crown className="w-4 h-4 text-yellow-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                                 <Badge variant="outline" className="text-xs bg-yellow-50 border-yellow-200 text-yellow-700">
                                   队长
                                 </Badge>

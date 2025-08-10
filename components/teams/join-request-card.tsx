@@ -89,13 +89,13 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
                 {applicant.name || '用户' + applicant.id}
               </h4>
               <Badge variant="outline" className="ml-2 text-xs">
-                <User className="w-3 h-3 mr-1" />
+                <User className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 {request.requestType === 'invitation' ? '邀请' : '申请'}
               </Badge>
             </div>
             
             <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-              <Clock className="w-3 h-3 mr-1" />
+              <Clock className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
               {formatDate(request.createdAt)}
             </div>
           </div>
@@ -104,7 +104,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {applicantProfile && (
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
               <div className="flex items-center">
-                <GraduationCap className="w-3 h-3 mr-1" />
+                <GraduationCap className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span>
                   {applicantProfile.major && applicantProfile.grade 
                     ? `${applicantProfile.major} • ${applicantProfile.grade}`
@@ -125,7 +125,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {request.message && (
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-3">
               <div className="flex items-start">
-                <FileText className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
+                <FileText className="w-4 h-4 text-gray-400 mr-2 mt-0.5" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   {request.message}
                 </p>
@@ -147,7 +147,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
                 disabled={isProcessing}
                 className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
               >
-                <X className="w-3 h-3 mr-1" />
+                <X className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 拒绝
               </Button>
               
@@ -157,7 +157,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
                 disabled={isProcessing || isTeamFull}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <Check className="w-3 h-3 mr-1" />
+                <Check className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 {isProcessing ? '处理中...' : isTeamFull ? '队伍已满' : '批准'}
               </Button>
             </div>

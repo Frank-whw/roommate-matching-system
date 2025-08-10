@@ -43,7 +43,7 @@ export default async function MatchesPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                <Users className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-blue-500" />
+                <Users className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-blue-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                 队伍管理
               </h1>
               <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">
@@ -54,7 +54,7 @@ export default async function MatchesPage() {
             <div className="flex items-center space-x-2 sm:space-x-4">
               <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
                 <Link href="/teams">
-                  <Search className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <Search className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   <span className="hidden sm:inline">浏览队伍</span>
                   <span className="sm:hidden">浏览</span>
                 </Link>
@@ -70,7 +70,7 @@ export default async function MatchesPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Crown className="w-5 h-5 mr-2 text-yellow-500" />
+                  <Crown className="w-5 h-5 mr-2 text-yellow-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                   我的队伍
                 </CardTitle>
                 <CardDescription>
@@ -88,7 +88,7 @@ export default async function MatchesPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <UserPlus className="w-5 h-5 mr-2 text-blue-500" />
+                  <UserPlus className="w-5 h-5 mr-2 text-blue-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                   队伍邀请
                 </CardTitle>
                 <CardDescription>
@@ -109,7 +109,7 @@ export default async function MatchesPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <UserPlus className="w-5 h-5 mr-2 text-green-500" />
+                  <UserPlus className="w-5 h-5 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                   入队申请
                 </CardTitle>
                 <CardDescription>
@@ -131,21 +131,21 @@ export default async function MatchesPage() {
               <CardContent className="space-y-3">
                 <Button asChild className="w-full" variant="outline">
                   <Link href="/teams/create">
-                    <Crown className="w-4 h-4 mr-2" />
+                    <Crown className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     创建新队伍
                   </Link>
                 </Button>
                 
                 <Button asChild className="w-full" variant="outline">
                   <Link href="/teams">
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     浏览队伍广场
                   </Link>
                 </Button>
                 
                 <Button asChild className="w-full" variant="outline">
                   <Link href="/explore">
-                    <MessageSquare className="w-4 h-4 mr-2" />
+                    <MessageSquare className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     个人匹配
                   </Link>
                 </Button>
@@ -156,7 +156,7 @@ export default async function MatchesPage() {
             <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
               <CardHeader>
                 <CardTitle className="flex items-center text-blue-800 dark:text-blue-200">
-                  <Settings className="w-5 h-5 mr-2" />
+                  <Settings className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   队伍管理提示
                 </CardTitle>
               </CardHeader>

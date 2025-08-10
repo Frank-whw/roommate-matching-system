@@ -77,26 +77,26 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
-            <UserIcon className="mr-2 h-4 w-4" />
+            <UserIcon className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/profile">
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>个人资料</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/matches">
-            <Users className="mr-2 h-4 w-4" />
+            <Users className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>队伍管理</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/teams">
-            <Users className="mr-2 h-4 w-4" />
+            <Users className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>我的队伍</span>
           </Link>
         </DropdownMenuItem>
@@ -104,7 +104,7 @@ function UserMenu() {
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
               <span>登出</span>
             </DropdownMenuItem>
           </button>
@@ -129,7 +129,7 @@ export default function Header() {
     <header className="border-b border-border bg-background sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <Home className="h-6 w-6 text-primary" />
+          <Home className="h-6 w-6 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
           <span className="ml-2 text-xl font-semibold text-foreground">{siteConfig.name}</span>
         </Link>
         

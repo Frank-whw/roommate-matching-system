@@ -20,7 +20,7 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
   if (!currentUserId) {
     return (
       <Alert>
-        <Users className="h-4 w-4" />
+        <Users className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         <AlertDescription>
           请先登录以查看队伍列表
         </AlertDescription>
@@ -42,7 +42,7 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
         <div className="text-center py-16">
           <div className="flex flex-col items-center space-y-6">
             <div className="w-20 h-20 bg-white/60 dark:bg-gray-800/60 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 dark:border-gray-700/60">
-              <Search className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+              <Search className="w-8 h-8 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
             </div>
             <div className="max-w-md">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
@@ -60,9 +60,9 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
               {(!userTeam || showAll) && (
                 <Button asChild className="bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-6 py-2 font-medium backdrop-blur-md">
                   <Link href="/teams/create">
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     创建队伍
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   </Link>
                 </Button>
               )}

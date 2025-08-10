@@ -148,7 +148,7 @@ export function FilterSidebar() {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
+            <Filter className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
             筛选条件
           </div>
           {getActiveFiltersCount() > 0 && (
@@ -172,7 +172,7 @@ export function FilterSidebar() {
             onClick={resetFilters}
             disabled={getActiveFiltersCount() === 0 || isLoading}
           >
-            <RotateCcw className="w-3 h-3 mr-1" />
+            <RotateCcw className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             重置
           </Button>
         </div>
@@ -182,7 +182,7 @@ export function FilterSidebar() {
         {/* 关键词搜索 */}
         <div>
           <Label className="flex items-center mb-2">
-            <Search className="w-3 h-3 mr-1" />
+            <Search className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             关键词搜索
           </Label>
           <Input
@@ -195,7 +195,7 @@ export function FilterSidebar() {
         {/* 基本信息 */}
         <div className="space-y-4">
           <h4 className="font-medium flex items-center">
-            <GraduationCap className="w-4 h-4 mr-2" />
+            <GraduationCap className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
             基本信息
           </h4>
           
@@ -214,7 +214,7 @@ export function FilterSidebar() {
             {/* 作息习惯 */}
             <div className="space-y-4">
               <h4 className="font-medium flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
+                <Clock className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                 作息习惯
               </h4>
               
@@ -248,7 +248,7 @@ export function FilterSidebar() {
             {/* 生活习惯 */}
             <div className="space-y-4">
               <h4 className="font-medium flex items-center">
-                <Home className="w-4 h-4 mr-2" />
+                <Home className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                 生活习惯
               </h4>
               
@@ -306,7 +306,7 @@ export function FilterSidebar() {
             {/* MBTI性格 */}
             <div className="space-y-4">
               <h4 className="font-medium flex items-center">
-                <Brain className="w-4 h-4 mr-2" />
+                <Brain className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                 性格类型
               </h4>
               

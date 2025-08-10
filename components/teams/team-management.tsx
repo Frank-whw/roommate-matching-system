@@ -117,7 +117,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Settings className="w-5 h-5 mr-2" />
+            <Settings className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
             队伍管理
           </CardTitle>
           <CardDescription>
@@ -156,7 +156,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
           {/* 快捷操作 */}
           <div className="flex items-center space-x-3 pt-4 border-t">
             <Button variant="outline" size="sm">
-              <Edit className="w-4 h-4 mr-2" />
+              <Edit className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               编辑队伍
             </Button>
             
@@ -167,7 +167,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
               disabled={isProcessing}
               className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               解散队伍
             </Button>
           </div>
@@ -207,7 +207,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                       </Avatar>
                       {isMemberLeader && (
                         <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
-                          <Crown className="w-3 h-3 text-white" />
+                          <Crown className="w-3 h-3 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
                         </div>
                       )}
                     </div>
@@ -243,7 +243,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" disabled={isProcessing}>
-                          <MoreHorizontal className="w-4 h-4" />
+                          <MoreHorizontal className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -254,7 +254,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                           onClick={() => handleRemoveMember(user.id, user.name || user.email)}
                           className="text-red-600"
                         >
-                          <UserMinus className="w-4 h-4 mr-2" />
+                          <UserMinus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                           移除成员
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -264,7 +264,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
                   {/* 当前用户（队长）的特殊标识 */}
                   {isCurrentUser && (
                     <div className="text-sm text-blue-600 dark:text-blue-400 flex items-center">
-                      <Crown className="w-4 h-4 mr-1" />
+                      <Crown className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                       队长权限
                     </div>
                   )}
@@ -276,7 +276,7 @@ export function TeamManagement({ team, members, currentUserId, isLeader }: TeamM
           {/* 管理提示 */}
           <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
             <div className="flex items-start">
-              <AlertTriangle className="w-5 h-5 text-amber-500 mr-2 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-amber-500 mr-2 mt-0.5" style={{ fill: 'none', stroke: 'currentColor' }} />
               <div className="text-sm text-amber-700 dark:text-amber-300">
                 <p className="font-medium mb-1">队长权限说明</p>
                 <ul className="space-y-1 text-xs">

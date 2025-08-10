@@ -61,7 +61,7 @@ export function ProfileGuard({ children, requireProfile = true }: ProfileGuardPr
           <Card>
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mb-4">
-                <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
               <CardTitle>完善个人资料</CardTitle>
               <CardDescription>
@@ -85,7 +85,7 @@ export function ProfileGuard({ children, requireProfile = true }: ProfileGuardPr
                 onClick={() => router.push('/profile')} 
                 className="w-full"
               >
-                <User className="w-4 h-4 mr-2" />
+                <User className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                 完善个人资料
               </Button>
             </CardContent>

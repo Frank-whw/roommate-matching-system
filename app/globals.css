@@ -645,3 +645,30 @@
     @apply border-green-300 dark:border-green-700 focus:border-green-500 focus:ring-green-500;
   }
 }
+
+/* 首页图标修复样式 - 确保图标中心透明 */
+@layer components {
+  /* 首页箭头图标 - 使用更精确的选择器 */
+  .homepage-hero .ml-2.h-5.w-5.sm\\:h-6.sm\\:w-6 svg,
+  .homepage-hero .ml-2.h-5.w-5.sm\\:h-6.sm\\:w-6 svg *,
+  .homepage-hero .ml-2.h-5.w-5.sm\\:h-6.sm\\:w-6 svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+  
+  /* 头部导航房屋图标 - 使用更精确的选择器 */
+  header .h-6.w-6.text-primary svg,
+  header .h-6.w-6.text-primary svg *,
+  header .h-6.w-6.text-primary svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+  
+  /* 匹配广场放大镜图标 - 使用更精确的选择器 */
+  .w-8.h-8.mr-3.text-pink-500 svg,
+  .w-8.h-8.mr-3.text-pink-500 svg *,
+  .w-8.h-8.mr-3.text-pink-500 svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+}

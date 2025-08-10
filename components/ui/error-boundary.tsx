@@ -29,7 +29,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mb-4">
-            <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" style={{ fill: 'none', stroke: 'currentColor' }} />
           </div>
           <CardTitle className="text-red-900 dark:text-red-100">
             出现了一些问题
@@ -55,7 +55,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
           </details>
           <div className="flex gap-2">
             <Button onClick={resetError} className="flex-1">
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               重试
             </Button>
             <Button 

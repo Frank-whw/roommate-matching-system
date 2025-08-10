@@ -130,7 +130,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
                   {/* 年龄信息 */}
                   {profile?.age && (
                     <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
-                      <User className="w-3 h-3 mr-1" />
+                                             <User className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                       <span>{profile.age}岁</span>
                     </div>
                   )}
@@ -148,7 +148,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             {/* 查看详情提示 */}
             <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="flex items-center text-xs text-pink-600 dark:text-pink-400">
-                <Eye className="w-3 h-3 mr-1" />
+                                 <Eye className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 点击查看详细资料
               </div>
             </div>
@@ -161,7 +161,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {profile?.mbti && (
               <Badge variant="outline" className="text-xs">
-                <Brain className="w-3 h-3 mr-1" />
+                <Brain className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span className="hidden sm:inline">{profile.mbti} {mbtiDescriptions[profile.mbti]}</span>
                 <span className="sm:hidden">{profile.mbti}</span>
               </Badge>
@@ -169,7 +169,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             
             {profile?.studyHabit && (
               <Badge variant="outline" className="text-xs">
-                <StudyHabitIcon className="w-3 h-3 mr-1" />
+                <StudyHabitIcon className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span className="hidden sm:inline">{studyHabitLabels[profile.studyHabit]?.label}</span>
                 <span className="sm:hidden">学习</span>
               </Badge>
@@ -177,7 +177,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             
             {profile?.lifestyle && (
               <Badge variant="outline" className="text-xs">
-                <Home className="w-3 h-3 mr-1" />
+                <Home className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span className="hidden sm:inline">{lifestyleLabels[profile.lifestyle]}</span>
                 <span className="sm:hidden">生活</span>
               </Badge>
@@ -185,7 +185,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
 
             {profile?.cleanliness && (
               <Badge variant="outline" className="text-xs">
-                <Sparkles className="w-3 h-3 mr-1" />
+                <Sparkles className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span className="hidden sm:inline">{cleanlinessLabels[profile.cleanliness]}</span>
                 <span className="sm:hidden">整洁</span>
               </Badge>
@@ -197,7 +197,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             {/* 作息时间 */}
             {(profile?.sleepTime || profile?.wakeTime) && (
               <div className="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <span className="truncate">
                   作息: {profile.sleepTime || '??:??'} - {profile.wakeTime || '??:??'}
                 </span>
@@ -225,9 +225,9 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
                   className="text-pink-500 hover:text-pink-600 text-xs mt-1 flex items-center"
                 >
                   {isExpanded ? (
-                    <>收起 <ChevronUp className="w-3 h-3 ml-1" /></>
+                    <>收起 <ChevronUp className="w-3 h-3 ml-1" style={{ fill: 'none', stroke: 'currentColor' }} /></>
                   ) : (
-                    <>展开 <ChevronDown className="w-3 h-3 ml-1" /></>
+                    <>展开 <ChevronDown className="w-3 h-3 ml-1" style={{ fill: 'none', stroke: 'currentColor' }} /></>
                   )}
                 </button>
               )}
@@ -243,7 +243,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             onClick={handleInvite}
             disabled={isLiking}
           >
-            <UserPlus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+            <UserPlus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="hidden sm:inline">{isLiking ? '邀请中...' : '邀请加入队伍'}</span>
           </Button>
         </div>

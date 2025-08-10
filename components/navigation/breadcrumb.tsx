@@ -42,10 +42,10 @@ export default function Breadcrumb({ items, className }: BreadcrumbProps) {
         {breadcrumbItems.map((item, index) => (
           <li key={index} className="flex items-center">
             {index > 0 && (
-              <ChevronRight className="h-4 w-4 text-muted-foreground mx-1" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground mx-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             )}
             {index === 0 && item.href === '/' && (
-              <Home className="h-4 w-4 text-muted-foreground mr-1" />
+              <Home className="h-4 w-4 text-muted-foreground mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             )}
             {item.href && index < breadcrumbItems.length - 1 ? (
               <Link

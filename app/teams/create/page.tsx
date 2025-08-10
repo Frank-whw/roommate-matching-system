@@ -36,13 +36,13 @@ export default async function CreateTeamPage() {
             <div className="flex items-center space-x-4">
               <Button variant="outline" size="sm" asChild>
                 <Link href="/teams">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   返回队伍
                 </Link>
               </Button>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                  <Crown className="w-8 h-8 mr-3 text-yellow-500" />
+                  <Crown className="w-8 h-8 mr-3 text-yellow-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                   创建队伍
                 </h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-300">
@@ -59,7 +59,7 @@ export default async function CreateTeamPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 mr-2" />
+                  <Users className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   队伍信息
                 </CardTitle>
                 <CardDescription>
@@ -78,7 +78,7 @@ export default async function CreateTeamPage() {
             <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
               <CardHeader>
                 <CardTitle className="flex items-center text-blue-800 dark:text-blue-200">
-                  <AlertCircle className="w-5 h-5 mr-2" />
+                  <AlertCircle className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   创建须知
                 </CardTitle>
               </CardHeader>
@@ -97,30 +97,30 @@ export default async function CreateTeamPage() {
             <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20">
               <CardHeader>
                 <CardTitle className="flex items-center text-green-800 dark:text-green-200">
-                  <Crown className="w-5 h-5 mr-2" />
+                  <Crown className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   队长权限
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-green-700 dark:text-green-300">
                 <ul className="space-y-2">
                   <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                     审批加入申请
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                     移除队伍成员
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                     修改队伍信息
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                     解散队伍
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    <CheckCircle className="w-4 h-4 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                     转让队长职位
                   </li>
                 </ul>

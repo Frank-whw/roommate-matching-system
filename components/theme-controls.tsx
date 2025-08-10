@@ -59,9 +59,9 @@ export default function ThemeControls() {
         title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       >
         {mode === 'light' ? (
-          <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         ) : (
-          <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         )}
       </Button>
 
@@ -74,7 +74,7 @@ export default function ThemeControls() {
             className="rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9"
             title="Change theme color"
           >
-            <Palette className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <Palette className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
@@ -94,7 +94,7 @@ export default function ThemeControls() {
                 <span>{color.name}</span>
               </div>
               {themeColor.value === color.value && (
-                <Check className="h-4 w-4" />
+                <Check className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
               )}
             </DropdownMenuItem>
           ))}

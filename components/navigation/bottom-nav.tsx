@@ -87,7 +87,7 @@ export default function BottomNav() {
                 <Icon className={cn(
                   'h-5 w-5 transition-transform',
                   isActive && !isDisabled && 'scale-110'
-                )} />
+                )} style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
               <span className={cn(
                 'transition-colors font-medium',
