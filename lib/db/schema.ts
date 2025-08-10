@@ -49,7 +49,6 @@ export const userProfiles = pgTable('user_profiles', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' })
     .unique(),
-  nickname: varchar('nickname', { length: 50 }), // 昵称，如：Frank
   wechatId: varchar('wechat_id', { length: 100 }), // 微信号
   gender: genderEnum('gender'),
   age: integer('age'),

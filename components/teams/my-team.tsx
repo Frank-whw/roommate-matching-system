@@ -195,11 +195,7 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
                         )}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {profile?.nickname ? (
-                          <span>昵称：{profile.nickname} • 加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
-                        ) : (
-                          <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
-                        )}
+                        <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
