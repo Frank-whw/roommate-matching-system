@@ -8,7 +8,7 @@ import {
   teams, 
   teamJoinRequests, 
   teamMembers,
-  userLikes 
+  activityLogs 
 } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/db/queries';
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const updates: any = {
       newMatches: [],
       teamNotifications: [],
-      newLikes: []
+      newInteractions: []
     };
 
     // 检查新匹配
@@ -101,6 +101,7 @@ export async function GET(request: NextRequest) {
             and(
               eq(teamJoinRequests.teamId, team.teamId),
               eq(teamJoinRequests.status, 'pending'),
+              eq(teamJoinRequests.requestType, 'application'),
               gte(teamJoinRequests.createdAt, since)
             )
           );
@@ -135,6 +136,7 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(teamJoinRequests.userId, userId),
+          eq(teamJoinRequests.requestType, 'application'),
           gte(teamJoinRequests.updatedAt, since),
           ne(teamJoinRequests.status, 'pending')
         )
@@ -166,28 +168,28 @@ export async function GET(request: NextRequest) {
 
     updates.teamNotifications = teamNotifications;
 
-    // 检查新的点赞（用户被点赞）
-    const newLikes = await db
+    // 检查新的用户互动（被点赞、被查看等）
+    const newInteractions = await db
       .select({
-        id: userLikes.id,
+        id: activityLogs.id,
         fromUser: users,
         fromUserProfile: userProfiles,
-        createdAt: userLikes.createdAt,
-        isLike: userLikes.isLike
+        createdAt: activityLogs.timestamp,
+        activityType: activityLogs.action
       })
-      .from(userLikes)
-      .leftJoin(users, eq(userLikes.fromUserId, users.id))
+      .from(activityLogs)
+      .leftJoin(users, eq(activityLogs.userId, users.id))
       .leftJoin(userProfiles, eq(userProfiles.userId, users.id))
       .where(
         and(
-          eq(userLikes.toUserId, userId),
-          eq(userLikes.isLike, true),
-          gte(userLikes.createdAt, since)
+          eq(activityLogs.actionTargetId, userId),
+          sql`${activityLogs.action} IN ('LIKE_USER', 'VIEW_PROFILE')`,
+          gte(activityLogs.timestamp, since)
         )
       )
       .limit(5);
 
-    updates.newLikes = newLikes;
+    updates.newInteractions = newInteractions;
 
     return NextResponse.json(updates);
 

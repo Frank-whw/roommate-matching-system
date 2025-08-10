@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, sql, gte, lte, ilike } from 'drizzle-orm';
+import { desc, and, eq, isNull, isNotNull, or, inArray, count, ne, notInArray, sql, gte, lte, ilike } from 'drizzle-orm';
 import { db } from './drizzle';
 import { 
   activityLogs, 
@@ -7,7 +7,6 @@ import {
   teams, 
   teamMembers, 
   teamJoinRequests, 
-  userLikes, 
   matches,
   ActivityType,
   NewUser
@@ -198,6 +197,47 @@ export async function logActivity(
   });
 }
 
+// 记录用户互动行为（点赞、跳过等）
+export async function logUserInteraction(
+  userId: number,
+  targetUserId: number,
+  action: ActivityType.LIKE_USER | ActivityType.SKIP_USER | ActivityType.PASS_USER | ActivityType.VIEW_PROFILE,
+  ipAddress?: string,
+  metadata?: any
+) {
+  await db.insert(activityLogs).values({
+    userId,
+    action,
+    actionTargetId: targetUserId,
+    ipAddress,
+    metadata: metadata ? JSON.stringify(metadata) : null,
+  });
+}
+
+// 检查用户是否已经对目标用户进行过互动
+export async function hasUserInteracted(
+  userId: number,
+  targetUserId: number,
+  actions?: (ActivityType.LIKE_USER | ActivityType.SKIP_USER | ActivityType.PASS_USER)[]
+): Promise<boolean> {
+  const defaultActions = [ActivityType.LIKE_USER, ActivityType.SKIP_USER, ActivityType.PASS_USER];
+  const checkActions = actions || defaultActions;
+  
+  const result = await db
+    .select({ id: activityLogs.id })
+    .from(activityLogs)
+    .where(
+      and(
+        eq(activityLogs.userId, userId),
+        eq(activityLogs.actionTargetId, targetUserId),
+        or(...checkActions.map(action => eq(activityLogs.action, action)))
+      )
+    )
+    .limit(1);
+    
+  return result.length > 0;
+}
+
 // 匹配相关查询
 interface MatchingFilters {
   search?: string;
@@ -232,11 +272,23 @@ export async function getUsersForMatching(
 
   // 获取当前用户已经点赞或跳过的用户ID
   const interactedUsers = await db
-    .select({ userId: userLikes.toUserId })
-    .from(userLikes)
-    .where(eq(userLikes.fromUserId, currentUserId));
+    .select({ userId: activityLogs.actionTargetId })
+    .from(activityLogs)
+    .where(
+      and(
+        eq(activityLogs.userId, currentUserId),
+        or(
+          eq(activityLogs.action, ActivityType.LIKE_USER),
+          eq(activityLogs.action, ActivityType.SKIP_USER),
+          eq(activityLogs.action, ActivityType.PASS_USER)
+        ),
+        isNotNull(activityLogs.actionTargetId)
+      )
+    );
   
-  const interactedUserIds = interactedUsers.map(u => u.userId);
+  const interactedUserIds = interactedUsers
+    .map(u => u.userId)
+    .filter(id => id !== null) as number[];
   
   // 基本筛选条件（包含同性别过滤）
   let whereConditions = [

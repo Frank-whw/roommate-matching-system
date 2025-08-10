@@ -78,7 +78,8 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
       .where(
         and(
           eq(teamJoinRequests.teamId, teamInfo.team.id),
-          eq(teamJoinRequests.status, 'pending')
+          eq(teamJoinRequests.status, 'pending'),
+          eq(teamJoinRequests.requestType, 'application')
         )
       )
       .orderBy(teamJoinRequests.createdAt);
