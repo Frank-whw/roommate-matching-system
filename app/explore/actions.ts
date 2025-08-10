@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { eq, and, or } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType } from '@/lib/db/schema';
-import { getCurrentUser, logActivity } from '@/lib/db/queries';
+import { getCurrentUser, logActivity, logUserInteraction } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
 
 // 邀请加入队伍操作schema
@@ -111,13 +111,14 @@ export async function inviteUserToTeam(rawData: any) {
       return { error: '您已经邀请过该用户' };
     }
 
-    // 创建邀请记录（使用teamJoinRequests表，但标记为邀请类型）
+    // 创建邀请记录（使用teamJoinRequests表，标记为邀请类型）
     await db.insert(teamJoinRequests).values({
       teamId: team.id,
       userId: targetUserId,
+      requestType: 'invitation',
+      invitedBy: currentUserId,
       message: message || `${user.users.name || '队长'}邀请您加入队伍「${team.name}」`,
       status: 'pending',
-      // 可以添加一个字段来区分是申请还是邀请，这里暂时用message来区分
     });
 
     // 记录活动日志
@@ -157,7 +158,7 @@ export async function getUserTeamInvites() {
 
     const currentUserId = user.users.id;
 
-    // 查询用户收到的队伍邀请
+    // 查询用户收到的队伍邀请（只查询邀请类型）
     const invites = await db
       .select({
         request: teamJoinRequests,
@@ -168,7 +169,8 @@ export async function getUserTeamInvites() {
       .where(
         and(
           eq(teamJoinRequests.userId, currentUserId),
-          eq(teamJoinRequests.status, 'pending')
+          eq(teamJoinRequests.status, 'pending'),
+          eq(teamJoinRequests.requestType, 'invitation')
         )
       );
 
@@ -315,8 +317,91 @@ export async function respondToTeamInvite(rawData: any) {
   }
 }
 
-// 向后兼容：保留原有的likeUser函数，但重定向到邀请功能
+// 用户互动操作schema
+const userInteractionSchema = z.object({
+  targetUserId: z.number().int().positive('目标用户ID不正确'),
+  action: z.enum(['like', 'skip', 'pass', 'view'], {
+    errorMap: () => ({ message: '操作类型不正确' })
+  })
+});
+
+// 记录用户互动行为
+export async function recordUserInteraction(rawData: any) {
+  try {
+    const { user } = await getCurrentUser();
+    if (!user || !user.users) {
+      return { error: '用户未登录' };
+    }
+
+    const currentUserId = user.users.id;
+
+    // 验证数据
+    const result = userInteractionSchema.safeParse(rawData);
+    if (!result.success) {
+      return { error: result.error.errors[0].message };
+    }
+
+    const { targetUserId, action } = result.data;
+
+    // 检查是否是自己
+    if (currentUserId === targetUserId) {
+      return { error: '不能对自己进行此操作' };
+    }
+
+    // 映射操作类型到ActivityType
+    let activityType: ActivityType;
+    switch (action) {
+      case 'like':
+        activityType = ActivityType.LIKE_USER;
+        break;
+      case 'skip':
+      case 'pass':
+        activityType = ActivityType.SKIP_USER;
+        break;
+      case 'view':
+        activityType = ActivityType.VIEW_PROFILE;
+        break;
+      default:
+        return { error: '不支持的操作类型' };
+    }
+
+    // 记录用户互动
+    await logUserInteraction(
+      currentUserId,
+      targetUserId,
+      activityType
+    );
+
+    // 重新验证相关页面
+    revalidatePath('/explore');
+
+    return {
+      success: true,
+      message: '操作已记录',
+      action
+    };
+
+  } catch (error) {
+    console.error('记录用户互动失败:', error);
+    return {
+      error: '操作失败，请重试'
+    };
+  }
+}
+
+// 向后兼容：保留原有的likeUser函数，现在记录点赞行为
 export async function likeUser(rawData: any) {
+  // 先记录点赞行为
+  const interactionResult = await recordUserInteraction({
+    targetUserId: rawData.targetUserId,
+    action: 'like'
+  });
+  
+  if (!interactionResult.success) {
+    return interactionResult;
+  }
+  
+  // 然后执行邀请逻辑（保持向后兼容）
   return inviteUserToTeam(rawData);
 }
 

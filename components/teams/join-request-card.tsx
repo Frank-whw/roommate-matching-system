@@ -25,8 +25,9 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleReview = async (approved: boolean) => {
+    const requestTypeText = request.requestType === 'invitation' ? '邀请' : '申请';
     const action = approved ? '批准' : '拒绝';
-    if (!confirm(`确定要${action}该用户的申请吗？`)) {
+    if (!confirm(`确定要${action}该用户的${requestTypeText}吗？`)) {
       return;
     }
 
@@ -89,7 +90,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
               </h4>
               <Badge variant="outline" className="ml-2 text-xs">
                 <User className="w-3 h-3 mr-1" />
-                新申请
+                {request.requestType === 'invitation' ? '邀请' : '申请'}
               </Badge>
             </div>
             
@@ -135,7 +136,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {/* 操作按钮 */}
           <div className="flex items-center justify-between">
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              申请ID: #{request.id}
+              {request.requestType === 'invitation' ? '邀请' : '申请'}ID: #{request.id}
             </div>
             
             <div className="flex items-center space-x-2">
@@ -165,7 +166,7 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {/* 队伍已满警告 */}
           {isTeamFull && (
             <div className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-              ⚠️ 队伍已达到4人满员，批准此申请需要先有成员退出
+              ⚠️ 队伍已达到4人满员，批准此{request.requestType === 'invitation' ? '邀请' : '申请'}需要先有成员退出
             </div>
           )}
         </div>

@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/db/queries';
 
 import { MyTeam } from '@/components/teams/my-team';
 import { JoinRequests } from '@/components/teams/join-requests';
+import { TeamInvites } from '@/components/teams/team-invites';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -95,22 +96,9 @@ export default async function MatchesPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">0</div>
-                    <div className="text-sm text-blue-700 dark:text-blue-300">待处理邀请</div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">0</div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">已发送邀请</div>
-                  </div>
-                </div>
-
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <UserPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>暂无队伍邀请</p>
-                  <p className="text-sm mt-2">去探索页面邀请其他用户加入您的队伍</p>
-                </div>
+                <Suspense fallback={<TeamInvitesSkeleton />}>
+                  <TeamInvites currentUserId={user.users?.id} />
+                </Suspense>
               </CardContent>
             </Card>
           </div>
@@ -225,6 +213,44 @@ function JoinRequestsSkeleton() {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function TeamInvitesSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* 统计信息骨架 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+        </div>
+        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+        </div>
+      </div>
+      
+      {/* 邀请列表骨架 */}
+      <div className="space-y-3">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="p-4 border rounded-lg animate-pulse">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+              </div>
+            </div>
+            <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
+            <div className="flex space-x-2">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
