@@ -23,7 +23,6 @@ type SessionData = {
   user: { 
     id: number;
     studentId?: string;
-    email?: string;
     isEmailVerified?: boolean;
   };
   expires: string;
@@ -75,7 +74,6 @@ export async function setSession(user: NewUser & { studentId?: string; isEmailVe
       user: { 
         id: user.id!,
         studentId: user.studentId,
-        email: user.email,
         isEmailVerified: user.isEmailVerified
       },
       expires: expiresInOneDay.toISOString(),

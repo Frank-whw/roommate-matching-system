@@ -21,6 +21,7 @@ import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
 import { siteConfig } from '@/lib/config';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -72,8 +73,8 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
             onClick={onClose}
           >
-            <Heart className="w-5 h-5 text-red-500" />
-            <span className="font-medium">我的匹配</span>
+            <Users className="w-5 h-5 text-blue-500" />
+            <span className="font-medium">队伍管理</span>
           </Link>
           
           {user && (
@@ -145,7 +146,7 @@ function UserMenu() {
         <Avatar className="cursor-pointer size-8 sm:size-9">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback className="text-xs sm:text-sm">
-            {user.email
+            {generateEmailFromStudentId(user.studentId)
               .split(' ')
               .map((n) => n[0])
               .join('')}
@@ -156,7 +157,7 @@ function UserMenu() {
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
             <UserIcon className="mr-2 h-4 w-4" />
-            <span className="truncate">{user.name || user.email}</span>
+            <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
@@ -235,7 +236,7 @@ export default function ResponsiveHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              我的匹配
+              队伍管理
             </Link>
           </nav>
 

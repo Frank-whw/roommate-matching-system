@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { hashPassword, signPasswordSetupToken } from '@/lib/auth/session';
 import { sendPasswordSetupEmail } from '@/lib/email';
+import { generateEmailFromStudentId } from '@/lib/db/queries';
 
 const registerSchema = z.object({
   studentId: z.string().regex(/^102\d55014\d{2}$/, '学号格式不正确，应为102*55014**格式'),
@@ -28,35 +29,24 @@ export async function POST(request: NextRequest) {
     const { studentId } = result.data;
     
     // 自动生成邮箱和姓名
-    const email = `${studentId}@stu.ecnu.edu.cn`;
+    const email = generateEmailFromStudentId(studentId);
     const name = `用户${studentId}`;
 
     // 检查用户是否已存在
     const existingUser = await db
       .select()
       .from(users)
-      .where(or(
-        eq(users.email, email),
-        eq(users.studentId, studentId)
-      ))
+      .where(eq(users.studentId, studentId))
       .limit(1);
 
     if (existingUser.length > 0) {
       const user = existingUser[0];
       // 如果用户已经设置了密码，则认为已完成注册
       if (user.passwordHash && user.passwordHash.trim() !== '') {
-        if (user.email === email) {
-          return NextResponse.json(
-            { error: '该邮箱已被注册' },
-            { status: 409 }
-          );
-        }
-        if (user.studentId === studentId) {
-          return NextResponse.json(
-            { error: '该学号已被注册' },
-            { status: 409 }
-          );
-        }
+        return NextResponse.json(
+          { error: '该学号已被注册' },
+          { status: 409 }
+        );
       } else {
         // 如果用户存在但未设置密码，重新发送设置密码邮件
         const passwordSetupToken = await signPasswordSetupToken(email, studentId);
@@ -89,7 +79,7 @@ export async function POST(request: NextRequest) {
             user: {
               id: user.id,
               name: user.name,
-              email: user.email,
+              email: generateEmailFromStudentId(user.studentId),
               studentId: user.studentId,
               isEmailVerified: user.isEmailVerified
             },
@@ -111,7 +101,6 @@ export async function POST(request: NextRequest) {
       .insert(users)
       .values({
         name,
-        email,
         studentId,
         passwordHash: '', // 临时空密码，等待用户设置
         isActive: false, // 设置为未激活，直到密码设置完成
@@ -141,7 +130,7 @@ export async function POST(request: NextRequest) {
         user: {
           id: newUser[0].id,
           name: newUser[0].name,
-          email: newUser[0].email,
+          email: generateEmailFromStudentId(newUser[0].studentId),
           studentId: newUser[0].studentId,
           isEmailVerified: newUser[0].isEmailVerified
         },

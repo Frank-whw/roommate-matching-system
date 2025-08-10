@@ -31,6 +31,7 @@ import {
 } from '@/lib/auth/middleware';
 import { sendEmailVerification, sendPasswordSetupEmail } from '@/lib/email';
 import { authConfig } from '@/lib/config';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 // 学号格式验证zod schema
 const studentIdSchema = z.string()
@@ -118,7 +119,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
             user: {
               id: existingUserByStudentId.id,
               name: existingUserByStudentId.name,
-              email: existingUserByStudentId.email,
+              email: generateEmailFromStudentId(existingUserByStudentId.studentId),
               studentId: existingUserByStudentId.studentId,
               isEmailVerified: existingUserByStudentId.isEmailVerified
             },
@@ -147,7 +148,6 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     // 创建临时用户记录（无密码）
     const newUser: NewUser = {
       studentId,
-      email,
       passwordHash: '', // 临时空密码，等待用户设置
       name: `用户${studentId}`,
       isActive: false, // 设置为未激活，直到密码设置完成

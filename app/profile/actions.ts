@@ -10,7 +10,6 @@ import { revalidatePath } from 'next/cache';
 // 个人资料更新schema
 const profileSchema = z.object({
   // 基本信息
-  nickname: z.string().min(2, '昵称至少需要2个字符').max(50, '昵称不能超过50个字符').optional(),
   wechatId: z.string().max(100, '微信号不能超过100个字符').optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   age: z.number().int().min(16, '年龄不能小于16').max(35, '年龄不能大于35').optional(),
@@ -65,7 +64,7 @@ export async function updateProfile(rawData: any) {
 
     // 计算资料完整度
     const requiredFields = [
-      data.nickname, data.wechatId, data.gender, data.age,
+      data.wechatId, data.gender, data.age,
       data.sleepTime, data.wakeTime, data.studyHabit,
       data.lifestyle, data.cleanliness, data.mbti,
       data.roommateExpectations, data.hobbies

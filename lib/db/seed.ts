@@ -1,10 +1,11 @@
 import { db } from './drizzle';
 import { users } from './schema';
 import { hashPassword } from '@/lib/auth/session';
+import { generateEmailFromStudentId } from './queries';
 
 async function seed() {
-  const email = 'test@edu.cn';
   const studentId = '1020055014001';
+  const email = generateEmailFromStudentId(studentId);
   const password = 'Admin123';
   const passwordHash = await hashPassword(password);
 
@@ -13,7 +14,6 @@ async function seed() {
     .values([
       {
         studentId: studentId,
-        email: email,
         passwordHash: passwordHash,
         name: 'Test User',
         isActive: true,

@@ -2,13 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { likeUser } from '@/app/explore/actions';
+import { inviteUserToTeam } from '@/app/explore/actions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
-  Heart,
   Clock,
   Home,
   Brain,
@@ -20,13 +19,15 @@ import {
   User,
   ChevronDown,
   ChevronUp,
-  Eye
+  Eye,
+  UserPlus
 } from 'lucide-react';
 
 interface UserCardProps {
   user: any;
   profile: any;
   currentUserId: number;
+  currentUserTeam?: any;
 }
 
 const mbtiDescriptions: { [key: string]: string } = {
@@ -54,26 +55,37 @@ const cleanlinessLabels: { [key: string]: string } = {
   'acceptable': '过得去就行'
 };
 
-export function UserCard({ user, profile, currentUserId }: UserCardProps) {
+export function UserCard({ user, profile, currentUserId, currentUserTeam }: UserCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
+  
+  // 检查当前用户是否为队长
+  const isTeamLeader = currentUserTeam?.membership?.isLeader === true;
+  const hasTeam = !!currentUserTeam;
+  
+  // 确定按钮状态
+  const canInvite = hasTeam && isTeamLeader;
+  const buttonText = !hasTeam 
+    ? "需要先创建或加入队伍" 
+    : !isTeamLeader 
+    ? "只有队长可以邀请" 
+    : "邀请加入队伍";
+  const buttonDisabled = !canInvite || isLiking;
 
-  // 处理点赞
-  const handleLike = async () => {
+  // 处理邀请加入队伍
+  const handleInvite = async () => {
+    if (isLiking || !canInvite) return;
+    
     setIsLiking(true);
     try {
-      const result = await likeUser({
+      const result = await inviteUserToTeam({
         targetUserId: user.id
       });
       
       if (result.error) {
         alert(result.error);
       } else {
-        if (result.matchCreated) {
-          alert('🎉 匹配成功！你们互相邀请，现在可以看到对方的联系方式了！');
-        } else {
-          alert('❤️ 已邀请，等待对方回应...');
-        }
+        alert('✉️ 邀请已发送，等待对方回应...');
         // 隐藏当前卡片或刷新页面
         window.location.reload();
       }
@@ -227,12 +239,12 @@ export function UserCard({ user, profile, currentUserId }: UserCardProps) {
         <div className="px-4 sm:px-6 pb-4 sm:pb-6">
           <Button
             size="sm"
-            className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-xs sm:text-sm"
-            onClick={handleLike}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs sm:text-sm"
+            onClick={handleInvite}
             disabled={isLiking}
           >
-            <Heart className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
-            <span className="hidden sm:inline">{isLiking ? '邀请中...' : '邀请'}</span>
+            <UserPlus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+            <span className="hidden sm:inline">{isLiking ? '邀请中...' : '邀请加入队伍'}</span>
           </Button>
         </div>
 

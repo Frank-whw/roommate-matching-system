@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings, Menu, X } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Users, Heart, Settings, Menu, X, Search } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
 import { siteConfig } from '@/lib/config';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -66,7 +67,7 @@ function UserMenu() {
         <Avatar className="cursor-pointer size-9">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback>
-            {user.email
+            {generateEmailFromStudentId(user.studentId)
               .split(' ')
               .map((n) => n[0])
               .join('')}
@@ -77,7 +78,7 @@ function UserMenu() {
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
             <UserIcon className="mr-2 h-4 w-4" />
-            <span className="truncate">{user.name || user.email}</span>
+            <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
@@ -89,8 +90,8 @@ function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/matches">
-            <Heart className="mr-2 h-4 w-4" />
-            <span>我的匹配</span>
+            <Users className="mr-2 h-4 w-4" />
+            <span>队伍管理</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
@@ -119,9 +120,9 @@ function MobileNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/explore', label: '匹配广场', icon: Heart },
+    { href: '/explore', label: '匹配广场', icon: Search },
     { href: '/teams', label: '队伍广场', icon: Users },
-    { href: '/matches', label: '我的匹配', icon: Heart },
+    { href: '/matches', label: '队伍管理', icon: Users },
     { href: '/profile', label: '个人资料', icon: Settings },
   ];
 
@@ -171,7 +172,7 @@ export default function Header() {
   const navItems = [
     { href: '/explore', label: '匹配广场' },
     { href: '/teams', label: '队伍广场' },
-    { href: '/matches', label: '我的匹配' },
+    { href: '/matches', label: '队伍管理' },
   ];
 
   return (

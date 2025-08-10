@@ -25,7 +25,6 @@ export const VALIDATION_RULES = {
   // 长度限制
   LENGTHS: {
     NAME: { min: 2, max: 50 },
-    NICKNAME: { min: 2, max: 20 },
     WECHAT: { min: 6, max: 20 },
     BIO: { max: 500 },
     EXPECTATIONS: { max: 1000 },
@@ -69,11 +68,6 @@ export const baseValidation = {
   name: z.string()
     .min(VALIDATION_RULES.LENGTHS.NAME.min, MESSAGES.TOO_SHORT(VALIDATION_RULES.LENGTHS.NAME.min))
     .max(VALIDATION_RULES.LENGTHS.NAME.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.NAME.max)),
-    
-  nickname: z.string()
-    .min(VALIDATION_RULES.LENGTHS.NICKNAME.min, MESSAGES.TOO_SHORT(VALIDATION_RULES.LENGTHS.NICKNAME.min))
-    .max(VALIDATION_RULES.LENGTHS.NICKNAME.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.NICKNAME.max))
-    .optional(),
     
   wechatId: z.string()
     .regex(VALIDATION_RULES.WECHAT_ID, MESSAGES.INVALID_WECHAT)
@@ -125,7 +119,6 @@ export const authSchemas = {
 export const profileSchemas = {
   updateProfile: z.object({
     // 基本信息
-    nickname: baseValidation.nickname,
     wechatId: baseValidation.wechatId,
     gender: z.enum(['male', 'female', 'other']).optional(),
     age: baseValidation.age,

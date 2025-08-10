@@ -39,7 +39,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [formData, setFormData] = useState({
     // 基本信息
-    nickname: initialProfile?.nickname || '',
     wechatId: initialProfile?.wechatId || '',
     gender: initialProfile?.gender || '',
     age: initialProfile?.age || '',
@@ -80,7 +79,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
       ...formData,
       age: formData.age ? parseInt(formData.age) : undefined,
     // 移除空字符串，让验证器处理为 undefined
-      nickname: formData.nickname || undefined,
       wechatId: formData.wechatId || undefined,
       gender: formData.gender || undefined,
       sleepTime: formData.sleepTime || undefined,
@@ -116,7 +114,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
 
   // 计算完成进度
   const requiredFields = [
-    formData.nickname, formData.wechatId, formData.gender, formData.age,
+    formData.wechatId, formData.gender, formData.age,
     formData.sleepTime, formData.wakeTime, formData.studyHabit,
     formData.lifestyle, formData.cleanliness, formData.mbti,
     formData.roommateExpectations, formData.hobbies
@@ -167,18 +165,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <Label htmlFor="nickname">昵称</Label>
-              <Input
-                id="nickname"
-                type="text"
-                placeholder="请输入您的昵称，比如：Frank"
-                value={formData.nickname}
-                onChange={(e) => handleInputChange('nickname', e.target.value)}
-                maxLength={50}
-              />
-            </div>
-
             <div>
               <Label htmlFor="wechatId">微信号</Label>
               <Input

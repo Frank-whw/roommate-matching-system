@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
-import { users, ActivityType } from '@/lib/db/schema';
+import { users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword, verifyPasswordSetupToken } from '@/lib/auth/session';
-import { logActivity } from '@/lib/db/queries';
+import { logActivity, generateEmailFromStudentId } from '@/lib/db/queries';
 
 // 设置密码请求schema
 const setPasswordSchema = z.object({
   token: z.string().min(1, '令牌不能为空'),
+  name: z.string().min(1, '姓名不能为空').max(50, '姓名不能超过50个字符'),
+  gender: z.enum(['male', 'female'], { errorMap: () => ({ message: '请选择有效的性别' }) }),
   password: z.string()
     .min(8, '密码至少需要8个字符')
     .regex(/[A-Z]/, '密码必须包含至少一个大写字母')
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { token, password } = result.data;
+    const { token, name, gender, password } = result.data;
 
     // 验证JWT令牌
     const tokenData = await verifyPasswordSetupToken(token);
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
     const foundUsers = await db
       .select()
       .from(users)
-      .where(eq(users.email, tokenData.email))
+      .where(eq(users.studentId, tokenData.studentId))
       .limit(1);
 
     if (foundUsers.length === 0) {
@@ -78,21 +80,45 @@ export async function POST(request: NextRequest) {
     // 哈希新密码
     const passwordHash = await hashPassword(password);
 
-    // 更新用户信息：设置密码、激活账户、验证邮箱
-    const updatedUser = await db
-      .update(users)
-      .set({
-        passwordHash,
-        isActive: true,
-        isEmailVerified: true,
-        emailVerificationToken: null,
-        emailVerificationExpires: null,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, user.id))
-      .returning();
+    // 使用事务同时更新用户信息和创建用户资料
+    const transactionResult = await db.transaction(async (tx) => {
+      // 更新用户信息：设置密码、姓名、激活账户、验证邮箱
+      const updatedUser = await tx
+        .update(users)
+        .set({
+          name: name.trim(),
+          passwordHash,
+          isActive: true,
+          isEmailVerified: true,
+          emailVerificationToken: null,
+          emailVerificationExpires: null,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, user.id))
+        .returning();
 
-    if (updatedUser.length === 0) {
+      if (updatedUser.length === 0) {
+        throw new Error('用户更新失败');
+      }
+
+      // 创建用户资料
+      const createdProfile = await tx
+        .insert(userProfiles)
+        .values({
+          userId: user.id,
+          gender: gender as 'male' | 'female',
+          isProfileComplete: false
+        })
+        .returning();
+
+      if (createdProfile.length === 0) {
+        throw new Error('用户资料创建失败');
+      }
+
+      return { user: updatedUser[0], profile: createdProfile[0] };
+    });
+
+    if (!transactionResult) {
       return NextResponse.json(
         { error: '密码设置失败，请重试' },
         { status: 500 }
@@ -107,12 +133,12 @@ export async function POST(request: NextRequest) {
       message: '密码设置成功！您现在可以登录系统了。',
       data: {
         user: {
-          id: updatedUser[0].id,
-          name: updatedUser[0].name,
-          email: updatedUser[0].email,
-          studentId: updatedUser[0].studentId,
-          isEmailVerified: updatedUser[0].isEmailVerified,
-          isActive: updatedUser[0].isActive
+          id: transactionResult.user.id,
+          name: transactionResult.user.name,
+          email: generateEmailFromStudentId(transactionResult.user.studentId),
+          studentId: transactionResult.user.studentId,
+          isEmailVerified: transactionResult.user.isEmailVerified,
+          isActive: transactionResult.user.isActive
         }
       }
     });

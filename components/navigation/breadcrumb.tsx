@@ -17,7 +17,7 @@ const pathMappings: Record<string, string> = {
   '/explore': '匹配广场',
   '/teams': '队伍广场',
   '/teams/create': '创建队伍',
-  '/matches': '我的匹配',
+  '/matches': '队伍管理',
   '/profile': '个人资料',
   '/sign-in': '登录',
   '/sign-up': '注册',

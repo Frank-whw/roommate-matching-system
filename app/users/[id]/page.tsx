@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCurrentUser, getUserWithProfile } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -105,9 +106,9 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
               <CardContent className="p-6 text-center">
                 <div className="relative mb-4">
                   <Avatar className="w-24 h-24 mx-auto ring-4 ring-pink-100 dark:ring-pink-900">
-                    <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=f97316&color=fff&size=200`} />
+                    <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || generateEmailFromStudentId(user.studentId))}&background=f97316&color=fff&size=200`} />
                     <AvatarFallback className="bg-gradient-to-br from-pink-400 to-purple-500 text-white text-xl">
-                      {user.name ? user.name.substring(0, 2) : user.email.substring(0, 2).toUpperCase()}
+                      {user.name ? user.name.substring(0, 2) : generateEmailFromStudentId(user.studentId).substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
@@ -134,7 +135,7 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
 
                   <div className="flex items-center justify-center text-gray-600 dark:text-gray-300">
                     <Mail className="w-4 h-4 mr-2" />
-                    <span>{user.email.replace(/(.{2}).*(@.*)/, '$1***$2')}</span>
+                    <span>{generateEmailFromStudentId(user.studentId).replace(/(.{2}).*(@.*)/, '$1***$2')}</span>
                   </div>
 
                   <div className="flex items-center justify-center text-gray-600 dark:text-gray-300">

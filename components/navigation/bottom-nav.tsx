@@ -39,8 +39,8 @@ const navItems: NavItem[] = [
   },
   {
     href: '/matches',
-    label: '心动',
-    icon: Heart,
+    label: '管理',
+    icon: Users,
     requireAuth: true,
   },
   {
