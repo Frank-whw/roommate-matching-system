@@ -97,11 +97,11 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
   };
 
   return (
-    <Card className="group relative overflow-hidden border border-white/40 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl">
+    <Card className="group relative overflow-hidden border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl">
       <CardContent className="p-5">
         {/* 队伍标题区域 */}
         <Link href={`/teams/${team.id}`} className="block">
-          <div className="flex items-start justify-between mb-4 hover:bg-white/50 dark:hover:bg-gray-800/50 -m-3 p-3 rounded-lg transition-colors duration-200">
+          <div className="flex items-start justify-between mb-4 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 -m-3 p-3 rounded-lg transition-colors duration-200 border border-transparent hover:border-gray-200/60 dark:hover:border-gray-700/50">
             <div className="flex-1 min-w-0">
               <div className="flex items-center mb-2">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mr-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 truncate">
@@ -111,8 +111,8 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                   variant="outline" 
                   className={
                     isTeamFull 
-                      ? "bg-white/80 dark:bg-gray-800/80 border-gray-300/80 dark:border-gray-600/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
-                      : "bg-green-100/80 dark:bg-green-900/50 border-green-300/80 dark:border-green-700/80 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
+                      ? "bg-gray-100/90 dark:bg-gray-800/80 border-gray-300/80 dark:border-gray-600/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
+                      : "bg-green-100/90 dark:bg-green-900/50 border-green-300/80 dark:border-green-700/80 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
                   }
                 >
                   {isTeamFull ? '已满员' : '招募中'}
@@ -165,9 +165,9 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
 
         {/* 队长信息 */}
         <Link href={`/users/${leader.id}`} className="block">
-          <div className="flex items-center space-x-3 mb-4 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg hover:bg-white/80 dark:hover:bg-gray-700/70 transition-colors duration-200 group/leader backdrop-blur-md border border-white/30 dark:border-gray-700/50">
+          <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50/80 dark:bg-gray-800/60 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/70 transition-colors duration-200 group/leader backdrop-blur-md border border-gray-200/60 dark:border-gray-700/50">
             <div className="relative">
-              <Avatar className="w-10 h-10 ring-2 ring-white/70 dark:ring-gray-700/70 shadow-md">
+              <Avatar className="w-10 h-10 ring-2 ring-white/80 dark:ring-gray-700/70 shadow-md">
                 <AvatarImage 
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.name || leader.email)}&background=3b82f6&color=fff`} 
                 />
@@ -212,14 +212,14 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               <FileText className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
               招募要求
             </div>
-            <div className="text-xs text-gray-700 dark:text-gray-200 bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg border border-white/50 dark:border-gray-700/60 backdrop-blur-md">
+            <div className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50/80 dark:bg-gray-800/60 p-3 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md">
               <p className="line-clamp-2 leading-relaxed">{team.requirements}</p>
             </div>
           </div>
         )}
 
         {/* 操作按钮区域 */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/50 dark:border-gray-700/70">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200/80 dark:border-gray-700/70">
           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 font-medium">
             <span>#{team.id}</span>
           </div>
@@ -232,7 +232,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               className={
                 canJoin 
                   ? "bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
-                  : "bg-gray-200/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
+                  : "bg-gray-200/90 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
               }
             >
               <UserPlus className="w-3 h-3 mr-1.5" />
@@ -249,7 +249,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               {team.currentMembers}/{team.maxMembers}
             </span>
           </div>
-          <div className="w-full bg-gray-200/70 dark:bg-gray-700/70 rounded-full h-1.5 overflow-hidden backdrop-blur-md">
+          <div className="w-full bg-gray-200/80 dark:bg-gray-700/70 rounded-full h-1.5 overflow-hidden backdrop-blur-md">
             <div 
               className="bg-gradient-to-r from-blue-500/90 to-purple-600/90 h-1.5 rounded-full transition-all duration-500 ease-out shadow-sm"
               style={{ width: `${(team.currentMembers / team.maxMembers) * 100}%` }}

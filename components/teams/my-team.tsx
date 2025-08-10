@@ -50,26 +50,26 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
 
     if (userTeam.length === 0) {
       return (
-        <div className="text-center py-12">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <Users className="w-8 h-8 text-gray-400" />
+        <div className="text-center py-16">
+          <div className="flex flex-col items-center space-y-6">
+            <div className="w-20 h-20 bg-white/60 dark:bg-gray-800/60 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 dark:border-gray-700/60">
+              <Users className="w-8 h-8 text-gray-500 dark:text-gray-400" />
             </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <div className="max-w-md">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 您还没有加入任何队伍
               </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 创建自己的队伍成为队长，或者申请加入其他队伍
               </p>
               <div className="flex items-center justify-center space-x-4">
-                <Button asChild>
+                <Button asChild className="bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-6 py-2 font-medium backdrop-blur-md">
                   <Link href="/teams/create">
                     <Plus className="w-4 h-4 mr-2" />
                     创建队伍
                   </Link>
                 </Button>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md">
                   <Link href="/teams">
                     <Search className="w-4 h-4 mr-2" />
                     浏览队伍
@@ -110,39 +110,43 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
     return (
       <div className="space-y-6">
         {/* 队伍基本信息 */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <div className="bg-gradient-to-r from-blue-100/80 to-indigo-100/80 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-300/60 dark:border-blue-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-xl">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center mb-2">
-                <Crown className="w-5 h-5 text-yellow-500 mr-2" />
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              <div className="flex items-center mb-3">
+                <Crown className="w-6 h-6 text-yellow-500 mr-3" />
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {teamInfo.team.name}
                 </h3>
                 {teamInfo.membership.isLeader && (
-                  <Badge variant="outline" className="ml-2 text-yellow-600 border-yellow-300">
+                  <Badge variant="outline" className="ml-3 text-yellow-700 dark:text-yellow-300 border-yellow-400/80 dark:border-yellow-600/80 bg-yellow-100/80 dark:bg-yellow-900/30 backdrop-blur-md">
                     队长
                   </Badge>
                 )}
               </div>
               
               {teamInfo.team.description && (
-                <p className="text-gray-600 dark:text-gray-300 mb-3">
+                <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">
                   {teamInfo.team.description}
                 </p>
               )}
               
-              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-                <Users className="w-4 h-4 mr-1" />
+              <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
+                <Users className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
                 <span>{teamInfo.team.currentMembers}/{teamInfo.team.maxMembers} 成员</span>
-                <span className="mx-2">•</span>
+                <span className="mx-3">•</span>
                 <span>创建于 {new Date(teamInfo.team.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
 
-            <div className="ml-4">
+            <div className="ml-6">
               <Badge 
                 variant={teamInfo.team.status === 'recruiting' ? 'default' : 'secondary'}
-                className={teamInfo.team.status === 'recruiting' ? 'bg-green-100 text-green-800' : ''}
+                className={
+                  teamInfo.team.status === 'recruiting' 
+                    ? 'bg-green-100/80 dark:bg-green-900/50 text-green-800 dark:text-green-200 border-green-300/80 dark:border-green-700/80 backdrop-blur-md'
+                    : 'bg-gray-100/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-200 border-gray-300/80 dark:border-gray-700/80 backdrop-blur-md'
+                }
               >
                 {teamInfo.team.status === 'recruiting' && '招募中'}
                 {teamInfo.team.status === 'full' && '已满员'}
@@ -154,23 +158,23 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
 
         {/* 队伍成员 */}
         <div>
-          <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             队伍成员 ({allTeamMembers.length})
             {showContacts && (
-              <Badge variant="outline" className="ml-2 text-green-600 border-green-300">
+              <Badge variant="outline" className="ml-3 text-green-700 dark:text-green-300 border-green-400/80 dark:border-green-600/80 bg-green-100/80 dark:bg-green-900/30 backdrop-blur-md">
                 含联系方式
               </Badge>
             )}
           </h4>
           <div className="grid grid-cols-1 gap-4">
             {allTeamMembers.map(({ member, user, profile }) => (
-              <div key={member.id} className="flex items-start space-x-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div key={member.id} className="flex items-start space-x-4 p-5 bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl backdrop-blur-2xl shadow-lg hover:shadow-xl transition-all duration-200">
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md ring-2 ring-white/50 dark:ring-gray-700/50">
                     {user.name ? user.name.substring(0, 2) : generateEmailFromStudentId(user.studentId).substring(0, 2).toUpperCase()}
                   </div>
                   {member.isLeader && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center shadow-md">
                       <Crown className="w-3 h-3 text-white" />
                     </div>
                   )}
@@ -179,22 +183,22 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="flex items-center">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="flex items-center mb-1">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
                           {user.name || '用户' + user.id}
                         </p>
                         {member.isLeader && (
-                          <Badge variant="outline" className="ml-2 text-xs text-yellow-600 border-yellow-300">
+                          <Badge variant="outline" className="ml-2 text-xs text-yellow-700 dark:text-yellow-300 border-yellow-400/80 dark:border-yellow-600/80 bg-yellow-100/80 dark:bg-yellow-900/30 backdrop-blur-md">
                             队长
                           </Badge>
                         )}
                         {user.id === currentUserId && (
-                          <Badge variant="outline" className="ml-2 text-xs text-blue-600 border-blue-300">
+                          <Badge variant="outline" className="ml-2 text-xs text-blue-700 dark:text-blue-300 border-blue-400/80 dark:border-blue-600/80 bg-blue-100/80 dark:bg-blue-900/30 backdrop-blur-md">
                             您
                           </Badge>
                         )}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <div className="text-xs text-gray-600 dark:text-gray-300">
                         <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
                       </div>
                     </div>

@@ -42,7 +42,11 @@ export function JoinTeamButton({ teamId, canJoin }: JoinTeamButtonProps) {
 
   if (!canJoin) {
     return (
-      <Button variant="outline" className="w-full" disabled>
+      <Button 
+        variant="outline" 
+        className="w-full border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md cursor-not-allowed" 
+        disabled
+      >
         <UserPlus className="w-4 h-4 mr-2" />
         已在队伍中
       </Button>
@@ -51,7 +55,7 @@ export function JoinTeamButton({ teamId, canJoin }: JoinTeamButtonProps) {
 
   return (
     <Button 
-      className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+      className="w-full bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg font-medium backdrop-blur-md"
       onClick={handleJoinTeam}
       disabled={isLoading}
     >

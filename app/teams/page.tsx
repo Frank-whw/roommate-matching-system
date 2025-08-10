@@ -60,7 +60,7 @@ export default async function TeamsPage() {
 
           {/* 搜索和筛选区域 */}
           <div className="mb-8">
-            <Card className="border border-white/40 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
+            <Card className="border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-lg font-semibold">
                   <Search className="w-5 h-5 mr-2 text-blue-600" />
@@ -75,12 +75,12 @@ export default async function TeamsPage() {
                   <div className="flex-1">
                     <Input
                       placeholder="搜索队伍名称、要求或描述..."
-                      className="w-full border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
+                      className="w-full border-gray-200/80 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md"
                       disabled
                     />
                     <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">搜索功能开发中...</p>
                   </div>
-                  <Button variant="outline" disabled className="border-white/50 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md">
+                  <Button variant="outline" disabled className="border-gray-200/80 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md">
                     <Filter className="w-4 h-4 mr-2" />
                     筛选
                   </Button>
@@ -90,7 +90,7 @@ export default async function TeamsPage() {
           </div>
 
           {/* 队伍列表 */}
-          <Card className="border border-white/40 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
+          <Card className="border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center text-lg font-semibold">
                 <Users className="w-5 h-5 mr-2 text-blue-600" />
@@ -109,7 +109,7 @@ export default async function TeamsPage() {
 
           {/* 侧边帮助信息 */}
           <div className="mt-8">
-            <Card className="border-blue-300/60 bg-blue-100/80 dark:border-blue-700/60 dark:bg-blue-900/50 backdrop-blur-2xl">
+            <Card className="border-blue-300/80 bg-blue-100/90 dark:border-blue-700/60 dark:bg-blue-900/50 backdrop-blur-2xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-blue-900 dark:text-blue-100 text-lg font-semibold">
                   <AlertCircle className="w-5 h-5 mr-2" />
@@ -153,23 +153,23 @@ function TeamsListSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="p-5 border border-white/40 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl rounded-xl animate-pulse">
+        <div key={i} className="p-5 border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl rounded-xl animate-pulse">
           <div className="flex justify-between items-start mb-4">
-            <div className="h-6 bg-gray-300/70 dark:bg-gray-600/70 rounded w-1/2 backdrop-blur-md"></div>
-            <div className="h-8 bg-gray-300/70 dark:bg-gray-600/70 rounded w-16 backdrop-blur-md"></div>
+            <div className="h-6 bg-gray-300/80 dark:bg-gray-600/70 rounded w-1/2 backdrop-blur-md"></div>
+            <div className="h-8 bg-gray-300/80 dark:bg-gray-600/70 rounded w-16 backdrop-blur-md"></div>
           </div>
-          <div className="h-4 bg-gray-300/70 dark:bg-gray-600/70 rounded mb-3 backdrop-blur-md"></div>
-          <div className="h-4 bg-gray-300/70 dark:bg-gray-600/70 rounded w-2/3 mb-4 backdrop-blur-md"></div>
-          <div className="flex items-center space-x-3 mb-4 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-md border border-white/30 dark:border-gray-700/50">
-            <div className="w-10 h-10 bg-gray-300/70 dark:bg-gray-600/70 rounded-full"></div>
+          <div className="h-4 bg-gray-300/80 dark:bg-gray-600/70 rounded mb-3 backdrop-blur-md"></div>
+          <div className="h-4 bg-gray-300/80 dark:bg-gray-600/70 rounded w-2/3 mb-4 backdrop-blur-md"></div>
+          <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50/80 dark:bg-gray-800/60 rounded-lg backdrop-blur-md border border-gray-200/60 dark:border-gray-700/50">
+            <div className="w-10 h-10 bg-gray-300/80 dark:bg-gray-600/70 rounded-full"></div>
             <div className="flex-1">
-              <div className="h-4 bg-gray-300/70 dark:bg-gray-600/70 rounded w-1/2 mb-1 backdrop-blur-md"></div>
-              <div className="h-3 bg-gray-300/70 dark:bg-gray-600/70 rounded w-1/3 backdrop-blur-md"></div>
+              <div className="h-4 bg-gray-300/80 dark:bg-gray-600/70 rounded w-1/2 mb-1 backdrop-blur-md"></div>
+              <div className="h-3 bg-gray-300/80 dark:bg-gray-600/70 rounded w-1/3 backdrop-blur-md"></div>
             </div>
           </div>
-          <div className="flex justify-between items-center pt-4 border-t border-white/50 dark:border-gray-700/70">
-            <div className="h-3 bg-gray-300/70 dark:bg-gray-600/70 rounded w-12 backdrop-blur-md"></div>
-            <div className="h-8 bg-gray-300/70 dark:bg-gray-600/70 rounded w-20 backdrop-blur-md"></div>
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200/80 dark:border-gray-700/70">
+            <div className="h-3 bg-gray-300/80 dark:bg-gray-600/70 rounded w-12 backdrop-blur-md"></div>
+            <div className="h-8 bg-gray-300/80 dark:bg-gray-600/70 rounded w-20 backdrop-blur-md"></div>
           </div>
         </div>
       ))}
