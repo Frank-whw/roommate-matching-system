@@ -88,7 +88,7 @@ export function ExploreHeader({
                 </Badge>
               </div>
               <Button variant="outline" size="sm" asChild className="ml-4">
-                <Link href="/teams">
+                <Link href="/matches">
                   <Users className="w-3 h-3 mr-1" />
                   队伍管理
                 </Link>

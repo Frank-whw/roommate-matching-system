@@ -64,7 +64,7 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             onClick={onClose}
           >
             <Users className="w-5 h-5 text-blue-500" />
-            <span className="font-medium">队伍广场</span>
+            <span className="font-medium">浏览队伍</span>
             <NotificationBadge />
           </Link>
           
@@ -225,7 +225,7 @@ export default function ResponsiveHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              队伍广场
+              浏览队伍
             </Link>
             <Link 
               href="/matches" 

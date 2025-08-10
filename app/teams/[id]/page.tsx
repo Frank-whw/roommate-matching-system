@@ -95,7 +95,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
           <Button variant="outline" asChild>
             <Link href="/teams" className="inline-flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              返回队伍广场
+              返回浏览队伍
             </Link>
           </Button>
         </div>

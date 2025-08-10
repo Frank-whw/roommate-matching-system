@@ -97,7 +97,7 @@ function UserMenu() {
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/teams">
             <Users className="mr-2 h-4 w-4" />
-            <span>我的队伍</span>
+            <span>浏览队伍</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -121,7 +121,7 @@ function MobileNav() {
 
   const navItems = [
     { href: '/explore', label: '匹配广场', icon: Search },
-    { href: '/teams', label: '队伍广场', icon: Users },
+    { href: '/teams', label: '浏览队伍', icon: Users },
     { href: '/matches', label: '队伍管理', icon: Users },
     { href: '/profile', label: '个人资料', icon: Settings },
   ];
@@ -171,7 +171,7 @@ export default function Header() {
 
   const navItems = [
     { href: '/explore', label: '匹配广场' },
-    { href: '/teams', label: '队伍广场' },
+    { href: '/teams', label: '浏览队伍' },
     { href: '/matches', label: '队伍管理' },
   ];
 

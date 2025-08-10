@@ -31,7 +31,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
   const handleJoinTeam = async () => {
     if (!canJoin) {
       if (showAll) {
-        alert('请前往队伍广场申请加入队伍');
+        alert('请前往浏览队伍页面申请加入队伍');
       } else {
         alert('您已经在一个队伍中了');
       }
@@ -69,7 +69,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
     
     // 不能申请的情况
     if (showAll) {
-      // 队伍广场模式：显示队伍状态
+      // 浏览队伍模式：显示队伍状态
       if (team.currentMembers >= team.maxMembers) {
         return '队伍已满';
       }

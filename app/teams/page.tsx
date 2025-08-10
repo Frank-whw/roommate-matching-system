@@ -40,7 +40,7 @@ export default async function TeamsPage() {
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white flex items-center">
                   <Users className="w-8 h-8 sm:w-10 sm:h-10 mr-3 text-blue-600" />
-                  队伍广场
+                  浏览队伍
                 </h1>
                 <p className="mt-3 text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
                   浏览所有队伍，找到合适的室友组合
