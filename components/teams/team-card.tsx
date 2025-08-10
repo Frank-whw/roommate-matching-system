@@ -10,7 +10,6 @@ import { joinTeam } from '@/app/teams/actions';
 import { 
   Crown,
   Users,
-  MapPin,
   Calendar,
   FileText,
   UserPlus,
@@ -135,13 +134,6 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                   <span>{formatDate(team.createdAt)}</span>
                 </div>
               </div>
-
-              {team.dormArea && (
-                <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-2">
-                  <MapPin className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" />
-                  <span className="truncate">{team.dormArea}</span>
-                </div>
-              )}
               
               {/* 查看详情提示 */}
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">

@@ -110,12 +110,6 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
                     : '专业信息待完善'
                   }
                 </span>
-                {applicantProfile.dormArea && (
-                  <>
-                    <span className="mx-1">•</span>
-                    <span>{applicantProfile.dormArea}</span>
-                  </>
-                )}
               </div>
             </div>
           )}

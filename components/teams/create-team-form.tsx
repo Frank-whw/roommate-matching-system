@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { 
   Users,
   Crown,
-  MapPin,
   FileText,
   AlertCircle
 } from 'lucide-react';
@@ -117,22 +116,6 @@ export function CreateTeamForm() {
         </p>
       </div>
 
-      {/* 期望宿舍区域 */}
-      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
-        <Label htmlFor="dormArea" className="flex items-center text-gray-900 dark:text-white font-semibold">
-          <MapPin className="w-4 h-4 mr-2 text-blue-600" />
-          期望宿舍区域
-        </Label>
-        <Input
-          id="dormArea"
-          name="dormArea"
-          placeholder="例如：东区、西区、南区、北区..."
-          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
-        />
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-          指定期望的宿舍区域，方便后续安排
-        </p>
-      </div>
 
       {/* 队伍信息提示 */}
       <div className="bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/60 dark:border-blue-700/60 rounded-xl p-6 backdrop-blur-2xl">
