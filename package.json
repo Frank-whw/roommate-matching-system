@@ -36,7 +36,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.18.1",
     "drizzle-orm": "^0.43.1",
     "framer-motion": "^12.23.12",
     "jose": "^6.0.11",

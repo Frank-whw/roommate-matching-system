@@ -321,6 +321,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                   <SelectItem value="ISFP">ISFP - 探险家</SelectItem>
                   <SelectItem value="ESTP">ESTP - 企业家</SelectItem>
                   <SelectItem value="ESFP">ESFP - 娱乐家</SelectItem>
+                  <SelectItem value="unknown">我不清楚自己的MBTI</SelectItem> 
                 </SelectContent>
               </Select>
             </div>

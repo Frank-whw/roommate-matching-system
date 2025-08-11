@@ -4,13 +4,18 @@ import { getCurrentUser, getTeamWithMembers, getTeamWithMembersContact, getUserT
 import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { TeamMemberContact } from '@/components/teams/team-member-contact';
 import { JoinTeamButton } from '@/components/teams/join-team-button';
-
-// 强制动态渲染
-export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   ArrowLeft,
   Crown,
@@ -24,8 +29,16 @@ import {
   GraduationCap,
   Mail,
   IdCard,
-  Sparkles
+  Sparkles,
+  Settings,
+  MoreHorizontal,
+  Trash2,
+  Edit,
+  UserMinus
 } from 'lucide-react';
+
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
 
 interface TeamDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -87,6 +100,11 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
     ? teamWithContact.members.filter(member => !member.membership.isLeader)
     : regularMembers;
 
+  // 检查当前用户是否是队长
+  const isLeader = isTeamMember && team.members.some(
+    m => m.user.id === currentUser.users.id && m.membership.isLeader
+  );
+
   return (
     <div className="min-h-screen bg-transparent">
       <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -147,8 +165,6 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                     <span className="text-gray-500 dark:text-gray-400">创建时间</span>
                     <span className="font-medium">{formatDate(team.createdAt)}</span>
                   </div>
-
-                  {/* 暂时移除dormArea，因为teams表中没有这个字段 */}
                 </div>
 
                 {/* 进度条 */}
@@ -229,6 +245,34 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                       联系信息已显示
                     </Badge>
                   )}
+                  {/* 添加管理按钮 - 仅队长可见 */}
+                  {isLeader && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="ml-auto">
+                          <Settings className="w-4 h-4" />
+                          <span className="sr-only">管理</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            if (confirm(`确定要解散队伍 "${team.name}" 吗？此操作不可撤销！`)) {
+                              // 执行解散队伍逻辑
+                            }
+                          }} 
+                          className="text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          解散队伍
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {/* 编辑队伍逻辑 */}}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          编辑队伍信息
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -237,21 +281,61 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                   {isTeamMember && teamWithContact ? (
                     <>
                       {teamWithContact.members.map((member) => (
-                        <TeamMemberContact
-                          key={member.user.id}
-                          member={{
-                            ...member,
-                            user: {
-                              ...member.user,
-                              email: generateEmailFromStudentId(member.user.studentId)
-                            },
-                            membership: {
-                              role: member.membership.isLeader ? 'leader' : 'member',
-                              joinedAt: member.membership.joinedAt
-                            }
-                          }}
-                          isCurrentUser={member.user.id === currentUser.users.id}
-                        />
+                        <div key={member.user.id} className="relative group">
+                          <TeamMemberContact
+                            member={{
+                              ...member,
+                              user: {
+                                ...member.user,
+                                email: generateEmailFromStudentId(member.user.studentId)
+                              },
+                              membership: {
+                                role: member.membership.isLeader ? 'leader' : 'member',
+                                joinedAt: member.membership.joinedAt
+                              }
+                            }}
+                            isCurrentUser={member.user.id === currentUser.users.id}
+                          />
+                          
+                          {/* 管理操作菜单 - 仅队长可见且不是自己 */}
+                          {isLeader && member.user.id !== currentUser.users.id && (
+                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="w-4 h-4" />
+                                    <span className="sr-only">打开菜单</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>成员操作</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      if (confirm(`确定要将队长权限转移给 ${member.user.name || '该成员'} 吗？`)) {
+                                        // 执行设为队长逻辑
+                                      }
+                                    }}
+                                  >
+                                    <Crown className="w-4 h-4 mr-2" />
+                                    设为队长
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      if (confirm(`确定要移除成员 ${member.user.name || '该成员'} 吗？`)) {
+                                        // 执行移除成员逻辑
+                                      }
+                                    }}
+                                    className="text-red-600"
+                                  >
+                                    <UserMinus className="w-4 h-4 mr-2" />
+                                    移除成员
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </>
                   ) : (

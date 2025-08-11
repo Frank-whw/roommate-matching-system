@@ -144,7 +144,8 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
     { value: 'ISTP', label: 'ISTP - 鉴赏家' },
     { value: 'ISFP', label: 'ISFP - 探险家' },
     { value: 'ESTP', label: 'ESTP - 企业家' },
-    { value: 'ESFP', label: 'ESFP - 表演者' }
+    { value: 'ESFP', label: 'ESFP - 表演者' },
+    { value: 'unknown', label: '我不清楚自己的MBTI' }
   ];
 
   return (
