@@ -139,7 +139,7 @@ export default async function MatchesPage() {
                 <Button asChild className="w-full" variant="outline">
                   <Link href="/teams">
                     <Search className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    浏览队伍广场
+                    浏览队伍
                   </Link>
                 </Button>
                 

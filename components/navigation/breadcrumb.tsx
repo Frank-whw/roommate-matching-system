@@ -15,7 +15,7 @@ interface BreadcrumbProps {
 const pathMappings: Record<string, string> = {
   '/': '首页',
   '/explore': '匹配广场',
-  '/teams': '队伍广场',
+  '/teams': '浏览队伍',
   '/teams/create': '创建队伍',
   '/matches': '队伍管理',
   '/profile': '个人资料',

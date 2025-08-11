@@ -31,7 +31,7 @@ export const VALIDATION_RULES = {
     HOBBIES: { max: 500 },
     DEAL_BREAKERS: { max: 500 },
     TEAM_NAME: { min: 2, max: 100 },
-    TEAM_DESCRIPTION: { max: 500 },
+    TEAM_DESCRIPTION: { max: 100 },
     MESSAGE: { max: 200 }
   }
 };

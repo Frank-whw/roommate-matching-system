@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { 
   Users,
   Crown,
-  MapPin,
   FileText,
   AlertCircle
 } from 'lucide-react';
@@ -18,6 +17,8 @@ import {
 export function CreateTeamForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [description, setDescription] = useState('');
+  const [requirements, setRequirements] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,8 +29,8 @@ export function CreateTeamForm() {
     const formData = new FormData(event.currentTarget);
     const data = {
       name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      requirements: formData.get('requirements') as string,
+      description: description.trim() || undefined,
+      requirements: requirements.trim() || undefined,
       maxMembers: 4, // 固定为4人队伍
     };
 
@@ -91,12 +92,20 @@ export function CreateTeamForm() {
           id="description"
           name="description"
           rows={4}
+          maxLength={100}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="介绍您的队伍文化、氛围和特色..."
           className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         />
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-          详细的描述有助于吸引合适的室友加入
-        </p>
+        <div className="flex justify-between items-center mt-2">
+          <p className="text-xs text-gray-600 dark:text-gray-300">
+            详细的描述有助于吸引合适的室友加入
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {description.length}/100
+          </p>
+        </div>
       </div>
 
       {/* 招募要求 */}
@@ -109,30 +118,22 @@ export function CreateTeamForm() {
           id="requirements"
           name="requirements"
           rows={4}
+          maxLength={100}
+          value={requirements}
+          onChange={(e) => setRequirements(e.target.value)}
           placeholder="说明您希望招募什么样的室友，例如：作息时间、生活习惯、学习态度等..."
           className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
         />
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-          明确的要求有助于找到更合适的室友
-        </p>
+        <div className="flex justify-between items-center mt-2">
+          <p className="text-xs text-gray-600 dark:text-gray-300">
+            明确的要求有助于找到更合适的室友
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {requirements.length}/100
+          </p>
+        </div>
       </div>
 
-      {/* 期望宿舍区域 */}
-      <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
-        <Label htmlFor="dormArea" className="flex items-center text-gray-900 dark:text-white font-semibold">
-          <MapPin className="w-4 h-4 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
-          期望宿舍区域
-        </Label>
-        <Input
-          id="dormArea"
-          name="dormArea"
-          placeholder="例如：东区、西区、南区、北区..."
-          className="mt-3 border-white/50 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md"
-        />
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-          指定期望的宿舍区域，方便后续安排
-        </p>
-      </div>
 
       {/* 队伍信息提示 */}
       <div className="bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/60 dark:border-blue-700/60 rounded-xl p-6 backdrop-blur-2xl">

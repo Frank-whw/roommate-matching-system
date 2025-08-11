@@ -15,11 +15,11 @@ export const breadcrumbConfigs = {
   ],
   teams: [
     { label: '首页', href: '/' },
-    { label: '队伍广场' },
+    { label: '浏览队伍' },
   ],
   createTeam: [
     { label: '首页', href: '/' },
-    { label: '队伍广场', href: '/teams' },
+    { label: '浏览队伍', href: '/teams' },
     { label: '创建队伍' },
   ],
   matches: [

@@ -10,7 +10,6 @@ import { joinTeam } from '@/app/teams/actions';
 import { 
   Crown,
   Users,
-  MapPin,
   Calendar,
   FileText,
   UserPlus,
@@ -32,7 +31,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
   const handleJoinTeam = async () => {
     if (!canJoin) {
       if (showAll) {
-        alert('请前往队伍广场申请加入队伍');
+        alert('请前往浏览队伍页面申请加入队伍');
       } else {
         alert('您已经在一个队伍中了');
       }
@@ -70,7 +69,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
     
     // 不能申请的情况
     if (showAll) {
-      // 队伍广场模式：显示队伍状态
+      // 浏览队伍模式：显示队伍状态
       if (team.currentMembers >= team.maxMembers) {
         return '队伍已满';
       }
@@ -135,13 +134,6 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                   <span>{formatDate(team.createdAt)}</span>
                 </div>
               </div>
-
-              {team.dormArea && (
-                <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-2">
-                  <MapPin className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
-                  <span className="truncate">{team.dormArea}</span>
-                </div>
-              )}
               
               {/* 查看详情提示 */}
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">

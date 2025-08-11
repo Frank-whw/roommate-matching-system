@@ -141,7 +141,7 @@ export default function ResponsiveHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              队伍广场
+              浏览队伍
             </Link>
             <Link 
               href="/matches" 
