@@ -83,8 +83,16 @@ export default async function ProfilePage() {
                 <p className="text-base font-semibold">{user.users?.studentId}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">邮箱</label>
-                <p className="text-base font-semibold">{user.users?.studentId ? generateEmailFromStudentId(user.users.studentId) : ''}</p>
+                <label className="text-sm font-medium text-gray-500">姓名</label>
+                <p className="text-base font-semibold">{user.users?.name || '未设置'}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-500">性别</label>
+                <p className="text-base font-semibold">
+                  {user.user_profiles?.gender === 'male' ? '男' : 
+                   user.user_profiles?.gender === 'female' ? '女' : 
+                   user.user_profiles?.gender === 'other' ? '其他' : '未设置'}
+                </p>
               </div>
             </div>
           </CardContent>
