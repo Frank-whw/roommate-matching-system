@@ -26,7 +26,8 @@ const profileSchema = z.object({
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP'
+    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+    'unknown'
   ]).optional(),
   
   // 室友期待和兴趣
