@@ -1,22 +1,26 @@
-import { compare, hash } from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NewUser } from '@/lib/db/schema';
 import { authConfig } from '@/lib/config';
-import crypto from 'crypto';
+// 使用Web Crypto API兼容Edge Runtime
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
-const SALT_ROUNDS = 10;
 
-export async function hashPassword(password: string) {
-  return hash(password, SALT_ROUNDS);
+// 使用Web Crypto API进行密码哈希
+export async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export async function comparePasswords(
   plainTextPassword: string,
   hashedPassword: string
-) {
-  return compare(plainTextPassword, hashedPassword);
+): Promise<boolean> {
+  const hashed = await hashPassword(plainTextPassword);
+  return hashed === hashedPassword;
 }
 
 type SessionData = {
@@ -95,7 +99,9 @@ export async function setSession(user: NewUser & { studentId?: string; isEmailVe
 
 // 生成邮箱验证令牌
 export function generateEmailVerificationToken(): string {
-  return crypto.randomBytes(32).toString('hex');
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // 验证学号格式
