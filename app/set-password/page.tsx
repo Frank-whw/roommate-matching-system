@@ -41,9 +41,9 @@ function SetPasswordContent() {
       return;
     }
 
-    // 验证姓名
+    // 验证用户名
     if (!name.trim()) {
-      setError('请输入姓名');
+      setError('请输入用户名');
       return;
     }
 
@@ -162,14 +162,14 @@ function SetPasswordContent() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="name" className="text-sm font-medium">
-                    姓名 <span className="text-destructive">*</span>
+                    用户名 <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="请输入您的真实姓名"
+                    placeholder="请输入您的用户名"
                     required
                     maxLength={50}
                     className="mt-1"

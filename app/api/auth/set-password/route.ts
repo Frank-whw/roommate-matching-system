@@ -9,7 +9,7 @@ import { logActivity, generateEmailFromStudentId } from '@/lib/db/queries';
 // 设置密码请求schema
 const setPasswordSchema = z.object({
   token: z.string().min(1, '令牌不能为空'),
-  name: z.string().min(1, '姓名不能为空').max(50, '姓名不能超过50个字符'),
+  name: z.string().min(1, '用户名不能为空').max(50, '用户名不能超过50个字符'),
   gender: z.enum(['male', 'female'], { errorMap: () => ({ message: '请选择有效的性别' }) }),
   password: z.string()
     .min(8, '密码至少需要8个字符')
