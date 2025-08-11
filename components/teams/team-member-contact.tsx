@@ -115,12 +115,12 @@ export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactPr
                 >
                   {showContact ? (
                     <>
-                      <EyeOff className="h-3 w-3 mr-1" />
+                      <EyeOff className="h-3 w-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                       隐藏联系方式
                     </>
                   ) : (
                     <>
-                      <Eye className="h-3 w-3 mr-1" />
+                      <Eye className="h-3 w-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                       查看联系方式
                     </>
                   )}
@@ -132,7 +132,7 @@ export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactPr
                     {member.contactInfo?.wechatId && (
                       <div className="flex items-center justify-between space-x-2">
                         <div className="flex items-center space-x-2 min-w-0">
-                          <Users className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          <Users className="h-4 w-4 text-green-600 flex-shrink-0" style={{ fill: 'none', stroke: 'currentColor' }} />
                           <div className="min-w-0">
                             <p className="text-xs text-muted-foreground">微信号</p>
                             <p className="text-sm font-mono text-foreground truncate">
@@ -147,16 +147,16 @@ export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactPr
                           onClick={() => copyToClipboard(member.contactInfo!.wechatId!, 'wechat')}
                         >
                           {copiedWechat ? (
-                            <Check className="h-3 w-3 text-green-600" />
+                            <Check className="h-3 w-3 text-green-600" style={{ fill: 'none', stroke: 'currentColor' }} />
                           ) : (
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-3 w-3" style={{ fill: 'none', stroke: 'currentColor' }} />
                           )}
                         </Button>
                       </div>
                     )}
 
                     <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                      <Mail className="h-4 w-4 text-gray-600 flex-shrink-0" style={{ fill: 'none', stroke: 'currentColor' }} />
                       <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">邮箱</p>
                         <p className="text-sm text-foreground truncate">
@@ -173,7 +173,7 @@ export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactPr
             {isCurrentUser && !hasContactInfo && (
               <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
                 <p className="text-xs text-yellow-800">
-                  <Mail className="h-3 w-3 inline mr-1" />
+                  <Mail className="h-3 w-3 inline mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                   完善微信号让队友更容易联系到您
                 </p>
               </div>

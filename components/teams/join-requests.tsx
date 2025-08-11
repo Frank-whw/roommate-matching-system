@@ -18,7 +18,7 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
   if (!currentUserId) {
     return (
       <Alert>
-        <UserPlus className="h-4 w-4" />
+        <UserPlus className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         <AlertDescription>
           请先登录以查看申请列表
         </AlertDescription>
@@ -48,7 +48,7 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
         <div className="text-center py-8">
           <div className="flex flex-col items-center space-y-3">
             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <UserPlus className="w-6 h-6 text-gray-400" />
+              <UserPlus className="w-6 h-6 text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -78,7 +78,8 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
       .where(
         and(
           eq(teamJoinRequests.teamId, teamInfo.team.id),
-          eq(teamJoinRequests.status, 'pending')
+          eq(teamJoinRequests.status, 'pending'),
+          eq(teamJoinRequests.requestType, 'application')
         )
       )
       .orderBy(teamJoinRequests.createdAt);
@@ -88,7 +89,7 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
         <div className="text-center py-8">
           <div className="flex flex-col items-center space-y-3">
             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <Clock className="w-6 h-6 text-gray-400" />
+              <Clock className="w-6 h-6 text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -118,12 +119,12 @@ export async function JoinRequests({ currentUserId }: JoinRequestsProps) {
 
         {/* 队伍已满提醒 */}
         {teamInfo.team.currentMembers >= teamInfo.team.maxMembers && (
-          <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-amber-800 dark:text-amber-200">
-              队伍已达到4人满员，建议拒绝新的申请
-            </AlertDescription>
-          </Alert>
+                  <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20">
+          <AlertCircle className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
+          <AlertDescription className="text-amber-800 dark:text-amber-200">
+            队伍已达到4人满员，建议拒绝新的申请
+          </AlertDescription>
+        </Alert>
         )}
 
         <div className="space-y-3">

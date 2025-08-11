@@ -27,7 +27,7 @@ const NotificationIcon = ({ type }: { type: NotificationType }) => {
     case NotificationType.TEAM_JOIN_REQUEST:
       return <UserPlus className="w-4 h-4 text-blue-500" />;
     case NotificationType.TEAM_REQUEST_APPROVED:
-      return <Check className="w-4 h-4 text-green-500" />;
+      return <Check className="w-4 h-4 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />;
     case NotificationType.TEAM_REQUEST_REJECTED:
       return <UserX className="w-4 h-4 text-orange-500" />;
     case NotificationType.USER_LIKED:
@@ -36,7 +36,7 @@ const NotificationIcon = ({ type }: { type: NotificationType }) => {
     case NotificationType.TEAM_DISBANDED:
       return <Users className="w-4 h-4 text-gray-500" />;
     default:
-      return <Bell className="w-4 h-4 text-gray-500" />;
+      return <Bell className="w-4 h-4 text-gray-500" style={{ fill: 'none', stroke: 'currentColor' }} />;
   }
 };
 
@@ -99,19 +99,19 @@ export function NotificationCenter() {
       <Button
         variant="ghost"
         size="sm"
-        className="relative"
+        className="relative h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         {state.unreadCount > 0 ? (
-          <BellRing className="w-5 h-5" />
+                      <BellRing className="w-4 h-4 sm:w-5 sm:h-5" style={{ fill: 'none', stroke: 'currentColor' }} />
         ) : (
-          <Bell className="w-5 h-5" />
+                      <Bell className="w-4 h-4 sm:w-5 sm:h-5" style={{ fill: 'none', stroke: 'currentColor' }} />
         )}
         
         {state.unreadCount > 0 && (
           <Badge 
             variant="destructive" 
-            className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
+            className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center text-xs"
           >
             {state.unreadCount > 99 ? '99+' : state.unreadCount}
           </Badge>
@@ -153,7 +153,7 @@ export function NotificationCenter() {
           <CardContent className="p-0 max-h-80 overflow-y-auto">
             {state.notifications.length === 0 ? (
               <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-                <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" style={{ fill: 'none', stroke: 'currentColor' }} />
                 <p className="text-sm">暂无新通知</p>
               </div>
             ) : (

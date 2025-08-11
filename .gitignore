@@ -44,3 +44,6 @@ CLAUDE.md
 
 # scripts folder (cloud database, no need to track)
 scripts/
+
+# .trae directory (development tools, no need to track)
+.trae/

@@ -227,10 +227,11 @@ export async function joinTeam(rawData: any) {
       return { error: '您已经向该队伍发送过申请' };
     }
 
-    // Create join request
+    // Create join request (申请类型)
     await db.insert(teamJoinRequests).values({
       teamId,
       userId: currentUserId,
+      requestType: 'application',
       message: message || '',
       status: 'pending',
     });
@@ -285,7 +286,12 @@ export async function reviewJoinRequest(rawData: any) {
       .from(teamJoinRequests)
       .innerJoin(teams, eq(teamJoinRequests.teamId, teams.id))
       .innerJoin(users, eq(teamJoinRequests.userId, users.id))
-      .where(eq(teamJoinRequests.id, requestId))
+      .where(
+        and(
+          eq(teamJoinRequests.id, requestId),
+          eq(teamJoinRequests.requestType, 'application')
+        )
+      )
       .limit(1);
 
     if (joinRequest.length === 0) {

@@ -32,7 +32,7 @@ const ToastIcon = ({ type }: { type: NotificationType }) => {
     case NotificationType.TEAM_REQUEST_APPROVED:
       return <Check className="w-5 h-5 text-green-500" />;
     case NotificationType.TEAM_REQUEST_REJECTED:
-      return <AlertTriangle className="w-5 h-5 text-orange-500" />;
+      return <AlertTriangle className="w-5 h-5 text-orange-500" style={{ fill: 'none', stroke: 'currentColor' }} />;
     case NotificationType.USER_LIKED:
       return <Heart className="w-5 h-5 text-pink-500" />;
     default:
@@ -106,7 +106,7 @@ export function ToastNotification({
             onClick={handleClose}
             className="h-auto p-0 w-5 h-5 hover:bg-transparent"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />
           </Button>
         </div>
       </CardContent>

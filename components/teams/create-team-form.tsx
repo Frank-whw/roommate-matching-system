@@ -57,7 +57,7 @@ export function CreateTeamForm() {
       {error && (
         <div className="bg-red-100/80 dark:bg-red-900/30 border border-red-300/80 dark:border-red-700/80 rounded-xl p-4 backdrop-blur-md">
           <div className="flex items-center">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="text-red-800 dark:text-red-200 font-medium">{error}</span>
           </div>
         </div>
@@ -66,7 +66,7 @@ export function CreateTeamForm() {
       {/* 队伍名称 */}
       <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
         <Label htmlFor="name" className="flex items-center text-gray-900 dark:text-white font-semibold">
-          <Crown className="w-4 h-4 mr-2 text-blue-600" />
+          <Crown className="w-4 h-4 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
           队伍名称 <span className="text-red-500 ml-1">*</span>
         </Label>
         <Input
@@ -85,7 +85,7 @@ export function CreateTeamForm() {
       {/* 队伍描述 */}
       <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
         <Label htmlFor="description" className="flex items-center text-gray-900 dark:text-white font-semibold">
-          <FileText className="w-4 h-4 mr-2 text-blue-600" />
+          <FileText className="w-4 h-4 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
           队伍描述
         </Label>
         <Textarea
@@ -111,7 +111,7 @@ export function CreateTeamForm() {
       {/* 招募要求 */}
       <div className="bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl p-6 backdrop-blur-2xl shadow-lg">
         <Label htmlFor="requirements" className="flex items-center text-gray-900 dark:text-white font-semibold">
-          <FileText className="w-4 h-4 mr-2 text-blue-600" />
+          <FileText className="w-4 h-4 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
           招募要求
         </Label>
         <Textarea
@@ -138,7 +138,7 @@ export function CreateTeamForm() {
       {/* 队伍信息提示 */}
       <div className="bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/60 dark:border-blue-700/60 rounded-xl p-6 backdrop-blur-2xl">
         <div className="flex items-start">
-          <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5" />
+          <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5" style={{ fill: 'none', stroke: 'currentColor' }} />
           <div>
             <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
               队伍信息

@@ -85,10 +85,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         red: '0 100% 97%'
       },
       dark: {
-        blue: '222 47% 11%',
-        green: '150 6% 10%',
-        orange: '20 14% 10%',
-        red: '350 25% 10%'
+        blue: '222 47% 3%',
+        green: '150 6% 2%',
+        orange: '20 14% 2%',
+        red: '350 25% 2%'
       }
     };
 

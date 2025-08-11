@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, Users, Heart, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import useSWR from 'swr';
 import { User as UserType } from '@/lib/db/schema';
 import { fetcher, authSWRConfig } from '@/lib/auth/client';
@@ -14,7 +13,6 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   requireAuth: boolean;
-  badge?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -35,7 +33,6 @@ const navItems: NavItem[] = [
     label: '队伍',
     icon: Users,
     requireAuth: true,
-    badge: true,
   },
   {
     href: '/matches',
@@ -90,15 +87,7 @@ export default function BottomNav() {
                 <Icon className={cn(
                   'h-5 w-5 transition-transform',
                   isActive && !isDisabled && 'scale-110'
-                )} />
-                {item.badge && !isDisabled && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-4 w-4 p-0 text-xs flex items-center justify-center"
-                  >
-                    •
-                  </Badge>
-                )}
+                )} style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
               <span className={cn(
                 'transition-colors font-medium',

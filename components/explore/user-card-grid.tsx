@@ -27,7 +27,7 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
   if (!currentUserId) {
     return (
       <Alert>
-        <Search className="h-4 w-4" />
+        <Search className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
         <AlertDescription>
           请先登录以查看匹配的用户
         </AlertDescription>
@@ -62,9 +62,9 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
           <div className="flex flex-col items-center space-y-4">
             <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
               {hasFilters ? (
-                <Search className="w-8 h-8 text-gray-400" />
+                <Search className="w-8 h-8 text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
               ) : (
-                <Users className="w-8 h-8 text-gray-400" />
+                <Users className="w-8 h-8 text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
               )}
             </div>
             <div>
@@ -90,7 +90,7 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
               <div className="flex space-x-3 justify-center">
                 <Button variant="outline" size="sm" asChild>
                   <a href="/explore" className="inline-flex items-center">
-                    <RefreshCw className="w-4 h-4 mr-2" />
+                    <RefreshCw className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     刷新页面
                   </a>
                 </Button>
@@ -113,12 +113,12 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
         {/* 结果统计 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-            <Users className="w-4 h-4" />
+            <Users className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>找到 {users.length} 位匹配的用户</span>
           </div>
           <Button variant="ghost" size="sm" asChild>
             <a href="/explore" className="inline-flex items-center">
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               刷新
             </a>
           </Button>

@@ -7,7 +7,8 @@ import {
   userProfiles, 
   teams, 
   teamJoinRequests, 
-  teamMembers
+  teamMembers,
+  activityLogs 
 } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/db/queries';
 
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     const updates: any = {
       newMatches: [],
       teamNotifications: [],
-      teamInvitations: [] // 替换newLikes为队伍邀请
+      newInteractions: []
     };
 
     // 检查新匹配
@@ -100,6 +101,7 @@ export async function GET(request: NextRequest) {
             and(
               eq(teamJoinRequests.teamId, team.teamId),
               eq(teamJoinRequests.status, 'pending'),
+              eq(teamJoinRequests.requestType, 'application'),
               gte(teamJoinRequests.createdAt, since)
             )
           );
@@ -134,6 +136,7 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(teamJoinRequests.userId, userId),
+          eq(teamJoinRequests.requestType, 'application'),
           gte(teamJoinRequests.updatedAt, since),
           ne(teamJoinRequests.status, 'pending')
         )
@@ -165,28 +168,28 @@ export async function GET(request: NextRequest) {
 
     updates.teamNotifications = teamNotifications;
 
-    // 检查新的队伍邀请（用户收到的邀请）
-    const teamInvitations = await db
+    // 检查新的用户互动（被点赞、被查看等）
+    const newInteractions = await db
       .select({
-        id: teamJoinRequests.id,
-        team: teams,
-        leaderName: users.name,
-        message: teamJoinRequests.message,
-        createdAt: teamJoinRequests.createdAt
+        id: activityLogs.id,
+        fromUser: users,
+        fromUserProfile: userProfiles,
+        createdAt: activityLogs.timestamp,
+        activityType: activityLogs.action
       })
-      .from(teamJoinRequests)
-      .leftJoin(teams, eq(teamJoinRequests.teamId, teams.id))
-      .leftJoin(users, eq(teams.leaderId, users.id))
+      .from(activityLogs)
+      .leftJoin(users, eq(activityLogs.userId, users.id))
+      .leftJoin(userProfiles, eq(userProfiles.userId, users.id))
       .where(
         and(
-          eq(teamJoinRequests.userId, userId),
-          eq(teamJoinRequests.status, 'pending'),
-          gte(teamJoinRequests.createdAt, since)
+          eq(activityLogs.actionTargetId, userId),
+          sql`${activityLogs.action} IN ('LIKE_USER', 'VIEW_PROFILE')`,
+          gte(activityLogs.timestamp, since)
         )
       )
       .limit(5);
 
-    updates.teamInvitations = teamInvitations;
+    updates.newInteractions = newInteractions;
 
     return NextResponse.json(updates);
 

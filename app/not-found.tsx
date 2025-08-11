@@ -7,7 +7,7 @@ export default function NotFound() {
     <div className="flex items-center justify-center flex-1">
       <div className="max-w-md space-y-8 p-4 text-center">
         <div className="flex justify-center">
-          <CircleIcon className="size-12 text-primary" />
+          <CircleIcon className="size-12 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
         </div>
         <h1 className="text-4xl font-bold text-foreground tracking-tight">
           Page Not Found

@@ -39,7 +39,7 @@ export default async function TeamsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white flex items-center">
-                  <Users className="w-8 h-8 sm:w-10 sm:h-10 mr-3 text-blue-600" />
+                  <Users className="w-8 h-8 sm:w-10 sm:h-10 mr-3 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
                   浏览队伍
                 </h1>
                 <p className="mt-3 text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -50,7 +50,7 @@ export default async function TeamsPage() {
               <div className="flex items-center space-x-3">
                 <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all duration-200 rounded-lg px-6 py-2 font-medium">
                   <Link href="/teams/create">
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     创建队伍
                   </Link>
                 </Button>
@@ -63,7 +63,7 @@ export default async function TeamsPage() {
             <Card className="border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-lg font-semibold">
-                  <Search className="w-5 h-5 mr-2 text-blue-600" />
+                  <Search className="w-5 h-5 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
                   搜索队伍
                 </CardTitle>
                 <CardDescription className="text-gray-700 dark:text-gray-200">
@@ -81,7 +81,7 @@ export default async function TeamsPage() {
                     <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">搜索功能开发中...</p>
                   </div>
                   <Button variant="outline" disabled className="border-gray-200/80 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md">
-                    <Filter className="w-4 h-4 mr-2" />
+                    <Filter className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     筛选
                   </Button>
                 </div>
@@ -93,7 +93,7 @@ export default async function TeamsPage() {
           <Card className="border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center text-lg font-semibold">
-                <Users className="w-5 h-5 mr-2 text-blue-600" />
+                <Users className="w-5 h-5 mr-2 text-blue-600" style={{ fill: 'none', stroke: 'currentColor' }} />
                 所有队伍
               </CardTitle>
               <CardDescription className="text-gray-700 dark:text-gray-200">
@@ -112,7 +112,7 @@ export default async function TeamsPage() {
             <Card className="border-blue-300/80 bg-blue-100/90 dark:border-blue-700/60 dark:bg-blue-900/50 backdrop-blur-2xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-blue-900 dark:text-blue-100 text-lg font-semibold">
-                  <AlertCircle className="w-5 h-5 mr-2" />
+                  <AlertCircle className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                   加入队伍提示
                 </CardTitle>
               </CardHeader>

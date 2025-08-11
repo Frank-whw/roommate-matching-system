@@ -31,13 +31,13 @@ export function ErrorDisplay({
     switch (errorObj.type) {
       case ErrorType.SERVER_ERROR:
       case ErrorType.NETWORK:
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />;
       case ErrorType.AUTHENTICATION:
       case ErrorType.AUTHORIZATION:
       case ErrorType.FORBIDDEN:
-        return <AlertCircle className="w-4 h-4" />;
+        return <AlertCircle className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />;
       default:
-        return <Info className="w-4 h-4" />;
+        return <Info className="w-4 h-4" style={{ fill: 'none', stroke: 'currentColor' }} />;
     }
   };
 
@@ -81,7 +81,7 @@ export function ErrorDisplay({
             onClick={onRetry}
             className="text-xs"
           >
-            <RefreshCw className="w-3 h-3 mr-1" />
+            <RefreshCw className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
             重试
           </Button>
         )}
@@ -93,7 +93,7 @@ export function ErrorDisplay({
             onClick={onDismiss}
             className="text-xs p-1 h-6 w-6"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3 h-3" style={{ fill: 'none', stroke: 'currentColor' }} />
           </Button>
         )}
       </div>
@@ -171,7 +171,7 @@ export function PageError({
     <div className="min-h-[400px] flex items-center justify-center p-4">
       <div className="text-center max-w-md">
         <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mb-6">
-          <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+          <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" style={{ fill: 'none', stroke: 'currentColor' }} />
         </div>
         
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -185,7 +185,7 @@ export function PageError({
         <div className="flex gap-3 justify-center">
           {errorObj.retry && onRetry && (
             <Button onClick={onRetry}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               重试
             </Button>
           )}

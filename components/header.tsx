@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings, Menu, X, Search } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Users, Heart, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,26 +77,26 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-2 py-1.5 text-sm font-medium text-foreground">
           <div className="flex items-center">
-            <UserIcon className="mr-2 h-4 w-4" />
+            <UserIcon className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="truncate">{user.name || generateEmailFromStudentId(user.studentId)}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/profile">
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>个人资料</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/matches">
-            <Users className="mr-2 h-4 w-4" />
+            <Users className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>队伍管理</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="w-full cursor-pointer" asChild>
           <Link href="/teams">
-            <Users className="mr-2 h-4 w-4" />
+            <Users className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span>浏览队伍</span>
           </Link>
         </DropdownMenuItem>
@@ -104,7 +104,7 @@ function UserMenu() {
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
               <span>登出</span>
             </DropdownMenuItem>
           </button>
@@ -114,57 +114,7 @@ function UserMenu() {
   );
 }
 
-// 移动端导航菜单
-function MobileNav() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
 
-  const navItems = [
-    { href: '/explore', label: '匹配广场', icon: Search },
-    { href: '/teams', label: '浏览队伍', icon: Users },
-    { href: '/matches', label: '队伍管理', icon: Users },
-    { href: '/profile', label: '个人资料', icon: Settings },
-  ];
-
-  return (
-    <div className="md:hidden">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative"
-      >
-        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-background border-b shadow-lg z-50">
-          <nav className="p-4 space-y-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function Header() {
   const pathname = usePathname();
@@ -179,7 +129,7 @@ export default function Header() {
     <header className="border-b border-border bg-background sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <Home className="h-6 w-6 text-primary" />
+          <Home className="h-6 w-6 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
           <span className="ml-2 text-xl font-semibold text-foreground">{siteConfig.name}</span>
         </Link>
         
@@ -204,7 +154,6 @@ export default function Header() {
         
         <div className="flex items-center space-x-4">
           <ThemeControls />
-          <MobileNav />
           <Suspense fallback={<div className="h-9" />}>
             <UserMenu />
           </Suspense>

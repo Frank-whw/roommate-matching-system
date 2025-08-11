@@ -173,7 +173,7 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <User className="w-5 h-5 mr-2" />
+            <User className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
             个人资料
           </CardTitle>
           <CardDescription>
@@ -332,12 +332,12 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              <Loader2 className="animate-spin mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
               保存中...
             </>
           ) : (
             <>
-              <CheckCircle className="w-4 h-4 mr-2" />
+              <CheckCircle className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
               {hasProfile ? '更新资料' : '保存资料'}
             </>
           )}

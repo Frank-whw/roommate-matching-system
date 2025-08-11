@@ -126,11 +126,11 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               
               <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-2 space-x-3">
                 <div className="flex items-center">
-                  <Users className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" />
+                  <Users className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
                   <span>{team.currentMembers}/{team.maxMembers}</span>
                 </div>
                 <div className="flex items-center">
-                  <Calendar className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" />
+                  <Calendar className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
                   <span>{formatDate(team.createdAt)}</span>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               {/* 查看详情提示 */}
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 font-medium">
-                  <Eye className="w-3 h-3 mr-1" />
+                  <Eye className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
                   查看详情
                 </div>
               </div>
@@ -168,7 +168,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                 </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center shadow-md">
-                <Crown className="w-2 h-2 text-white" />
+                <Crown className="w-2 h-2 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
             </div>
             
@@ -177,7 +177,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                 <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover/leader:text-blue-600 dark:group-hover/leader:text-blue-400 transition-colors duration-200 truncate">
                   {leader.name || '队长' + leader.id}
                 </p>
-                <Crown className="w-3 h-3 text-yellow-500 ml-1 flex-shrink-0" />
+                <Crown className="w-3 h-3 text-yellow-500 ml-1 flex-shrink-0" style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
               <div className="text-xs text-gray-600 dark:text-gray-300">
                 {leaderProfile?.major && leaderProfile?.grade ? (
@@ -191,7 +191,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
             {/* 查看队长资料提示 */}
             <div className="opacity-0 group-hover/leader:opacity-100 transition-opacity duration-200">
               <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
-                <Eye className="w-3 h-3" />
+                <Eye className="w-3 h-3" style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
         {team.requirements && (
           <div className="mb-4">
             <div className="flex items-center text-sm font-semibold text-gray-900 dark:text-white mb-2">
-              <FileText className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
+              <FileText className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
               招募要求
             </div>
             <div className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50/80 dark:bg-gray-800/60 p-3 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md">
@@ -227,7 +227,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
                   : "bg-gray-200/90 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
               }
             >
-              <UserPlus className="w-3 h-3 mr-1.5" />
+              <UserPlus className="w-3 h-3 mr-1.5" style={{ fill: 'none', stroke: 'currentColor' }} />
               {getButtonText()}
             </Button>
           </div>

@@ -38,9 +38,9 @@ const mbtiDescriptions: { [key: string]: string } = {
 };
 
 const studyHabitLabels: { [key: string]: { label: string; icon: any } } = {
-  'early_bird': { label: '早起学习', icon: Sun },
-  'night_owl': { label: '夜猫子', icon: Moon },
-  'flexible': { label: '灵活安排', icon: Coffee }
+  library: { label: '常在图书馆', icon: GraduationCap },
+  dormitory: { label: '常在寝室', icon: Home },
+  flexible: { label: '灵活', icon: Coffee }
 };
 
 const lifestyleLabels: { [key: string]: string } = {
@@ -50,9 +50,9 @@ const lifestyleLabels: { [key: string]: string } = {
 };
 
 const cleanlinessLabels: { [key: string]: string } = {
-  'very_clean': '非常整洁',
-  'clean': '比较整洁',
-  'moderate': '一般'
+  'extremely_clean': '极爱干净',
+  'regularly_tidy': '定期收拾',
+  'acceptable': '过得去就行'
 };
 
 const genderLabels: { [key: string]: string } = {
