@@ -4,7 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
 import { TeamMemberContact } from './team-member-contact';
 
 interface Member {
@@ -55,25 +60,28 @@ export function TeamMembersCard({
             </Link>
             {/* 管理操作入口 */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <DropdownMenu
-                trigger={<Button size="icon" variant="ghost">⋮</Button>}
-                items={[
-                  {
-                    label: '查看详情',
-                    onClick: () => {/* 弹窗展示详情 */},
-                  },
-                  {
-                    label: '移除成员',
-                    onClick: () => onRemoveMember && onRemoveMember(member.id),
-                    disabled: member.user.id === currentUserId,
-                  },
-                  {
-                    label: '设为队长',
-                    onClick: () => onSetLeader && onSetLeader(member.id),
-                    disabled: member.membership.role === 'leader',
-                  },
-                ]}
-              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost">⋮</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => {/* 弹窗展示详情 */}}>
+                    查看详情
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => onRemoveMember && onRemoveMember(member.id)}
+                    disabled={member.user.id === currentUserId}
+                  >
+                    移除成员
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => onSetLeader && onSetLeader(member.id)}
+                    disabled={member.membership.role === 'leader'}
+                  >
+                    设为队长
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         ))}
