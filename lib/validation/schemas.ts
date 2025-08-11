@@ -233,7 +233,8 @@ export const commonSchemas = {
       'INTJ', 'INTP', 'ENTJ', 'ENTP',
       'INFJ', 'INFP', 'ENFJ', 'ENFP',
       'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-      'ISTP', 'ISFP', 'ESTP', 'ESFP'
+      'ISTP', 'ISFP', 'ESTP', 'ESFP',
+      'unknown'
     ]).optional(),
     studyHabit: z.enum(['library', 'dormitory', 'flexible']).optional(),
     lifestyle: z.enum(['quiet', 'social', 'balanced']).optional()

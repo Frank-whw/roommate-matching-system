@@ -176,21 +176,6 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                 maxLength={100}
               />
             </div>
-            
-            <div>
-              <Label htmlFor="gender">性别</Label>
-              <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="请选择性别" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">男</SelectItem>
-                  <SelectItem value="female">女</SelectItem>
-                  <SelectItem value="other">其他</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
             <div>
               <Label htmlFor="age">年龄</Label>
               <Input
@@ -321,7 +306,7 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
                   <SelectItem value="ISFP">ISFP - 探险家</SelectItem>
                   <SelectItem value="ESTP">ESTP - 企业家</SelectItem>
                   <SelectItem value="ESFP">ESFP - 娱乐家</SelectItem>
-                  <SelectItem value="unknown">我不清楚自己的MBTI</SelectItem> 
+                  <SelectItem value="unknown">我不清楚自己的MBTI</SelectItem>
                 </SelectContent>
               </Select>
             </div>
