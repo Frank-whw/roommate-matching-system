@@ -11,8 +11,8 @@ import { revalidatePath } from 'next/cache';
 // Create team schema
 const createTeamSchema = z.object({
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长'),
-  description: z.string().optional(),
-  requirements: z.string().optional(),
+  description: z.string().max(100, '队伍描述不能超过100字').optional(),
+  requirements: z.string().max(100, '招募要求不能超过100字').optional(),
   // maxMembers 固定为 4，不再需要从客户端传入
 });
 
@@ -48,8 +48,8 @@ const disbandTeamSchema = z.object({
 const updateTeamSchema = z.object({
   teamId: z.number().int().positive('队伍ID不正确'),
   name: z.string().min(1, '队伍名称不能为空').max(100, '队伍名称过长').optional(),
-  description: z.string().optional(),
-  requirements: z.string().optional(),
+  description: z.string().max(100, '队伍描述不能超过100字').optional(),
+  requirements: z.string().max(100, '招募要求不能超过100字').optional(),
   // maxMembers 固定为 4，不允许修改
 });
 
