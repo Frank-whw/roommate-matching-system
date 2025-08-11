@@ -47,3 +47,6 @@ scripts/
 
 # .trae directory (development tools, no need to track)
 .trae/
+
+# .claude directory (Claude development tools, no need to track)
+.claude/
