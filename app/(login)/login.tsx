@@ -64,7 +64,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="flex items-center space-x-2">
-            <Home className="h-8 w-8 text-primary" />
+            <Home className="h-8 w-8 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {siteConfig.name}
             </span>
@@ -176,9 +176,9 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               {(state?.error || state?.message) && (
                 <Alert className={state?.error ? 'border-destructive' : 'border-green-500'}>
                   {state?.error ? (
-                    <AlertCircle className="h-4 w-4" />
+                    <AlertCircle className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                   ) : (
-                    <CheckCircle className="h-4 w-4" />
+                    <CheckCircle className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                   )}
                   <AlertDescription>
                     {state?.error || state?.message}
@@ -193,7 +193,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               >
                 {isPending ? (
                   <>
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                     {mode === 'signin' ? '登录中...' : '注册中...'}
                   </>
                 ) : (
@@ -260,7 +260,7 @@ function EmailVerificationForm({
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <Mail className="h-16 w-16 text-primary" />
+          <Mail className="h-16 w-16 text-primary" style={{ fill: 'none', stroke: 'currentColor' }} />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
           邮箱验证
@@ -295,9 +295,9 @@ function EmailVerificationForm({
               {(resendState?.error || resendState?.message) && (
                 <Alert className={resendState?.error ? 'border-destructive' : 'border-green-500'}>
                   {resendState?.error ? (
-                    <AlertCircle className="h-4 w-4" />
+                    <AlertCircle className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                   ) : (
-                    <CheckCircle className="h-4 w-4" />
+                    <CheckCircle className="h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                   )}
                   <AlertDescription>
                     {resendState?.error || resendState?.message}
@@ -313,7 +313,7 @@ function EmailVerificationForm({
               >
                 {resendPending ? (
                   <>
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" style={{ fill: 'none', stroke: 'currentColor' }} />
                     发送中...
                   </>
                 ) : (
@@ -345,7 +345,7 @@ function RegistrationSuccess({ message, isResent }: { message: string; isResent:
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <CheckCircle className="h-16 w-16 text-green-500" />
+          <CheckCircle className="h-16 w-16 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
           {isResent ? '验证邮件已重新发送' : '注册申请已提交'}
