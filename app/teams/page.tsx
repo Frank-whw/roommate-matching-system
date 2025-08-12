@@ -97,12 +97,12 @@ export default async function TeamsPage() {
                 所有队伍
               </CardTitle>
               <CardDescription className="text-gray-700 dark:text-gray-200">
-                浏览所有同性别队伍，找到合适的加入
+                浏览可加入的同性别队伍，找到合适的加入
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Suspense fallback={<TeamsListSkeleton />}>
-                <TeamsList currentUserId={user.users?.id} showAll={true} />
+                <TeamsList currentUserId={user.users?.id} showAll={false} />
               </Suspense>
             </CardContent>
           </Card>
