@@ -58,17 +58,22 @@ const cleanlinessLabels: { [key: string]: string } = {
 export function UserCard({ user, profile, currentUserId, currentUserTeam }: UserCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isInviting, setIsInviting] = useState(false);
+  const [invited, setInvited] = useState(false);
   
   // 检查当前用户是否为队长
   const isTeamLeader = currentUserTeam?.membership?.isLeader === true;
   const hasTeam = !!currentUserTeam;
   
   // 确定按钮状态
-  const canInvite = hasTeam && isTeamLeader;
-  const buttonText = !hasTeam 
-    ? "需要先创建或加入队伍" 
-    : !isTeamLeader 
-    ? "只有队长可以邀请" 
+  const canInvite = hasTeam && isTeamLeader && !invited;
+  const buttonText = !hasTeam
+    ? "需要先创建或加入队伍"
+    : !isTeamLeader
+    ? "只有队长可以邀请"
+    : invited
+    ? "已发送邀请"
+    : isInviting
+    ? "邀请中..."
     : "邀请加入队伍";
   const buttonDisabled = !canInvite || isInviting;
 
@@ -85,9 +90,8 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
       if (result.error) {
         alert(result.error);
       } else {
+        setInvited(true);
         alert('✉️ 邀请已发送，等待对方回应...');
-        // 隐藏当前卡片或刷新页面
-        window.location.reload();
       }
     } catch (error) {
       console.error('邀请失败:', error);
