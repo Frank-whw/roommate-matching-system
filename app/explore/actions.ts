@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { eq, and, or } from 'drizzle-orm';
+import { eq, and, or, sql } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
@@ -250,23 +250,28 @@ export async function respondToTeamInvite(rawData: any) {
         return { error: '队伍已满' };
       }
 
-      // 接受邀请
+      // 接受邀请（并发安全：在事务中原子更新成员数并插入成员）
       await db.transaction(async (tx) => {
-        // 加入队伍
+        // 原子占位：仅当未满员时增加成员数
+        const updateResult = await tx.execute(
+          sql`UPDATE "teams"
+              SET "current_members" = "current_members" + 1,
+                  "updated_at" = now()
+            WHERE "id" = ${team.id}
+              AND "current_members" < "max_members"
+            RETURNING "current_members";`
+        );
+
+        if (!('rows' in updateResult) || updateResult.rows.length === 0) {
+          throw new Error('队伍已满');
+        }
+
+        // 加入队伍（若用户并发加入其他队伍，将因唯一约束失败并回滚）
         await tx.insert(teamMembers).values({
           teamId: team.id,
           userId: currentUserId,
           isLeader: false,
         });
-
-        // 更新队伍成员数
-        await tx
-          .update(teams)
-          .set({
-            currentMembers: team.currentMembers + 1,
-            updatedAt: new Date(),
-          })
-          .where(eq(teams.id, team.id));
 
         // 更新邀请状态
         await tx
