@@ -429,7 +429,7 @@ export async function getAvailableTeams(userId: number, limit = 20) {
 
   const currentUserGender = currentUserProfile[0].gender;
 
-  // 排除用户已在的队伍和已申请的队伍
+  // 只排除用户已在的队伍，不排除已申请的队伍
   const userTeam = await getUserTeam(userId);
   const excludeTeamIds = [];
   
@@ -437,6 +437,7 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     excludeTeamIds.push(userTeam.team.id);
   }
   
+  // 获取用户的待处理申请
   const pendingRequests = await db
     .select({ teamId: teamJoinRequests.teamId })
     .from(teamJoinRequests)
@@ -447,7 +448,7 @@ export async function getAvailableTeams(userId: number, limit = 20) {
       )
     );
   
-  excludeTeamIds.push(...pendingRequests.map(r => r.teamId));
+  const pendingTeamIds = pendingRequests.map(r => r.teamId);
   
   const conditions = [
     eq(teams.status, 'recruiting'),
@@ -459,8 +460,8 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     conditions.push(notInArray(teams.id, excludeTeamIds));
   }
   
-  // 获取符合条件的队伍
-  return await db
+  // 获取符合条件的队伍，包含申请状态
+  const teams_result = await db
     .select({
       team: teams,
       leader: users,
@@ -472,6 +473,12 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     .where(and(...conditions))
     .groupBy(teams.id, users.id)
     .limit(limit);
+  
+  // 为每个队伍添加申请状态
+  return teams_result.map(result => ({
+    ...result,
+    hasPendingRequest: pendingTeamIds.includes(result.team.id)
+  }));
 }
 
 // 个人资料相关查询

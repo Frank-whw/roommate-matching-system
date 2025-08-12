@@ -100,15 +100,16 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
 
         {/* 响应式网格布局 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="teams-list">
-          {teams.map(({ team, leader, memberCount }: any) => (
+          {teams.map(({ team, leader, memberCount, hasPendingRequest }: any) => (
             <TeamCard
               key={team.id}
               team={team}
               leader={leader}
               leaderProfile={null} // getAllTeams 没有返回 leaderProfile
               currentUserId={currentUserId}
-              canJoin={!userTeam && !showAll} // showAll模式下不能申请，只能浏览
+              canJoin={!userTeam && !showAll && !hasPendingRequest} // showAll模式下不能申请，只能浏览；有待处理申请时也不能申请
               showAll={showAll}
+              hasPendingRequest={hasPendingRequest}
             />
           ))}
         </div>

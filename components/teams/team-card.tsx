@@ -23,12 +23,18 @@ interface TeamCardProps {
   currentUserId: number;
   canJoin: boolean;
   showAll?: boolean; // 是否在显示所有队伍模式
+  hasPendingRequest?: boolean; // 是否有待处理的申请
 }
 
-export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, showAll = false }: TeamCardProps) {
+export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, showAll = false, hasPendingRequest = false }: TeamCardProps) {
   const [isJoining, setIsJoining] = useState(false);
 
   const handleJoinTeam = async () => {
+    if (hasPendingRequest) {
+      alert('您已经申请过该队伍，请等待队长审核');
+      return;
+    }
+    
     if (!canJoin) {
       if (showAll) {
         alert('请前往浏览队伍页面申请加入队伍');
@@ -65,6 +71,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
   // 获取按钮文本和状态
   const getButtonText = () => {
     if (isJoining) return '申请中...';
+    if (hasPendingRequest) return '申请中';
     if (canJoin) return '申请加入';
     
     // 不能申请的情况
@@ -220,11 +227,13 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
             <Button
               size="sm"
               onClick={handleJoinTeam}
-              disabled={isJoining || !canJoin}
+              disabled={isJoining || !canJoin || hasPendingRequest}
               className={
-                canJoin 
-                  ? "bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
-                  : "bg-gray-200/90 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
+                hasPendingRequest
+                  ? "bg-orange-200/90 dark:bg-orange-800/80 text-orange-700 dark:text-orange-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md border border-orange-300/60 dark:border-orange-600/60"
+                  : canJoin 
+                    ? "bg-blue-600/95 hover:bg-blue-700/95 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
+                    : "bg-gray-200/90 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 cursor-not-allowed rounded-lg px-4 py-1.5 text-sm font-medium backdrop-blur-md"
               }
             >
               <UserPlus className="w-3 h-3 mr-1.5" style={{ fill: 'none', stroke: 'currentColor' }} />

@@ -6,6 +6,7 @@ import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
+import { sendJoinRequestNotification } from '@/lib/email';
 import { revalidatePath } from 'next/cache';
 
 // Create team schema
@@ -235,6 +236,40 @@ export async function joinTeam(rawData: any) {
       message: message || '',
       status: 'pending',
     });
+
+    // Get team leader and applicant information for email notification
+    const [leaderInfo, applicantInfo] = await Promise.all([
+      db.select({
+        name: users.name,
+        studentId: users.studentId
+      })
+      .from(users)
+      .where(eq(users.id, team.leaderId))
+      .limit(1),
+      db.select({
+        name: users.name,
+        studentId: users.studentId
+      })
+      .from(users)
+      .where(eq(users.id, currentUserId))
+      .limit(1)
+    ]);
+
+    // Send email notification to team leader
+    if (leaderInfo[0] && applicantInfo[0]) {
+      try {
+        const leaderEmail = generateEmailFromStudentId(leaderInfo[0].studentId);
+        await sendJoinRequestNotification(
+          leaderEmail,
+          team.name,
+          applicantInfo[0].name || generateEmailFromStudentId(applicantInfo[0].studentId),
+          applicantInfo[0].studentId
+        );
+      } catch (emailError) {
+        console.error('发送邮件通知失败:', emailError);
+        // 邮件发送失败不影响申请流程
+      }
+    }
 
     // Log activity
     await logActivity(

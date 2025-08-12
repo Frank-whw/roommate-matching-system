@@ -356,6 +356,63 @@ export function getEmailDomain(email: string): string {
   return email.split('@')[1]?.toLowerCase() || '';
 }
 
+// 发送入队申请通知邮件
+export async function sendJoinRequestNotification(
+  email: string, 
+  teamName: string, 
+  applicantName: string, 
+  applicantStudentId: string
+): Promise<boolean> {
+  const subject = '室友匹配系统 - 新的入队申请';
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 15px 0; }
+        .applicant-info { background: #dbeafe; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>📝 新的入队申请</h1>
+        </div>
+        <div class="content">
+          <p>您好，队长！</p>
+          <p>您的队伍「<strong>${teamName}</strong>」收到了一份新的入队申请。</p>
+          <div class="applicant-info">
+            <p><strong>👤 申请人：</strong>${applicantName}</p>
+            <p><strong>🎓 学号：</strong>${applicantStudentId}</p>
+          </div>
+          <p>该同学希望加入您的队伍，一起寻找理想的住宿环境。请及时查看申请详情并做出回复。</p>
+          <p style="text-align: center;">
+            <a href="${process.env.BASE_URL}/teams" class="button">查看申请详情</a>
+          </p>
+          <p style="background: #fef3c7; padding: 15px; border-radius: 6px; border-left: 4px solid #f59e0b;">
+            ⏰ <strong>温馨提醒：</strong>请及时处理入队申请，让申请人知道您的决定！
+          </p>
+          <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+            <strong>室友匹配系统团队</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content
+  });
+}
+
 // 检查邮件配置是否完整
 export function isEmailConfigured(): boolean {
   const {
