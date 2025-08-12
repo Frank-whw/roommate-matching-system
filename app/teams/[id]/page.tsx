@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TeamManagementActions, MemberManagementActions } from '@/components/teams/team-management-actions';
 import { 
   ArrowLeft,
   Crown,
@@ -246,33 +247,11 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                     </Badge>
                   )}
                   {/* 添加管理按钮 - 仅队长可见 */}
-                  {isLeader && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="ml-auto">
-                          <Settings className="w-4 h-4" />
-                          <span className="sr-only">管理</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem 
-                          onClick={() => {
-                            if (confirm(`确定要解散队伍 "${team.name}" 吗？此操作不可撤销！`)) {
-                              // 执行解散队伍逻辑
-                            }
-                          }} 
-                          className="text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          解散队伍
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => {/* 编辑队伍逻辑 */}}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          编辑队伍信息
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
+                  <TeamManagementActions 
+                    teamId={team.id} 
+                    teamName={team.name} 
+                    isLeader={isLeader} 
+                  />
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -298,43 +277,12 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                           />
                           
                           {/* 管理操作菜单 - 仅队长可见且不是自己 */}
-                          {isLeader && member.user.id !== currentUser.users.id && (
-                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                    <span className="sr-only">打开菜单</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>成员操作</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem 
-                                    onClick={() => {
-                                      if (confirm(`确定要将队长权限转移给 ${member.user.name || '该成员'} 吗？`)) {
-                                        // 执行设为队长逻辑
-                                      }
-                                    }}
-                                  >
-                                    <Crown className="w-4 h-4 mr-2" />
-                                    设为队长
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    onClick={() => {
-                                      if (confirm(`确定要移除成员 ${member.user.name || '该成员'} 吗？`)) {
-                                        // 执行移除成员逻辑
-                                      }
-                                    }}
-                                    className="text-red-600"
-                                  >
-                                    <UserMinus className="w-4 h-4 mr-2" />
-                                    移除成员
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          )}
+                          <MemberManagementActions 
+                            memberId={member.user.id}
+                            memberName={member.user.name || '该成员'}
+                            isLeader={isLeader}
+                            isCurrentUser={member.user.id === currentUser.users.id}
+                          />
                         </div>
                       ))}
                     </>
