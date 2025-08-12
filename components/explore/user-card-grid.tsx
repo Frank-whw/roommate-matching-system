@@ -1,4 +1,7 @@
 import { getUsersForMatching, getUserTeam } from '@/lib/db/queries';
+import { db } from '@/lib/db/drizzle';
+import { teamJoinRequests } from '@/lib/db/schema';
+import { and, eq } from 'drizzle-orm';
 import { UserCard } from '@/components/explore/user-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -48,11 +51,21 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
       mbti: searchParams?.mbti ? searchParams.mbti.split(',').filter(Boolean) : []
     };
     
-    // 获取用户列表和当前用户的队伍信息
-    const [users, currentUserTeam] = await Promise.all([
+    // 获取用户列表、当前用户的队伍信息，以及当前用户发送的待处理邀请
+    const [users, currentUserTeam, pendingInvites] = await Promise.all([
       getUsersForMatching(currentUserId, limit, filters),
-      getUserTeam(currentUserId)
+      getUserTeam(currentUserId),
+      db
+        .select({ userId: teamJoinRequests.userId })
+        .from(teamJoinRequests)
+        .where(and(
+          eq(teamJoinRequests.invitedBy, currentUserId),
+          eq(teamJoinRequests.requestType, 'invitation'),
+          eq(teamJoinRequests.status, 'pending')
+        ))
     ]);
+
+    const invitedUserSet = new Set<number>(pendingInvites.map((r) => r.userId));
 
     if (users.length === 0) {
       const hasFilters = searchParams && Object.values(searchParams).some(value => value && value !== 'all');
@@ -133,6 +146,7 @@ export async function UserCardGrid({ currentUserId, limit = 12, searchParams }: 
               profile={profile}
               currentUserId={currentUserId}
               currentUserTeam={currentUserTeam}
+              alreadyInvited={invitedUserSet.has(user.id)}
             />
           ))}
         </div>
