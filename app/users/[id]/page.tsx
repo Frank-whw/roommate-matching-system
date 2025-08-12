@@ -150,13 +150,7 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
                     <Heart className="w-4 h-4 mr-2" />
                     邀请Ta
                   </Button>
-                  
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link href={`/matches?userId=${user.id}`}>
-                      <User className="w-4 h-4 mr-2" />
-                      查看详情
-                    </Link>
-                  </Button>
+              
                 </div>
               </CardContent>
             </Card>
