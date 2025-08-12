@@ -28,6 +28,7 @@ interface UserCardProps {
   profile: any;
   currentUserId: number;
   currentUserTeam?: any;
+  alreadyInvited?: boolean;
 }
 
 const mbtiDescriptions: { [key: string]: string } = {
@@ -55,10 +56,10 @@ const cleanlinessLabels: { [key: string]: string } = {
   'acceptable': '过得去就行'
 };
 
-export function UserCard({ user, profile, currentUserId, currentUserTeam }: UserCardProps) {
+export function UserCard({ user, profile, currentUserId, currentUserTeam, alreadyInvited = false }: UserCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isInviting, setIsInviting] = useState(false);
-  const [invited, setInvited] = useState(false);
+  const [invited, setInvited] = useState(alreadyInvited);
   
   // 检查当前用户是否为队长
   const isTeamLeader = currentUserTeam?.membership?.isLeader === true;

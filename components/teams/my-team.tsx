@@ -3,8 +3,6 @@ import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, users, userProfiles } from '@/lib/db/schema';
 import { getUserContactInfo } from '@/lib/db/queries';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
-import { TeamCard } from './team-card';
-import { TeamManagement } from './team-management';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,9 +13,17 @@ import {
   Search,
   ArrowRight,
   MessageCircle,
-  Mail
+  Mail,
+  Settings,
+  UserMinus,
+  AlertTriangle,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
+import { MemberCard } from './member-card';
 
 interface MyTeamProps {
   currentUserId?: number;
@@ -166,65 +172,19 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
               </Badge>
             )}
           </h4>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-3">
             {allTeamMembers.map(({ member, user, profile }) => (
-              <div key={member.id} className="flex items-start space-x-4 p-5 bg-white/80 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/60 rounded-xl backdrop-blur-2xl shadow-lg hover:shadow-xl transition-all duration-200">
-                <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md ring-2 ring-white/50 dark:ring-gray-700/50">
-                    {user.name ? user.name.substring(0, 2) : generateEmailFromStudentId(user.studentId).substring(0, 2).toUpperCase()}
-                  </div>
-                  {member.isLeader && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center shadow-md">
-                      <Crown className="w-3 h-3 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center mb-1">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {user.name || '用户' + user.id}
-                        </p>
-                        {member.isLeader && (
-                          <Badge variant="outline" className="ml-2 text-xs text-yellow-700 dark:text-yellow-300 border-yellow-400/80 dark:border-yellow-600/80 bg-yellow-100/80 dark:bg-yellow-900/30 backdrop-blur-md">
-                            队长
-                          </Badge>
-                        )}
-                        {user.id === currentUserId && (
-                          <Badge variant="outline" className="ml-2 text-xs text-blue-700 dark:text-blue-300 border-blue-400/80 dark:border-blue-600/80 bg-blue-100/80 dark:bg-blue-900/30 backdrop-blur-md">
-                            您
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">
-                        <span>加入于 {new Date(member.joinedAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 显示联系方式 */}
-                  {showContacts && user.id !== currentUserId && contactsInfo[user.id] && (
-                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                      <div className="flex items-center space-x-4 text-sm">
-                        {contactsInfo[user.id].email && (
-                          <div className="flex items-center text-gray-600 dark:text-gray-300">
-                            <Mail className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-                            <span className="truncate">{contactsInfo[user.id].email}</span>
-                          </div>
-                        )}
-                        {contactsInfo[user.id].wechatId && (
-                          <div className="flex items-center text-green-600 dark:text-green-400">
-                            <MessageCircle className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-                            <span>{contactsInfo[user.id].wechatId}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <MemberCard
+                key={member.id}
+                member={member}
+                user={user}
+                profile={profile}
+                currentUserId={currentUserId}
+                isLeader={teamInfo.membership.isLeader}
+                teamId={teamInfo.team.id}
+                showContacts={showContacts}
+                contactInfo={contactsInfo[user.id]}
+              />
             ))}
           </div>
         </div>
@@ -243,15 +203,28 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
           </div>
         )}
 
-        {/* 队伍管理区域 */}
+        {/* 队长管理区域 */}
         {teamInfo.membership.isLeader && (
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <TeamManagement 
-              team={teamInfo.team}
-              members={allTeamMembers}
-              currentUserId={currentUserId!}
-              isLeader={true}
-            />
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h4 className="text-base font-medium text-gray-900 dark:text-white flex items-center">
+                <Settings className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
+                队长管理
+              </h4>
+              
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/teams/${teamInfo.team.id}/edit`}>
+                    <Edit className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
+                    编辑
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+              点击成员卡片查看详情，使用右侧菜单管理成员
+            </p>
           </div>
         )}
       </div>

@@ -283,7 +283,7 @@ export async function respondToTeamInvite(rawData: any) {
             RETURNING "current_members";`
         );
 
-        if (!('rows' in updateResult) || updateResult.rows.length === 0) {
+        if (updateResult.length === 0) {
           throw new Error('队伍已满');
         }
 

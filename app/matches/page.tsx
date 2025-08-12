@@ -63,87 +63,90 @@ export default async function MatchesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
           {/* 主要内容区域 */}
-          <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+          <div className="lg:col-span-3 space-y-4">
             {/* 我的队伍 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
+            <Card className="shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center text-lg">
                   <Crown className="w-5 h-5 mr-2 text-yellow-500" style={{ fill: 'none', stroke: 'currentColor' }} />
                   我的队伍
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   您当前加入的队伍信息和队友联系方式
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <Suspense fallback={<MyTeamSkeleton />}>
                   <MyTeam currentUserId={user.users?.id} showContacts={true} />
                 </Suspense>
               </CardContent>
             </Card>
 
-            {/* 队伍邀请管理 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <UserPlus className="w-5 h-5 mr-2 text-blue-500" style={{ fill: 'none', stroke: 'currentColor' }} />
-                  队伍邀请
-                </CardTitle>
-                <CardDescription>
-                  管理您发送和接收的队伍邀请
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Suspense fallback={<TeamInvitesSkeleton />}>
-                  <TeamInvites currentUserId={user.users?.id} />
-                </Suspense>
-              </CardContent>
-            </Card>
+            {/* 队伍邀请和申请管理 - 合并为一行 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* 队伍邀请管理 */}
+              <Card className="shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-lg">
+                    <UserPlus className="w-5 h-5 mr-2 text-blue-500" style={{ fill: 'none', stroke: 'currentColor' }} />
+                    队伍邀请
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    管理您发送和接收的队伍邀请
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <Suspense fallback={<TeamInvitesSkeleton />}>
+                    <TeamInvites currentUserId={user.users?.id} />
+                  </Suspense>
+                </CardContent>
+              </Card>
+
+              {/* 入队申请管理 */}
+              <Card className="shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-lg">
+                    <UserPlus className="w-5 h-5 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
+                    入队申请
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    管理您队伍的加入申请
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <Suspense fallback={<JoinRequestsSkeleton />}>
+                    <JoinRequests currentUserId={user.users?.id} />
+                  </Suspense>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          {/* 侧边栏 */}
-          <div className="space-y-6">
-            {/* 入队申请管理 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <UserPlus className="w-5 h-5 mr-2 text-green-500" style={{ fill: 'none', stroke: 'currentColor' }} />
-                  入队申请
-                </CardTitle>
-                <CardDescription>
-                  管理您队伍的加入申请
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Suspense fallback={<JoinRequestsSkeleton />}>
-                  <JoinRequests currentUserId={user.users?.id} />
-                </Suspense>
-              </CardContent>
-            </Card>
-
+          {/* 侧边栏 - 更紧凑 */}
+          <div className="space-y-4">
             {/* 快捷操作 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">队伍操作</CardTitle>
+            <Card className="shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">快捷操作</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button asChild className="w-full" variant="outline">
+              <CardContent className="pt-0 space-y-2">
+                <Button asChild className="w-full h-9" variant="outline" size="sm">
                   <Link href="/teams/create">
                     <Crown className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    创建新队伍
+                    创建队伍
                   </Link>
                 </Button>
                 
-                <Button asChild className="w-full" variant="outline">
+                <Button asChild className="w-full h-9" variant="outline" size="sm">
                   <Link href="/teams">
                     <Search className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     浏览队伍
                   </Link>
                 </Button>
                 
-                <Button asChild className="w-full" variant="outline">
+                <Button asChild className="w-full h-9" variant="outline" size="sm">
                   <Link href="/explore">
                     <MessageSquare className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
                     个人匹配
@@ -152,21 +155,20 @@ export default async function MatchesPage() {
               </CardContent>
             </Card>
 
-            {/* 队伍规则提示 */}
-            <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
-              <CardHeader>
-                <CardTitle className="flex items-center text-blue-800 dark:text-blue-200">
-                  <Settings className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                  队伍管理提示
+            {/* 队伍规则提示 - 更紧凑 */}
+            <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20 shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center text-blue-800 dark:text-blue-200 text-sm">
+                  <Settings className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
+                  管理提示
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-blue-700 dark:text-blue-300">
-                <ul className="space-y-2">
-                  <li>• 只有队友间才能查看联系方式</li>
-                  <li>• 队长可以管理队伍和审批申请</li>
-                  <li>• 队伍满员后将停止接受申请</li>
-                  <li>• 退出队伍前请与队友协商</li>
-                  <li>• 队长不能直接退出有成员的队伍</li>
+              <CardContent className="pt-0 text-xs text-blue-700 dark:text-blue-300">
+                <ul className="space-y-1">
+                  <li>• 队友间可查看联系方式</li>
+                  <li>• 队长可管理队伍和审批</li>
+                  <li>• 满员后停止接受申请</li>
+                  <li>• 退出前请与队友协商</li>
                 </ul>
               </CardContent>
             </Card>

@@ -25,29 +25,57 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleReview = async (approved: boolean) => {
+    console.log('🔍 handleReview 函数被调用', { approved, requestId: request.id, requestType: request.requestType });
+    
     const requestTypeText = request.requestType === 'invitation' ? '邀请' : '申请';
     const action = approved ? '批准' : '拒绝';
+    
+    console.log('📝 准备显示确认对话框', { action, requestTypeText });
+    
     if (!confirm(`确定要${action}该用户的${requestTypeText}吗？`)) {
+      console.log('❌ 用户取消了操作');
       return;
     }
 
+    console.log('✅ 用户确认操作，开始处理请求');
     setIsProcessing(true);
+    
     try {
+      console.log('🚀 调用 reviewJoinRequest API', {
+        requestId: request.id,
+        approved,
+        timestamp: new Date().toISOString()
+      });
+      
       const result = await reviewJoinRequest({
         requestId: request.id,
         approved,
       });
       
+      console.log('📥 收到 API 响应', result);
+      
       if (result.error) {
-        alert(result.error);
+        console.error('❌ API 返回错误:', result.error);
+        alert(`操作失败: ${result.error}`);
+      } else if (result.success) {
+        console.log('✅ 操作成功:', result.message);
+        alert(result.message || '操作成功');
+        console.log('🔄 准备刷新页面');
+        window.location.reload();
       } else {
-        alert(result.message);
+        console.warn('⚠️ API 响应格式异常:', result);
+        alert('操作可能成功，但响应格式异常，请刷新页面查看结果');
         window.location.reload();
       }
     } catch (error) {
-      console.error('审核申请失败:', error);
-      alert('审核失败，请重试');
+      console.error('💥 请求过程中发生异常:', {
+        error,
+        message: error instanceof Error ? error.message : '未知错误',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      alert(`审核失败: ${error instanceof Error ? error.message : '网络错误，请重试'}`);
     } finally {
+      console.log('🏁 handleReview 函数执行完毕，重置处理状态');
       setIsProcessing(false);
     }
   };
