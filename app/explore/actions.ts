@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { eq, and, or, sql } from 'drizzle-orm';
+import { eq, and, or, sql, ne } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
@@ -282,6 +282,21 @@ export async function respondToTeamInvite(rawData: any) {
             reviewedAt: new Date(),
           })
           .where(eq(teamJoinRequests.id, requestId));
+
+        // 自动拒绝该用户的其他所有待处理申请/邀请（避免并发加入多个队伍）
+        await tx
+          .update(teamJoinRequests)
+          .set({
+            status: 'rejected',
+            reviewedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(teamJoinRequests.userId, currentUserId),
+              eq(teamJoinRequests.status, 'pending'),
+              ne(teamJoinRequests.id, requestId)
+            )
+          );
       });
 
       // 记录活动日志
