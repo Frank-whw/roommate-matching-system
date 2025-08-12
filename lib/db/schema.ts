@@ -8,6 +8,7 @@ import {
   boolean,
   index,
   pgEnum,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -116,8 +117,8 @@ export const teamMembers = pgTable('team_members', {
 }, (table) => ({
   teamIdIdx: index('team_member_team_id_idx').on(table.teamId),
   userIdIdx: index('team_member_user_id_idx').on(table.userId),
-  // 确保一个用户只能在一个队伍中
-  uniqueUserTeam: index('unique_user_team_idx').on(table.userId),
+  // 确保一个用户只能在一个队伍中（唯一约束）
+  uniqueUserTeam: uniqueIndex('unique_user_team_idx').on(table.userId),
 }));
 
 // Request type enum for team join requests
