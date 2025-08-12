@@ -62,19 +62,8 @@ export async function TeamInvites({ currentUserId }: TeamInvitesProps) {
       )
       .orderBy(teamJoinRequests.createdAt);
 
-    const formatDate = (dateString: string) => {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
-      
-      if (diffInMinutes < 60) {
-        return `${Math.floor(diffInMinutes)}分钟前`;
-      } else if (diffInMinutes < 1440) {
-        return `${Math.floor(diffInMinutes / 60)}小时前`;
-      } else {
-        return `${Math.floor(diffInMinutes / 1440)}天前`;
-      }
-    };
+    // 移除 formatDate 函数定义
+    // const formatDate = (dateString: string) => { ... }
 
     if (receivedInvites.length === 0 && sentInvites.length === 0) {
       return (
@@ -119,7 +108,7 @@ export async function TeamInvites({ currentUserId }: TeamInvitesProps) {
                   team={team}
                   user={inviter}
                   type="received"
-                  formatDate={formatDate}
+                  // 移除 formatDate={formatDate}
                 />
               ))}
             </div>
@@ -141,7 +130,7 @@ export async function TeamInvites({ currentUserId }: TeamInvitesProps) {
                   team={team}
                   user={invitee}
                   type="sent"
-                  formatDate={formatDate}
+                  // 移除 formatDate={formatDate}
                 />
               ))}
             </div>

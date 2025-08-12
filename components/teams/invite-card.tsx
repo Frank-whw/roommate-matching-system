@@ -13,12 +13,27 @@ interface InviteCardProps {
   team: any;
   user: any;
   type: 'received' | 'sent';
-  formatDate: (date: string) => string;
+  // 移除 formatDate 属性
 }
 
-export default function InviteCard({ request, team, user, type, formatDate }: InviteCardProps) {
+export default function InviteCard({ request, team, user, type }: InviteCardProps) {
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState<null | 'accept' | 'reject'>(null);
+
+  // 将 formatDate 函数移到组件内部
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
+    
+    if (diffInMinutes < 60) {
+      return `${Math.floor(diffInMinutes)}分钟前`;
+    } else if (diffInMinutes < 1440) {
+      return `${Math.floor(diffInMinutes / 60)}小时前`;
+    } else {
+      return `${Math.floor(diffInMinutes / 1440)}天前`;
+    }
+  };
 
   const handleResponse = async (accept: boolean) => {
     const action = accept ? '接受' : '拒绝';
