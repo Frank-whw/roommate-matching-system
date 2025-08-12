@@ -209,16 +209,7 @@ export const teamSchemas = {
   })
 };
 
-// 匹配相关schemas
-export const matchSchemas = {
-  likeUser: z.object({
-    targetUserId: z.number().int().positive()
-  }),
-  
-  unmatchUser: z.object({
-    matchId: z.number().int().positive()
-  })
-};
+// 匹配相关schemas已移除 - 系统已升级为队伍邀请机制
 
 // 通用schemas
 export const commonSchemas = {

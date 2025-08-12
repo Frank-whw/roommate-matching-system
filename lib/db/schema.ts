@@ -153,57 +153,31 @@ export const teamJoinRequests = pgTable('team_join_requests', {
 
 // User likes table has been removed - user interactions are now tracked in activity_logs
 
-// Matches table - 匹配结果表（双向喜欢后的匹配记录）
-export const matches = pgTable('matches', {
-  id: serial('id').primaryKey(),
-  user1Id: integer('user1_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  user2Id: integer('user2_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  matchScore: integer('match_score'), // 匹配度评分 (0-100)
-  status: matchStatusEnum('status').notNull().default('matched'), // 匹配状态
-  
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-}, (table) => ({
-  user1Idx: index('match_user1_id_idx').on(table.user1Id),
-  user2Idx: index('match_user2_id_idx').on(table.user2Id),
-  statusIdx: index('match_status_idx').on(table.status),
-}));
+// Matches table has been removed - interactions are now handled through teams only
 
-// Activity logs table - 活动日志表（扩展用于用户互动追踪）
+// Activity logs table - 活动日志表（用于系统活动追踪，不包含用户互动）
 export const activityLogs = pgTable('activity_logs', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   action: text('action').notNull(),
-  actionTargetId: integer('action_target_id')
-    .references(() => users.id), // 操作目标用户（如点赞、跳过的用户）
   timestamp: timestamp('timestamp').notNull().defaultNow(),
   ipAddress: varchar('ip_address', { length: 45 }),
   metadata: text('metadata'), // JSON field for additional data
 }, (table) => ({
   userIdIdx: index('activity_log_user_id_idx').on(table.userId),
   actionIdx: index('activity_log_action_idx').on(table.action),
-  targetIdx: index('activity_log_target_idx').on(table.actionTargetId),
-  actionTargetIdx: index('activity_log_action_target_idx').on(table.action, table.actionTargetId),
-  userActionIdx: index('activity_log_user_action_idx').on(table.userId, table.action),
 }));
 
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
   profile: one(userProfiles),
   activityLogs: many(activityLogs),
-  activityLogsAsTarget: many(activityLogs, { relationName: 'activityLogsAsTarget' }),
   teamMemberships: many(teamMembers),
   teamsAsLeader: many(teams),
   joinRequests: many(teamJoinRequests),
   invitationsSent: many(teamJoinRequests, { relationName: 'invitationsSent' }),
-  matchesAsUser1: many(matches, { relationName: 'matchesAsUser1' }),
-  matchesAsUser2: many(matches, { relationName: 'matchesAsUser2' }),
 }));
 
 export const userProfilesRelations = relations(userProfiles, ({ one }) => ({
@@ -255,29 +229,12 @@ export const teamJoinRequestsRelations = relations(teamJoinRequests, ({ one }) =
 }));
 
 // userLikes relations removed - interactions now tracked in activity_logs
-
-export const matchesRelations = relations(matches, ({ one }) => ({
-  user1: one(users, {
-    fields: [matches.user1Id],
-    references: [users.id],
-    relationName: 'matchesAsUser1',
-  }),
-  user2: one(users, {
-    fields: [matches.user2Id],
-    references: [users.id],
-    relationName: 'matchesAsUser2',
-  }),
-}));
+// matches relations removed - matches table deleted
 
 export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   user: one(users, {
     fields: [activityLogs.userId],
     references: [users.id],
-  }),
-  targetUser: one(users, {
-    fields: [activityLogs.actionTargetId],
-    references: [users.id],
-    relationName: 'activityLogsAsTarget',
   }),
 }));
 
@@ -292,9 +249,7 @@ export type TeamMember = typeof teamMembers.$inferSelect;
 export type NewTeamMember = typeof teamMembers.$inferInsert;
 export type TeamJoinRequest = typeof teamJoinRequests.$inferSelect;
 export type NewTeamJoinRequest = typeof teamJoinRequests.$inferInsert;
-// UserLike types removed - interactions now tracked in activity_logs
-export type Match = typeof matches.$inferSelect;
-export type NewMatch = typeof matches.$inferInsert;
+// UserLike and Match types removed - interaction features deleted
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 
@@ -310,15 +265,7 @@ export enum ActivityType {
   UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
   UPDATE_PROFILE = 'UPDATE_PROFILE',
   
-  // 用户互动相关
-  LIKE_USER = 'LIKE_USER',
-  SKIP_USER = 'SKIP_USER',
-  VIEW_PROFILE = 'VIEW_PROFILE',
-  PASS_USER = 'PASS_USER',
-  
-  // 匹配相关
-  MATCH_SUCCESS = 'MATCH_SUCCESS',
-  UNMATCH = 'UNMATCH',
+  // 用户互动功能已移除
   
   // 队伍相关
   CREATE_TEAM = 'CREATE_TEAM',

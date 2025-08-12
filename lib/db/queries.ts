@@ -7,7 +7,6 @@ import {
   teams, 
   teamMembers, 
   teamJoinRequests, 
-  matches,
   ActivityType,
   NewUser
 } from './schema';
@@ -197,47 +196,6 @@ export async function logActivity(
   });
 }
 
-// 记录用户互动行为（点赞、跳过等）
-export async function logUserInteraction(
-  userId: number,
-  targetUserId: number,
-  action: ActivityType.LIKE_USER | ActivityType.SKIP_USER | ActivityType.PASS_USER | ActivityType.VIEW_PROFILE,
-  ipAddress?: string,
-  metadata?: any
-) {
-  await db.insert(activityLogs).values({
-    userId,
-    action,
-    actionTargetId: targetUserId,
-    ipAddress,
-    metadata: metadata ? JSON.stringify(metadata) : null,
-  });
-}
-
-// 检查用户是否已经对目标用户进行过互动
-export async function hasUserInteracted(
-  userId: number,
-  targetUserId: number,
-  actions?: (ActivityType.LIKE_USER | ActivityType.SKIP_USER | ActivityType.PASS_USER)[]
-): Promise<boolean> {
-  const defaultActions = [ActivityType.LIKE_USER, ActivityType.SKIP_USER, ActivityType.PASS_USER];
-  const checkActions = actions || defaultActions;
-  
-  const result = await db
-    .select({ id: activityLogs.id })
-    .from(activityLogs)
-    .where(
-      and(
-        eq(activityLogs.userId, userId),
-        eq(activityLogs.actionTargetId, targetUserId),
-        or(...checkActions.map(action => eq(activityLogs.action, action)))
-      )
-    )
-    .limit(1);
-    
-  return result.length > 0;
-}
-
 // 匹配相关查询
 interface MatchingFilters {
   search?: string;
@@ -269,26 +227,6 @@ export async function getUsersForMatching(
   }
 
   const currentUserGender = currentUserProfile[0].gender;
-
-  // 获取当前用户已经点赞或跳过的用户ID
-  const interactedUsers = await db
-    .select({ userId: activityLogs.actionTargetId })
-    .from(activityLogs)
-    .where(
-      and(
-        eq(activityLogs.userId, currentUserId),
-        or(
-          eq(activityLogs.action, ActivityType.LIKE_USER),
-          eq(activityLogs.action, ActivityType.SKIP_USER),
-          eq(activityLogs.action, ActivityType.PASS_USER)
-        ),
-        isNotNull(activityLogs.actionTargetId)
-      )
-    );
-  
-  const interactedUserIds = interactedUsers
-    .map(u => u.userId)
-    .filter(id => id !== null) as number[];
   
   // 基本筛选条件（包含同性别过滤）
   let whereConditions = [
@@ -299,13 +237,8 @@ export async function getUsersForMatching(
     ne(users.id, currentUserId),
     eq(userProfiles.gender, currentUserGender) // 只显示同性别用户
   ];
-  
-  // 排除已互动用户
-  if (interactedUserIds.length > 0) {
-    whereConditions.push(notInArray(users.id, interactedUserIds));
-  }
 
-  // 应用其他筛选条件（移除gender过滤，因为已经强制同性别）
+  // 应用其他筛选条件
   if (filters.minAge !== undefined) {
     whereConditions.push(gte(userProfiles.age, filters.minAge));
   }

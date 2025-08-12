@@ -57,7 +57,7 @@ const cleanlinessLabels: { [key: string]: string } = {
 
 export function UserCard({ user, profile, currentUserId, currentUserTeam }: UserCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLiking, setIsLiking] = useState(false);
+  const [isInviting, setIsInviting] = useState(false);
   
   // 检查当前用户是否为队长
   const isTeamLeader = currentUserTeam?.membership?.isLeader === true;
@@ -70,13 +70,13 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
     : !isTeamLeader 
     ? "只有队长可以邀请" 
     : "邀请加入队伍";
-  const buttonDisabled = !canInvite || isLiking;
+  const buttonDisabled = !canInvite || isInviting;
 
   // 处理邀请加入队伍
   const handleInvite = async () => {
-    if (isLiking || !canInvite) return;
+    if (isInviting || !canInvite) return;
     
-    setIsLiking(true);
+    setIsInviting(true);
     try {
       const result = await inviteUserToTeam({
         targetUserId: user.id
@@ -93,7 +93,7 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
       console.error('邀请失败:', error);
       alert('邀请失败，请重试');
     } finally {
-      setIsLiking(false);
+      setIsInviting(false);
     }
   };
 
@@ -241,10 +241,10 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam }: User
             size="sm"
             className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs sm:text-sm"
             onClick={handleInvite}
-            disabled={isLiking}
+            disabled={buttonDisabled}
           >
             <UserPlus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-            <span className="hidden sm:inline">{isLiking ? '邀请中...' : '邀请加入队伍'}</span>
+            <span className="hidden sm:inline">{isInviting ? '邀请中...' : buttonText}</span>
           </Button>
         </div>
 

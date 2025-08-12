@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { eq, and, or } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType } from '@/lib/db/schema';
-import { getCurrentUser, logActivity, logUserInteraction } from '@/lib/db/queries';
+import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
 
 // 邀请加入队伍操作schema
@@ -313,138 +313,6 @@ export async function respondToTeamInvite(rawData: any) {
     console.error('响应邀请失败:', error);
     return {
       error: '操作失败，请重试'
-    };
-  }
-}
-
-// 用户互动操作schema
-const userInteractionSchema = z.object({
-  targetUserId: z.number().int().positive('目标用户ID不正确'),
-  action: z.enum(['like', 'skip', 'pass', 'view'], {
-    errorMap: () => ({ message: '操作类型不正确' })
-  })
-});
-
-// 记录用户互动行为
-export async function recordUserInteraction(rawData: any) {
-  try {
-    const { user } = await getCurrentUser();
-    if (!user || !user.users) {
-      return { error: '用户未登录' };
-    }
-
-    const currentUserId = user.users.id;
-
-    // 验证数据
-    const result = userInteractionSchema.safeParse(rawData);
-    if (!result.success) {
-      return { error: result.error.errors[0].message };
-    }
-
-    const { targetUserId, action } = result.data;
-
-    // 检查是否是自己
-    if (currentUserId === targetUserId) {
-      return { error: '不能对自己进行此操作' };
-    }
-
-    // 映射操作类型到ActivityType
-    let activityType: ActivityType;
-    switch (action) {
-      case 'like':
-        activityType = ActivityType.LIKE_USER;
-        break;
-      case 'skip':
-      case 'pass':
-        activityType = ActivityType.SKIP_USER;
-        break;
-      case 'view':
-        activityType = ActivityType.VIEW_PROFILE;
-        break;
-      default:
-        return { error: '不支持的操作类型' };
-    }
-
-    // 记录用户互动
-    await logUserInteraction(
-      currentUserId,
-      targetUserId,
-      activityType
-    );
-
-    // 重新验证相关页面
-    revalidatePath('/explore');
-
-    return {
-      success: true,
-      message: '操作已记录',
-      action
-    };
-
-  } catch (error) {
-    console.error('记录用户互动失败:', error);
-    return {
-      error: '操作失败，请重试'
-    };
-  }
-}
-
-// 向后兼容：保留原有的likeUser函数，现在记录点赞行为
-export async function likeUser(rawData: any) {
-  // 先记录点赞行为
-  const interactionResult = await recordUserInteraction({
-    targetUserId: rawData.targetUserId,
-    action: 'like'
-  });
-  
-  if (!interactionResult.success) {
-    return interactionResult;
-  }
-  
-  // 然后执行邀请逻辑（保持向后兼容）
-  return inviteUserToTeam(rawData);
-}
-
-// 获取用户匹配列表（临时占位符函数）
-export async function getUserMatches() {
-  try {
-    const { user } = await getCurrentUser();
-    if (!user || !user.users) {
-      return { error: '用户未登录' };
-    }
-
-    // 由于系统已改为邀请机制，返回空的匹配列表
-    return {
-      success: true,
-      matches: [],
-      message: '系统已升级为队伍邀请机制，不再使用传统匹配功能'
-    };
-  } catch (error) {
-    console.error('获取匹配列表失败:', error);
-    return {
-      error: '获取匹配列表失败'
-    };
-  }
-}
-
-// 取消匹配（临时占位符函数）
-export async function unmatchUser(rawData: any) {
-  try {
-    const { user } = await getCurrentUser();
-    if (!user || !user.users) {
-      return { error: '用户未登录' };
-    }
-
-    // 由于系统已改为邀请机制，返回不支持的操作提示
-    return {
-      error: '系统已升级为队伍邀请机制，不再支持取消匹配功能。请使用队伍管理功能。',
-      message: '操作不支持'
-    };
-  } catch (error) {
-    console.error('取消匹配失败:', error);
-    return {
-      error: '操作失败',
-      message: '操作失败'
     };
   }
 }

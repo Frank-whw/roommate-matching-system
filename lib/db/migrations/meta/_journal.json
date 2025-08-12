@@ -50,6 +50,13 @@
       "when": 1754816300073,
       "tag": "0006_curved_alex_power",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1736601000000,
+      "tag": "0007_remove_interactions",
+      "breakpoints": true
     }
   ]
 }

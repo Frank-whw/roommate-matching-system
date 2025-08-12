@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { eq, and, gte, ne, or, sql } from 'drizzle-orm';
+import { eq, and, gte, ne } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { 
-  matches, 
   users, 
   userProfiles, 
   teams, 
   teamJoinRequests, 
-  teamMembers,
-  activityLogs 
+  teamMembers
 } from '@/lib/db/schema';
 import { getCurrentUser } from '@/lib/db/queries';
 
@@ -30,46 +28,8 @@ export async function GET(request: NextRequest) {
     const since = sinceParam ? new Date(sinceParam) : new Date(Date.now() - 5 * 60 * 1000);
 
     const updates: any = {
-      newMatches: [],
-      teamNotifications: [],
-      newInteractions: []
+      teamNotifications: []
     };
-
-    // 检查新匹配
-    const newMatches = await db
-      .select({
-        id: matches.id,
-        user1Id: matches.user1Id,
-        user2Id: matches.user2Id,
-        matchedUser: users,
-        matchedUserProfile: userProfiles,
-        createdAt: matches.createdAt
-      })
-      .from(matches)
-      .leftJoin(users, 
-        eq(users.id, 
-          sql`CASE WHEN ${matches.user1Id} = ${userId} THEN ${matches.user2Id} ELSE ${matches.user1Id} END`
-        )
-      )
-      .leftJoin(userProfiles, 
-        eq(userProfiles.userId, 
-          sql`CASE WHEN ${matches.user1Id} = ${userId} THEN ${matches.user2Id} ELSE ${matches.user1Id} END`
-        )
-      )
-      .where(
-        and(
-          gte(matches.createdAt, since),
-          eq(matches.status, 'matched'),
-          // 用户是匹配的一方
-          or(
-            eq(matches.user1Id, userId),
-            eq(matches.user2Id, userId)
-          )
-        )
-      )
-      .limit(10);
-
-    updates.newMatches = newMatches;
 
     // 检查队伍相关通知
     const teamNotifications: any[] = [];
@@ -167,29 +127,6 @@ export async function GET(request: NextRequest) {
     });
 
     updates.teamNotifications = teamNotifications;
-
-    // 检查新的用户互动（被点赞、被查看等）
-    const newInteractions = await db
-      .select({
-        id: activityLogs.id,
-        fromUser: users,
-        fromUserProfile: userProfiles,
-        createdAt: activityLogs.timestamp,
-        activityType: activityLogs.action
-      })
-      .from(activityLogs)
-      .leftJoin(users, eq(activityLogs.userId, users.id))
-      .leftJoin(userProfiles, eq(userProfiles.userId, users.id))
-      .where(
-        and(
-          eq(activityLogs.actionTargetId, userId),
-          sql`${activityLogs.action} IN ('LIKE_USER', 'VIEW_PROFILE')`,
-          gte(activityLogs.timestamp, since)
-        )
-      )
-      .limit(5);
-
-    updates.newInteractions = newInteractions;
 
     return NextResponse.json(updates);
 
