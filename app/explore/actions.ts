@@ -258,6 +258,7 @@ export async function respondToTeamInvite(rawData: any) {
               SET "current_members" = "current_members" + 1,
                   "updated_at" = now()
             WHERE "id" = ${team.id}
+              AND "status" = 'recruiting'
               AND "current_members" < "max_members"
             RETURNING "current_members";`
         );
