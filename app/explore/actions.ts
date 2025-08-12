@@ -279,6 +279,7 @@ export async function respondToTeamInvite(rawData: any) {
           .update(teamJoinRequests)
           .set({
             status: 'matched',
+            reviewedBy: currentUserId,
             reviewedAt: new Date(),
           })
           .where(eq(teamJoinRequests.id, requestId));
@@ -288,6 +289,7 @@ export async function respondToTeamInvite(rawData: any) {
           .update(teamJoinRequests)
           .set({
             status: 'rejected',
+            reviewedBy: currentUserId,
             reviewedAt: new Date(),
           })
           .where(
@@ -320,6 +322,7 @@ export async function respondToTeamInvite(rawData: any) {
         .update(teamJoinRequests)
         .set({
           status: 'rejected',
+          reviewedBy: currentUserId,
           reviewedAt: new Date(),
         })
         .where(eq(teamJoinRequests.id, requestId));
