@@ -3,9 +3,11 @@
 import { z } from 'zod';
 import { eq, and, or, sql, ne } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
-import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType } from '@/lib/db/schema';
+import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType, users as usersTable } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
+import { sendTeamInvitation } from '@/lib/email';
 
 // 邀请加入队伍操作schema
 const inviteToTeamSchema = z.object({
@@ -120,6 +122,24 @@ export async function inviteUserToTeam(rawData: any) {
       message: message || `${user.users.name || '队长'}邀请您加入队伍「${team.name}」`,
       status: 'pending',
     });
+
+    // 异步发送邀请邮件（最佳努力，不影响主流程）
+    try {
+      const [targetUser] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, targetUserId))
+        .limit(1);
+
+      if (targetUser) {
+        const targetEmail = generateEmailFromStudentId(targetUser.studentId);
+        const inviterName = user.users.name || '队长';
+        // 忽略发送失败，不阻塞流程
+        sendTeamInvitation(targetEmail, team.name, inviterName).catch(() => {});
+      }
+    } catch (_) {
+      // 忽略邮件失败
+    }
 
     // 记录活动日志
     await logActivity(
