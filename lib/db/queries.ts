@@ -11,7 +11,7 @@ import {
   NewUser
 } from './schema';
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth/session';
+// Note: import session helpers lazily inside functions to avoid bundling issues
 
 export async function getUser() {
   try {
@@ -21,6 +21,7 @@ export async function getUser() {
       return null;
     }
 
+    const { verifyToken } = await import('@/lib/auth/session');
     const sessionData = await verifyToken(sessionCookie.value);
     if (
       !sessionData ||
@@ -60,6 +61,7 @@ export async function getCurrentUser() {
       return { user: null, session: null };
     }
 
+    const { verifyToken } = await import('@/lib/auth/session');
     const sessionData = await verifyToken(sessionCookie.value);
     if (
       !sessionData ||
