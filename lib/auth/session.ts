@@ -2,25 +2,44 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NewUser } from '@/lib/db/schema';
 import { authConfig } from '@/lib/config';
-// 使用Web Crypto API兼容Edge Runtime
+import bcrypt from 'bcryptjs';
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+const BCRYPT_ROUNDS = 12;
 
-// 使用Web Crypto API进行密码哈希
-export async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+export function isBcryptHash(value: string): boolean {
+  return typeof value === 'string' && value.startsWith('$2');
 }
 
+export function isSha256Hex(value: string): boolean {
+  return typeof value === 'string' && /^[0-9a-f]{64}$/i.test(value);
+}
+
+// 使用 bcryptjs 进行密码哈希
+export async function hashPassword(password: string): Promise<string> {
+  const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
+  return await bcrypt.hash(password, salt);
+}
+
+// 比较密码：优先支持 bcrypt；兼容旧版 SHA-256(十六进制) 以便迁移
 export async function comparePasswords(
   plainTextPassword: string,
   hashedPassword: string
 ): Promise<boolean> {
-  const hashed = await hashPassword(plainTextPassword);
-  return hashed === hashedPassword;
+  if (isBcryptHash(hashedPassword)) {
+    return await bcrypt.compare(plainTextPassword, hashedPassword);
+  }
+  if (isSha256Hex(hashedPassword)) {
+    // 旧版：WebCrypto SHA-256 十六进制
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plainTextPassword);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const shaHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    return shaHex === hashedPassword.toLowerCase();
+  }
+  // 未知格式，直接失败
+  return false;
 }
 
 type SessionData = {
