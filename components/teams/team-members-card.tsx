@@ -45,7 +45,7 @@ export function TeamMembersCard({
           添加成员
         </Button>
       </div>
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {members.map((member) => (
           <div key={member.id} className="relative group">
             <Link

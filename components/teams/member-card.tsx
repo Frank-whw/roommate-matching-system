@@ -154,12 +154,6 @@ export function MemberCard({
         {showContacts && !isCurrentUser && contactInfo && (
           <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
             <div className="flex items-center space-x-4 text-sm">
-              {contactInfo.email && (
-                <div className="flex items-center text-gray-600 dark:text-gray-300">
-                  <Mail className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-                  <span className="truncate">{contactInfo.email}</span>
-                </div>
-              )}
               {contactInfo.wechatId && (
                 <div className="flex items-center text-green-600 dark:text-green-400">
                   <MessageCircle className="w-4 h-4 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
