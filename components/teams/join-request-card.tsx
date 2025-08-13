@@ -131,15 +131,6 @@ export function JoinRequestCard({ request, applicant, applicantProfile, teamInfo
           {/* 申请者详情 */}
           {applicantProfile && (
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-              <div className="flex items-center">
-                <GraduationCap className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-                <span>
-                  {applicantProfile.major && applicantProfile.grade 
-                    ? `${applicantProfile.major} • ${applicantProfile.grade}`
-                    : '专业信息待完善'
-                  }
-                </span>
-              </div>
             </div>
           )}
 
