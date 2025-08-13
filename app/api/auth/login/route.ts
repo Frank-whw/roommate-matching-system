@@ -4,7 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { comparePasswords, setSession, isSha256Hex, hashPassword } from '@/lib/auth/session';
-import { generateEmailFromStudentId } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -70,10 +70,10 @@ export async function POST(request: NextRequest) {
     // 检查邮箱验证状态
     if (!foundUser.isEmailVerified) {
       return NextResponse.json(
-        { 
+        {
           error: '请先验证邮箱后再登录',
           requireEmailVerification: true,
-          email: generateEmailFromStudentId(foundUser.studentId) 
+          email: generateEmailFromStudentId(foundUser.studentId)
         },
         { status: 403 }
       );

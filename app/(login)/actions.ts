@@ -11,9 +11,9 @@ import {
   type NewActivityLog,
   ActivityType,
 } from '@/lib/db/schema';
-import { 
-  comparePasswords, 
-  hashPassword, 
+import {
+  comparePasswords,
+  hashPassword,
   setSession,
   validateStudentId,
   validateEducationalEmail,
@@ -75,7 +75,7 @@ const signInSchema = z.object({
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
   const { studentId } = data;
-  
+
   // 自动生成邮箱
   const email = `${studentId}@stu.ecnu.edu.cn`;
 
@@ -92,7 +92,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       } else {
         // 如果用户存在但未设置密码，重新发送设置密码邮件
         const passwordSetupToken = await signPasswordSetupToken(email, studentId);
-        
+
         // 更新用户的验证令牌和过期时间
         await db
           .update(users)
@@ -398,12 +398,12 @@ export async function signOut() {
     }
     const cookieStore = await cookies();
     cookieStore.delete('session');
-    redirect('/login');
+    redirect('/sign-in');
   } catch (error) {
     console.error('登出出错:', error);
     const cookieStore = await cookies();
     cookieStore.delete('session');
-    redirect('/login');
+    redirect('/sign-in');
   }
 }
 
@@ -441,7 +441,7 @@ export const updatePassword = validatedActionWithUser(
       // 更新密码
       await db
         .update(users)
-        .set({ 
+        .set({
           passwordHash: newPasswordHash,
           updatedAt: new Date()
         })
@@ -489,7 +489,7 @@ export const deleteAccount = validatedActionWithUser(
       // 软删除用户（设置deletedAt）
       await db
         .update(users)
-        .set({ 
+        .set({
           deletedAt: new Date(),
           isActive: false
         })

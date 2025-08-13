@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getUserWithProfile, generateEmailFromStudentId } from '@/lib/db/queries';
-import { z } from 'zod';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -8,7 +7,7 @@ export const dynamic = 'force-dynamic';
 // 获取特定用户的详细信息
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const { user } = await getCurrentUser();
@@ -16,14 +15,14 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = await params;
+    const { id } = params;
     const userId = parseInt(id);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
     const targetUser = await getUserWithProfile(userId);
-    
+
     if (!targetUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

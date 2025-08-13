@@ -5,7 +5,7 @@ import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword, signPasswordSetupToken } from '@/lib/auth/session';
 import { sendPasswordSetupEmail } from '@/lib/email';
-import { generateEmailFromStudentId } from '@/lib/db/queries';
+import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 const registerSchema = z.object({
   studentId: z.string().regex(/^102\d55014\d{2}$/, '学号格式不正确，应为102*55014**格式'),
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { studentId } = result.data;
-    
+
     // 自动生成邮箱和姓名
     const email = generateEmailFromStudentId(studentId);
     const name = `用户${studentId}`;
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       } else {
         // 如果用户存在但未设置密码，重新发送设置密码邮件
         const passwordSetupToken = await signPasswordSetupToken(email, studentId);
-        
+
         // 更新用户的验证令牌和过期时间
         await db
           .update(users)

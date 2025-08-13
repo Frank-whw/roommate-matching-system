@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
 // 需要认证的路由
@@ -19,62 +18,67 @@ const authRoutes = [
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   // 检查是否是受保护的路由
-  const isProtectedRoute = protectedRoutes.some(route => 
+  const isProtectedRoute = protectedRoutes.some(route =>
     pathname.startsWith(route)
   );
-  
+
   // 检查是否是认证路由
-  const isAuthRoute = authRoutes.some(route => 
+  const isAuthRoute = authRoutes.some(route =>
     pathname.startsWith(route)
   );
 
   try {
-    // 获取session
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session');
-    
+    // 获取session（中间件环境下使用 request.cookies）
+    const sessionCookieValue = request.cookies.get('session')?.value;
     let isAuthenticated = false;
-    if (sessionCookie?.value) {
+    let shouldDeleteCookie = false;
+    if (sessionCookieValue) {
       try {
-        const sessionData = await verifyToken(sessionCookie.value);
-        isAuthenticated = !!(sessionData && 
-          sessionData.user && 
+        const sessionData = await verifyToken(sessionCookieValue);
+        isAuthenticated = !!(sessionData &&
+          sessionData.user &&
           new Date(sessionData.expires) > new Date()
         );
       } catch (error) {
-        // Token无效，清除cookie
-        const response = NextResponse.next();
-        response.cookies.delete('session');
+        // Token无效，后续在响应中删除Cookie
+        shouldDeleteCookie = true;
         isAuthenticated = false;
       }
     }
 
+    let response: NextResponse;
     // 如果是受保护的路由但用户未认证
     if (isProtectedRoute && !isAuthenticated) {
       const signInUrl = new URL('/sign-in', request.url);
       signInUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(signInUrl);
+      response = NextResponse.redirect(signInUrl);
+      if (shouldDeleteCookie) response.cookies.delete('session');
+      return response;
     }
 
     // 如果是认证路由但用户已认证
     if (isAuthRoute && isAuthenticated) {
-      return NextResponse.redirect(new URL('/explore', request.url));
+      response = NextResponse.redirect(new URL('/explore', request.url));
+      if (shouldDeleteCookie) response.cookies.delete('session');
+      return response;
     }
 
-    return NextResponse.next();
-    
+    response = NextResponse.next();
+    if (shouldDeleteCookie) response.cookies.delete('session');
+    return response;
+
   } catch (error) {
     console.error('Middleware error:', error);
-    
+
     // 如果是受保护的路由，在出错时重定向到登录
     if (isProtectedRoute) {
       const signInUrl = new URL('/sign-in', request.url);
       signInUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(signInUrl);
     }
-    
+
     return NextResponse.next();
   }
 }

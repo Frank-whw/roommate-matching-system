@@ -1,16 +1,16 @@
 'use server';
 
 import { z } from 'zod';
-import { eq, and, or, ne, count, desc } from 'drizzle-orm';
+import { eq, and, or, ne, count, desc, sql } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
-import { 
-  sendJoinRequestNotification, 
-  sendApplicationApprovedNotification, 
+import {
+  sendJoinRequestNotification,
+  sendApplicationApprovedNotification,
   sendApplicationRejectedNotification,
-  sendTeamDisbandedNotification 
+  sendTeamDisbandedNotification
 } from '@/lib/email';
 import { revalidatePath } from 'next/cache';
 
@@ -248,16 +248,16 @@ export async function joinTeam(rawData: any) {
         name: users.name,
         studentId: users.studentId
       })
-      .from(users)
-      .where(eq(users.id, team.leaderId))
-      .limit(1),
+        .from(users)
+        .where(eq(users.id, team.leaderId))
+        .limit(1),
       db.select({
         name: users.name,
         studentId: users.studentId
       })
-      .from(users)
-      .where(eq(users.id, currentUserId))
-      .limit(1)
+        .from(users)
+        .where(eq(users.id, currentUserId))
+        .limit(1)
     ]);
 
     // Send email notification to team leader
@@ -381,23 +381,29 @@ export async function reviewJoinRequest(rawData: any) {
 
       // Approve the request (within a transaction)
       await db.transaction(async (tx) => {
-        // Add user to team
+        // 原子占位：仅当未满员时增加成员数
+        const updated = await tx.execute(
+          sql`UPDATE "teams"
+              SET "current_members" = "current_members" + 1,
+                  "updated_at" = now()
+            WHERE "id" = ${team.id}
+              AND "status" = 'recruiting'
+              AND "current_members" < "max_members"
+            RETURNING "current_members";`
+        );
+
+        if ((updated as any[]).length === 0) {
+          throw new Error('队伍已满');
+        }
+
+        // 尝试插入成员（唯一约束保证用户只能在一个队伍）
         await tx.insert(teamMembers).values({
           teamId: team.id,
           userId: request.userId,
           isLeader: false,
         });
 
-        // Update team member count
-        await tx
-          .update(teams)
-          .set({
-            currentMembers: team.currentMembers + 1,
-            updatedAt: new Date(),
-          })
-          .where(eq(teams.id, team.id));
-
-        // Update request status
+        // 更新请求状态
         await tx
           .update(teamJoinRequests)
           .set({

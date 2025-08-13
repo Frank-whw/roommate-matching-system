@@ -4,7 +4,12 @@ import { NewUser } from '@/lib/db/schema';
 import { authConfig } from '@/lib/config';
 import bcrypt from 'bcryptjs';
 
-const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+// JWT 密钥：在开发环境提供回退，生产必须显式配置
+const resolvedAuthSecret = process.env.AUTH_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-secret-change-me' : '');
+if (!resolvedAuthSecret) {
+  throw new Error('AUTH_SECRET environment variable is not set');
+}
+const key = new TextEncoder().encode(resolvedAuthSecret);
 const BCRYPT_ROUNDS = 12;
 
 export function isBcryptHash(value: string): boolean {
@@ -43,7 +48,7 @@ export async function comparePasswords(
 }
 
 type SessionData = {
-  user: { 
+  user: {
     id: number;
     studentId?: string;
     isEmailVerified?: boolean;
@@ -94,7 +99,7 @@ export async function setSession(user: NewUser & { studentId?: string; isEmailVe
   try {
     const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const session: SessionData = {
-      user: { 
+      user: {
         id: user.id!,
         studentId: user.studentId,
         isEmailVerified: user.isEmailVerified
@@ -186,14 +191,14 @@ export async function verifyEmailVerificationToken(token: string): Promise<Email
     const { payload } = await jwtVerify(token, key, {
       algorithms: ['HS256'],
     });
-    
+
     const tokenData = payload as unknown as EmailVerificationToken;
-    
+
     // 检查是否过期
     if (Date.now() > tokenData.expires) {
       return null;
     }
-    
+
     return tokenData;
   } catch (error) {
     console.error('邮箱验证令牌验证失败:', error);
@@ -227,14 +232,14 @@ export async function verifyPasswordSetupToken(token: string): Promise<PasswordS
     const { payload } = await jwtVerify(token, key, {
       algorithms: ['HS256'],
     });
-    
+
     const tokenData = payload as unknown as PasswordSetupToken;
-    
+
     // 检查是否过期
     if (Date.now() > tokenData.expires) {
       return null;
     }
-    
+
     return tokenData;
   } catch (error) {
     console.error('设置密码令牌验证失败:', error);

@@ -18,8 +18,7 @@ export const mbtiEnum = pgEnum('mbti', [
   'INTJ', 'INTP', 'ENTJ', 'ENTP',
   'INFJ', 'INFP', 'ENFJ', 'ENFP',
   'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-  'ISTP', 'ISFP', 'ESTP', 'ESFP',
-  'unknown'
+  'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ]);
 export const studyHabitEnum = pgEnum('study_habit', ['library', 'dormitory', 'flexible']);
 export const lifestyleEnum = pgEnum('lifestyle', ['quiet', 'social', 'balanced']);
@@ -54,26 +53,26 @@ export const userProfiles = pgTable('user_profiles', {
   wechatId: varchar('wechat_id', { length: 100 }), // 微信号
   gender: genderEnum('gender'),
   age: integer('age'),
-  
+
   // 作息习惯
   sleepTime: varchar('sleep_time', { length: 10 }), // 睡觉时间，格式：22:00
   wakeTime: varchar('wake_time', { length: 10 }), // 起床时间，格式：07:00
   studyHabit: studyHabitEnum('study_habit'), // 学习习惯
-  
+
   // 生活习惯
   lifestyle: lifestyleEnum('lifestyle'), // 生活方式
   cleanliness: cleanlinessEnum('cleanliness'), // 清洁习惯
   mbti: mbtiEnum('mbti'), // MBTI性格类型
-  
+
   // 室友期待
   roommateExpectations: text('roommate_expectations'), // 室友期待描述
   hobbies: text('hobbies'), // 爱好兴趣
   dealBreakers: text('deal_breakers'), // 不能接受的行为
-  
+
   // 其他
   bio: text('bio'), // 个人简介
   isProfileComplete: boolean('is_profile_complete').notNull().default(false), // 资料完整度
-  
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
@@ -93,7 +92,7 @@ export const teams = pgTable('teams', {
   currentMembers: integer('current_members').notNull().default(1), // 当前成员数
   status: teamStatusEnum('status').notNull().default('recruiting'), // 队伍状态
   requirements: text('requirements'), // 招募要求
-  
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),
@@ -141,7 +140,7 @@ export const teamJoinRequests = pgTable('team_join_requests', {
   reviewedBy: integer('reviewed_by')
     .references(() => users.id), // 审核人（队长）
   reviewedAt: timestamp('reviewed_at'), // 审核时间
-  
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
@@ -265,9 +264,9 @@ export enum ActivityType {
   DELETE_ACCOUNT = 'DELETE_ACCOUNT',
   UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
   UPDATE_PROFILE = 'UPDATE_PROFILE',
-  
+
   // 用户互动功能已移除
-  
+
   // 队伍相关
   CREATE_TEAM = 'CREATE_TEAM',
   JOIN_TEAM = 'JOIN_TEAM',
