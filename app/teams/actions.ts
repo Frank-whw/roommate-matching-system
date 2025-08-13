@@ -6,7 +6,12 @@ import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
-import { sendJoinRequestNotification } from '@/lib/email';
+import { 
+  sendJoinRequestNotification, 
+  sendApplicationApprovedNotification, 
+  sendApplicationRejectedNotification,
+  sendTeamDisbandedNotification 
+} from '@/lib/email';
 import { revalidatePath } from 'next/cache';
 
 // Create team schema
@@ -419,6 +424,19 @@ export async function reviewJoinRequest(rawData: any) {
         ),
       ]);
 
+      // Send email notification to applicant
+      try {
+        const applicantEmail = generateEmailFromStudentId(applicant.studentId);
+        await sendApplicationApprovedNotification(
+          applicantEmail,
+          team.name,
+          applicant.name || generateEmailFromStudentId(applicant.studentId)
+        );
+      } catch (emailError) {
+        console.error('发送邮件通知失败:', emailError);
+        // 邮件发送失败不影响申请流程
+      }
+
       revalidatePath('/teams');
       return {
         success: true,
@@ -443,6 +461,19 @@ export async function reviewJoinRequest(rawData: any) {
         undefined,
         { teamId: team.id, applicantId: request.userId }
       );
+
+      // Send email notification to applicant
+      try {
+        const applicantEmail = generateEmailFromStudentId(applicant.studentId);
+        await sendApplicationRejectedNotification(
+          applicantEmail,
+          team.name,
+          applicant.name || generateEmailFromStudentId(applicant.studentId)
+        );
+      } catch (emailError) {
+        console.error('发送邮件通知失败:', emailError);
+        // 邮件发送失败不影响申请流程
+      }
 
       revalidatePath('/teams');
       return {
@@ -764,6 +795,24 @@ export async function disbandTeam(rawData: any) {
     );
 
     await Promise.all(activityPromises);
+
+    // Send email notifications to all members
+    const emailPromises = allMembers.map(async ({ member, user }) => {
+      try {
+        const userEmail = generateEmailFromStudentId(user.studentId);
+        await sendTeamDisbandedNotification(
+          userEmail,
+          team.name,
+          user.name || generateEmailFromStudentId(user.studentId),
+          member.isLeader
+        );
+      } catch (emailError) {
+        console.error(`发送邮件通知失败 (用户 ${user.id}):`, emailError);
+        // 邮件发送失败不影响解散流程
+      }
+    });
+
+    await Promise.all(emailPromises);
 
     revalidatePath('/teams');
     return {

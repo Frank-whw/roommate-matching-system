@@ -14,7 +14,6 @@ import {
   Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast-notifications';
 
 interface ContactInfo {
   wechatId: string | null;
@@ -44,22 +43,14 @@ interface TeamMemberContactProps {
 export function TeamMemberContact({ member, isCurrentUser }: TeamMemberContactProps) {
   const [showContact, setShowContact] = useState(false);
   const [copiedWechat, setCopiedWechat] = useState(false);
-  const { showToast } = useToast();
 
   const copyToClipboard = async (text: string, type: 'wechat') => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedWechat(true);
       setTimeout(() => setCopiedWechat(false), 2000);
-      showToast({
-        type: 'success',
-        message: '微信号已复制到剪贴板'
-      });
     } catch (err) {
-      showToast({
-        type: 'error',
-        message: '复制失败'
-      });
+      console.error('复制失败:', err);
     }
   };
 

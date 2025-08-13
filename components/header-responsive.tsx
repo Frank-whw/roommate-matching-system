@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Home, LogOut, User as UserIcon, Users, Heart, Settings } from 'lucide-react';
-import { NotificationCenter, NotificationBadge } from '@/components/realtime/notification-center';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -158,9 +157,6 @@ export default function ResponsiveHeader() {
 
           {/* Right side controls */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="block">
-              <NotificationCenter />
-            </div>
             <div className="block">
               <ThemeControls />
             </div>
