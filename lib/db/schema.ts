@@ -18,7 +18,8 @@ export const mbtiEnum = pgEnum('mbti', [
   'INTJ', 'INTP', 'ENTJ', 'ENTP',
   'INFJ', 'INFP', 'ENFJ', 'ENFP',
   'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-  'ISTP', 'ISFP', 'ESTP', 'ESFP'
+  'ISTP', 'ISFP', 'ESTP', 'ESFP',
+  'unknown'
 ]);
 export const studyHabitEnum = pgEnum('study_habit', ['library', 'dormitory', 'flexible']);
 export const lifestyleEnum = pgEnum('lifestyle', ['quiet', 'social', 'balanced']);

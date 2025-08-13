@@ -5,7 +5,7 @@ import { useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Users, Heart, Settings, MessageCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
 import { siteConfig } from '@/lib/config';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
+import ContactAuthorModal from './contact-author-modal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -105,6 +106,7 @@ function UserMenu() {
 
 export default function ResponsiveHeader() {
   const pathname = usePathname();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   return (
     <>
@@ -157,6 +159,27 @@ export default function ResponsiveHeader() {
 
           {/* Right side controls */}
           <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* 联系作者按钮 */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsContactModalOpen(true)}
+              className="hidden sm:flex items-center space-x-1 rounded-full"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden lg:inline">联系作者</span>
+            </Button>
+            
+            {/* 移动端联系按钮 */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsContactModalOpen(true)}
+              className="sm:hidden p-2 rounded-full"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+            
             <div className="block">
               <ThemeControls />
             </div>
@@ -164,13 +187,15 @@ export default function ResponsiveHeader() {
             <Suspense fallback={<div className="h-8 w-8 sm:h-9 sm:w-9" />}>
               <UserMenu />
             </Suspense>
-            
-
           </div>
         </div>
       </header>
 
-
+      {/* 联系作者模态框 */}
+      <ContactAuthorModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
     </>
   );
 }
