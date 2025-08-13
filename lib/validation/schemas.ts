@@ -54,22 +54,27 @@ const MESSAGES = {
 // 基础字段验证
 export const baseValidation = {
   studentId: z.string()
+    .trim()
     .regex(VALIDATION_RULES.STUDENT_ID, MESSAGES.INVALID_STUDENT_ID),
     
   email: z.string()
+    .trim()
     .email(MESSAGES.INVALID_EMAIL),
     
   password: z.string()
+    .trim()
     .min(VALIDATION_RULES.PASSWORD.MIN_LENGTH, MESSAGES.TOO_SHORT(VALIDATION_RULES.PASSWORD.MIN_LENGTH))
     .regex(/[A-Z]/, '密码必须包含至少一个大写字母')
     .regex(/[a-z]/, '密码必须包含至少一个小写字母')
     .regex(/\d/, '密码必须包含至少一个数字'),
     
   name: z.string()
+    .trim()
     .min(VALIDATION_RULES.LENGTHS.NAME.min, MESSAGES.TOO_SHORT(VALIDATION_RULES.LENGTHS.NAME.min))
     .max(VALIDATION_RULES.LENGTHS.NAME.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.NAME.max)),
     
   wechatId: z.string()
+    .trim()
     .regex(VALIDATION_RULES.WECHAT_ID, MESSAGES.INVALID_WECHAT)
     .optional(),
     
@@ -80,10 +85,12 @@ export const baseValidation = {
     .optional(),
     
   time: z.string()
+    .trim()
     .regex(VALIDATION_RULES.TIME_FORMAT, MESSAGES.INVALID_TIME)
     .optional(),
     
   bio: z.string()
+    .trim()
     .max(VALIDATION_RULES.LENGTHS.BIO.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.BIO.max))
     .optional()
 };
@@ -98,24 +105,24 @@ export const authSchemas = {
   
   login: z.object({
     studentId: baseValidation.studentId,
-    password: z.string().min(1, '密码不能为空')
+    password: z.string().trim().min(1, '密码不能为空')
   }),
   
   setPassword: z.object({
-    token: z.string().min(1, 'Token不能为空'),
+    token: z.string().trim().min(1, 'Token不能为空'),
     password: baseValidation.password,
-    confirmPassword: z.string()
+    confirmPassword: z.string().trim()
   }).refine(data => data.password === data.confirmPassword, {
     message: MESSAGES.PASSWORD_MISMATCH,
     path: ['confirmPassword']
   }),
   
   verifyEmail: z.object({
-    token: z.string().min(1, 'Token不能为空')
+    token: z.string().trim().min(1, 'Token不能为空')
   })
 };
 
-// 个人资料schemas
+//个人资料schemas
 export const profileSchemas = {
   updateProfile: z.object({
     // 基本信息
@@ -141,12 +148,15 @@ export const profileSchemas = {
     
     // 室友期待和兴趣
     roommateExpectations: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.EXPECTATIONS.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.EXPECTATIONS.max))
       .optional(),
     hobbies: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.HOBBIES.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.HOBBIES.max))
       .optional(),
     dealBreakers: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.DEAL_BREAKERS.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.DEAL_BREAKERS.max))
       .optional(),
     
@@ -159,13 +169,16 @@ export const profileSchemas = {
 export const teamSchemas = {
   createTeam: z.object({
     name: z.string()
+      .trim()
       .min(VALIDATION_RULES.LENGTHS.TEAM_NAME.min, MESSAGES.TOO_SHORT(VALIDATION_RULES.LENGTHS.TEAM_NAME.min))
       .max(VALIDATION_RULES.LENGTHS.TEAM_NAME.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_NAME.max)),
     description: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional(),
     // maxMembers 已移除 - 系统固定为4人队伍
     requirements: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional()
   }),
@@ -173,14 +186,17 @@ export const teamSchemas = {
   updateTeam: z.object({
     teamId: z.number().int().positive(),
     name: z.string()
+      .trim()
       .min(VALIDATION_RULES.LENGTHS.TEAM_NAME.min, MESSAGES.TOO_SHORT(VALIDATION_RULES.LENGTHS.TEAM_NAME.min))
       .max(VALIDATION_RULES.LENGTHS.TEAM_NAME.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_NAME.max))
       .optional(),
     description: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional(),
     // maxMembers 已移除 - 系统固定为4人队伍，不允许修改
     requirements: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional()
   }),
@@ -188,6 +204,7 @@ export const teamSchemas = {
   joinTeam: z.object({
     teamId: z.number().int().positive(),
     message: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.MESSAGE.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.MESSAGE.max))
       .optional()
   }),
@@ -196,6 +213,7 @@ export const teamSchemas = {
     requestId: z.number().int().positive(),
     action: z.enum(['approve', 'reject']),
     rejectReason: z.string()
+      .trim()
       .max(VALIDATION_RULES.LENGTHS.MESSAGE.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.MESSAGE.max))
       .optional()
   })
