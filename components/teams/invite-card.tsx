@@ -82,12 +82,12 @@ export default function InviteCard({ request, team, user, type }: InviteCardProp
             </div>
           </div>
 
-
-          {request.message && (
+          
+          {/* {request.message && (
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-3">
               <p className="text-sm text-gray-600 dark:text-gray-300">{request.message}</p>
             </div>
-          )}
+          )} */}
 
           {type === 'received' ? (
             <div className="flex items-center justify-between">
