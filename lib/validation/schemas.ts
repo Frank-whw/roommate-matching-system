@@ -164,11 +164,7 @@ export const teamSchemas = {
     description: z.string()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional(),
-    maxMembers: z.number()
-      .int()
-      .min(2, '队伍最少需要2人')
-      .max(4, '队伍最多4人')
-      .default(4),
+    // maxMembers 已移除 - 系统固定为4人队伍
     requirements: z.string()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional()
@@ -183,11 +179,7 @@ export const teamSchemas = {
     description: z.string()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional(),
-    maxMembers: z.number()
-      .int()
-      .min(2, '队伍最少需要2人')
-      .max(4, '队伍最多4人')
-      .optional(),
+    // maxMembers 已移除 - 系统固定为4人队伍，不允许修改
     requirements: z.string()
       .max(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max, MESSAGES.TOO_LONG(VALIDATION_RULES.LENGTHS.TEAM_DESCRIPTION.max))
       .optional()
