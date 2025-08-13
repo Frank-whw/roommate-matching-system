@@ -333,11 +333,11 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
               placeholder="描述您希望室友具备的特质，如：作息规律、爱干净、好相处等..."
               value={formData.roommateExpectations}
               onChange={(e) => handleInputChange('roommateExpectations', e.target.value)}
-              maxLength={1000}
-              rows={3}
+              maxLength={50}
+              rows={2}
             />
             <div className="text-right text-sm text-gray-500 mt-1">
-              {formData.roommateExpectations.length}/1000
+              {formData.roommateExpectations.length}/50
             </div>
           </div>
           
@@ -348,11 +348,11 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
               placeholder="分享您的兴趣爱好，如：读书、运动、音乐、游戏等..."
               value={formData.hobbies}
               onChange={(e) => handleInputChange('hobbies', e.target.value)}
-              maxLength={500}
-              rows={3}
+              maxLength={50}
+              rows={2}
             />
             <div className="text-right text-sm text-gray-500 mt-1">
-              {formData.hobbies.length}/500
+              {formData.hobbies.length}/50
             </div>
           </div>
           
@@ -363,11 +363,11 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
               placeholder="描述您不能容忍的室友行为，如：不爱干净、经常带朋友回宿舍等..."
               value={formData.dealBreakers}
               onChange={(e) => handleInputChange('dealBreakers', e.target.value)}
-              maxLength={500}
-              rows={3}
+              maxLength={50}
+              rows={2}
             />
             <div className="text-right text-sm text-gray-500 mt-1">
-              {formData.dealBreakers.length}/500
+              {formData.dealBreakers.length}/50
             </div>
           </div>
         </CardContent>
@@ -389,14 +389,14 @@ export function ProfileForm({ user, hasProfile, initialProfile }: ProfileFormPro
             <Label htmlFor="bio">个人简介</Label>
             <Textarea
               id="bio"
-              placeholder="用简短的话介绍一下自己，让其他人更了解您..."
+              placeholder="用简短的话介绍一下自己（如性格、专业、家乡等）..."
               value={formData.bio}
               onChange={(e) => handleInputChange('bio', e.target.value)}
-              maxLength={500}
-              rows={4}
+              maxLength={100}
+              rows={3}
             />
             <div className="text-right text-sm text-gray-500 mt-1">
-              {formData.bio.length}/500
+              {formData.bio.length}/100
             </div>
           </div>
         </CardContent>

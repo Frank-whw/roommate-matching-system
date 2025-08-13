@@ -26,10 +26,10 @@ export const VALIDATION_RULES = {
   LENGTHS: {
     NAME: { min: 2, max: 50 },
     WECHAT: { min: 6, max: 20 },
-    BIO: { max: 500 },
-    EXPECTATIONS: { max: 1000 },
-    HOBBIES: { max: 500 },
-    DEAL_BREAKERS: { max: 500 },
+    BIO: { max: 100 },
+    EXPECTATIONS: { max: 50 },
+    HOBBIES: { max: 50 },
+    DEAL_BREAKERS: { max: 50 },
     TEAM_NAME: { min: 2, max: 100 },
     TEAM_DESCRIPTION: { max: 100 },
     MESSAGE: { max: 200 }

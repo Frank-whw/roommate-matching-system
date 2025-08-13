@@ -286,8 +286,8 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
               value={formData.roommateExpectations}
               onChange={(value) => handleFieldChange('roommateExpectations', value)}
               placeholder="描述您对室友的期待，例如：希望室友作息规律，爱干净..."
-              rows={3}
-              maxLength={1000}
+              rows={2}
+              maxLength={50}
               error={validation.errors.roommateExpectations}
             />
 
@@ -296,8 +296,8 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
               value={formData.hobbies}
               onChange={(value) => handleFieldChange('hobbies', value)}
               placeholder="分享您的兴趣爱好，例如：阅读、运动、看电影、编程..."
-              rows={3}
-              maxLength={500}
+              rows={2}
+              maxLength={50}
               error={validation.errors.hobbies}
             />
 
@@ -306,8 +306,8 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
               value={formData.dealBreakers}
               onChange={(value) => handleFieldChange('dealBreakers', value)}
               placeholder="描述您绝对不能接受的室友行为，例如：吸烟、大声喧哗..."
-              rows={3}
-              maxLength={500}
+              rows={2}
+              maxLength={50}
               error={validation.errors.dealBreakers}
             />
 
@@ -315,9 +315,9 @@ export function EnhancedProfileForm({ user, hasProfile, initialProfile }: Enhanc
               label="个人简介"
               value={formData.bio}
               onChange={(value) => handleFieldChange('bio', value)}
-              placeholder="简单介绍一下自己的性格、专业、生活状态等..."
-              rows={4}
-              maxLength={500}
+              placeholder="简单介绍一下自己（如性格、家乡等）...写的越多越有可能被邀请进队哦"
+              rows={3}
+              maxLength={100}
               error={validation.errors.bio}
             />
           </div>
