@@ -33,13 +33,14 @@ export default function LoadingIndicator({ delay = 100 }: LoadingIndicatorProps)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
           className="fixed top-0 left-0 right-0 z-50"
         >
           <div className="h-1 bg-gray-200 dark:bg-gray-700">
             <motion.div
               initial={{ width: '0%' }}
               animate={{ width: '100%' }}
-              transition={{ duration: 0.5, ease: 'easeInOut' }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
               className="h-full bg-gradient-to-r from-primary to-primary/80"
             />
           </div>
@@ -53,9 +54,10 @@ export default function LoadingIndicator({ delay = 100 }: LoadingIndicatorProps)
 export function PageLoadingIndicator() {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       className="flex items-center justify-center min-h-[400px]"
     >
       <div className="text-center">

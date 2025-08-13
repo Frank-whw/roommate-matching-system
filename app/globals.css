@@ -534,8 +534,8 @@
 @layer base {
   * {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow, transform;
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
   }
 
   /* Fix for Radix UI dropdowns - prevent transform transitions that cause positioning issues */
@@ -566,7 +566,7 @@
   
   /* 暗夜模式下的特殊过渡效果 */
   .dark * {
-    transition-duration: 400ms;
+    transition-duration: 250ms;
   }
   
   /* Ensure dark mode overrides also respect Radix UI positioning */

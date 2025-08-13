@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { SharedElement, SharedAvatar } from '@/components/shared-element';
 import { 
   Clock,
   Home,
@@ -106,13 +107,13 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam, alread
   const StudyHabitIcon = profile?.studyHabit ? studyHabitLabels[profile.studyHabit]?.icon || Coffee : Coffee;
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <Card className="group hover:shadow-lg transition-all duration-200 ease-out hover:-translate-y-1 overflow-hidden">
       <CardContent className="p-0">
         {/* 用户头部信息 - 可点击查看详情 */}
         <Link href={`/users/${user.id}`} className="block">
           <div className="p-4 sm:p-6 pb-3 sm:pb-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
             <div className="flex items-start space-x-3 sm:space-x-4">
-              <div className="relative flex-shrink-0">
+              <SharedAvatar layoutId={`avatar-${user.id}`} className="relative flex-shrink-0">
                 <Avatar className="w-12 h-12 sm:w-16 sm:h-16 ring-2 ring-pink-100 dark:ring-pink-900">
                   <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=f97316&color=fff`} />
                   <AvatarFallback className="bg-gradient-to-br from-pink-400 to-purple-500 text-white">
@@ -121,13 +122,15 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam, alread
                 </Avatar>
                 {/* 在线状态指示器 */}
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
-              </div>
+              </SharedAvatar>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
+                <SharedElement layoutId={`user-name-${user.id}`}>
                   <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
                     {user.name || '用户' + user.id}
                   </h3>
+                </SharedElement>
                 </div>
                 
                 {/* 基本信息优化：突出重要信息 */}
