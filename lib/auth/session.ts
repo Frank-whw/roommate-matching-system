@@ -4,8 +4,24 @@ import { NewUser } from '@/lib/db/schema';
 import { authConfig } from '@/lib/config';
 import bcrypt from 'bcryptjs';
 
-// JWT 密钥：在开发环境提供回退，生产必须显式配置
-const resolvedAuthSecret = process.env.AUTH_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-secret-change-me' : '');
+// JWT 密钥：在开发环境提供安全的随机回退，生产必须显式配置
+function getDevSecret(): string {
+  // 生成更安全的开发环境密钥
+  if (typeof window === 'undefined' && typeof require !== 'undefined') {
+    try {
+      const crypto = require('crypto');
+      return crypto.randomBytes(32).toString('hex');
+    } catch {
+      // 如果crypto不可用，使用基于时间戳的复杂字符串
+      const timestamp = Date.now().toString();
+      const random = Math.random().toString(36).substring(2);
+      return `dev-secret-${timestamp}-${random}-change-me-in-production`;
+    }
+  }
+  return 'dev-secret-fallback-change-me-in-production';
+}
+
+const resolvedAuthSecret = process.env.AUTH_SECRET || (process.env.NODE_ENV !== 'production' ? getDevSecret() : '');
 if (!resolvedAuthSecret) {
   throw new Error('AUTH_SECRET environment variable is not set');
 }
