@@ -9,6 +9,7 @@ import LoadingIndicator from '@/components/navigation/loading-indicator';
 import ErrorFilter from '@/components/error-filter';
 import PageTransition from '@/components/page-transition';
 import { Suspense } from 'react';
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
