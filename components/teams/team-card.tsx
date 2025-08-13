@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { joinTeam } from '@/app/teams/actions';
-import { SharedElement, SharedAvatar } from '@/components/shared-element';
 import { 
   Crown,
   Users,
@@ -104,24 +103,22 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
   };
 
   return (
-    <Card className="group relative overflow-hidden bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-md hover:shadow-xl transition-all duration-200 ease-out hover:-translate-y-1 rounded-xl">
+    <Card className="group relative overflow-hidden border border-gray-200/80 dark:border-gray-700/60 bg-white/90 dark:bg-gray-900/70 backdrop-blur-2xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-1 rounded-xl">
       <CardContent className="p-5">
         {/* 队伍标题区域 */}
         <Link href={`/teams/${team.id}`} className="block">
           <div className="flex items-start justify-between mb-4 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 -m-3 p-3 rounded-lg transition-colors duration-200 border border-transparent hover:border-gray-200/60 dark:hover:border-gray-700/50">
             <div className="flex-1 min-w-0">
               <div className="flex items-center mb-2">
-              <SharedElement layoutId={`team-name-${team.id}`}>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mr-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 truncate">
                   {team.name}
                 </h3>
-              </SharedElement>
                 <Badge 
                   variant="outline" 
                   className={
                     isTeamFull 
-                      ? "bg-gray-100/90 dark:bg-gray-800/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
-                      : "bg-green-100/90 dark:bg-green-900/50 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
+                      ? "bg-gray-100/90 dark:bg-gray-800/80 border-gray-300/80 dark:border-gray-600/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
+                      : "bg-green-100/90 dark:bg-green-900/50 border-green-300/80 dark:border-green-700/80 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-md"
                   }
                 >
                   {isTeamFull ? '已满员' : '招募中'}
@@ -167,8 +164,8 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
 
         {/* 队长信息 */}
         <Link href={`/users/${leader.id}`} className="block">
-          <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50/80 dark:bg-gray-800/60 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/70 transition-colors duration-200 ease-out group/leader backdrop-blur-md">
-            <SharedAvatar layoutId={`leader-avatar-${team.id}`} className="relative">
+          <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-50/80 dark:bg-gray-800/60 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/70 transition-colors duration-200 group/leader backdrop-blur-md border border-gray-200/60 dark:border-gray-700/50">
+            <div className="relative">
               <Avatar className="w-10 h-10 ring-2 ring-white/80 dark:ring-gray-700/70 shadow-md">
                 <AvatarImage 
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.name || leader.email)}&background=3b82f6&color=fff`} 
@@ -180,7 +177,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center shadow-md">
                 <Crown className="w-2 h-2 text-white" style={{ fill: 'none', stroke: 'currentColor' }} />
               </div>
-            </SharedAvatar>
+            </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center mb-0.5">
@@ -214,7 +211,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
               <FileText className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
               招募要求
             </div>
-            <div className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50/80 dark:bg-gray-800/60 p-3 rounded-lg backdrop-blur-md">
+            <div className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50/80 dark:bg-gray-800/60 p-3 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md">
               <p className="line-clamp-2 leading-relaxed">{team.requirements}</p>
             </div>
           </div>
@@ -255,7 +252,7 @@ export function TeamCard({ team, leader, leaderProfile, currentUserId, canJoin, 
           </div>
           <div className="w-full bg-gray-200/80 dark:bg-gray-700/70 rounded-full h-1.5 overflow-hidden backdrop-blur-md">
             <div 
-              className="bg-gradient-to-r from-blue-500/90 to-purple-600/90 h-1.5 rounded-full transition-all duration-200 ease-out shadow-sm"
+              className="bg-gradient-to-r from-blue-500/90 to-purple-600/90 h-1.5 rounded-full transition-all duration-500 ease-out shadow-sm"
               style={{ width: `${(team.currentMembers / team.maxMembers) * 100}%` }}
             />
           </div>

@@ -255,7 +255,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   {/* 使用新的联系信息组件 */}
                   {isTeamMember && teamWithContact ? (
                     <>
