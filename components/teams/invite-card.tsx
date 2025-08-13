@@ -82,22 +82,6 @@ export default function InviteCard({ request, team, user, type }: InviteCardProp
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-3">
-            <div className="flex items-center">
-              <Users className="w-4 h-4 text-gray-400 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {team.name}
-              </span>
-              <Badge variant="secondary" className="ml-2 text-xs">
-                {team.currentMembers}/{team.maxMembers}人
-              </Badge>
-            </div>
-            {team.description && (
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                {team.description}
-              </p>
-            )}
-          </div>
 
           {request.message && (
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-3">

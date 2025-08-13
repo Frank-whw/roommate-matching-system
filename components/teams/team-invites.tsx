@@ -77,21 +77,6 @@ export async function TeamInvites({ currentUserId }: TeamInvitesProps) {
 
     return (
       <div className="space-y-6">
-        {/* 统计信息 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {receivedInvites.length}
-            </div>
-            <div className="text-sm text-blue-700 dark:text-blue-300">待处理邀请</div>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-              {sentInvites.length}
-            </div>
-            <div className="text-sm text-gray-700 dark:text-gray-300">已发送邀请</div>
-          </div>
-        </div>
 
         {/* 收到的邀请 */}
         {receivedInvites.length > 0 && (
