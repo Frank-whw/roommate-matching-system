@@ -2,6 +2,17 @@
 import nodemailer from 'nodemailer';
 import { authConfig } from '@/lib/config';
 
+// HTML转义函数，防止XSS攻击
+function escapeHtml(unsafe: string): string {
+  if (typeof unsafe !== 'string') return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 interface EmailOptions {
   to: string;
   subject: string;
@@ -110,7 +121,7 @@ export async function sendEmailVerification(email: string, token: string, studen
           <h1>📧 邮箱验证</h1>
         </div>
         <div class="content">
-          <p>尊敬的同学（学号：<strong>${studentId}</strong>），</p>
+          <p>尊敬的同学（学号：<strong>${escapeHtml(studentId)}</strong>），</p>
           <p>感谢您注册<strong>室友匹配系统</strong>！</p>
           <p>请点击以下按钮完成邮箱验证（链接10分钟内有效）：</p>
           <p style="text-align: center;">
@@ -164,7 +175,7 @@ export async function sendPasswordSetupEmail(email: string, token: string, stude
           <h1>🔐 设置密码</h1>
         </div>
         <div class="content">
-          <p>尊敬的同学（学号：<strong>${studentId}</strong>），</p>
+          <p>尊敬的同学（学号：<strong>${escapeHtml(studentId)}</strong>），</p>
           <p>感谢您注册<strong>室友匹配系统</strong>！</p>
           <p>您的邮箱已验证成功，现在请设置您的登录密码（链接10分钟内有效）：</p>
           <p style="text-align: center;">
@@ -217,7 +228,7 @@ export async function sendMatchNotification(email: string, matchedUserName: stri
         </div>
         <div class="content">
           <div class="celebration">🎊 恭喜恭喜！ 🎊</div>
-          <p>太棒了！您与 <strong>${matchedUserName}</strong> 互相匹配成功！</p>
+          <p>太棒了！您与 <strong>${escapeHtml(matchedUserName)}</strong> 互相匹配成功！</p>
           <p>现在您可以：</p>
           <ul>
             <li>查看对方的详细资料信息</li>
@@ -272,10 +283,10 @@ export async function sendTeamInvitation(email: string, teamName: string, invite
         <div class="content">
           <p>您收到了一个队伍邀请！</p>
           <div class="team-info">
-            <p><strong>👤 邀请人：</strong>${inviterName}</p>
-            <p><strong>🏠 队伍名：</strong>「${teamName}」</p>
+            <p><strong>👤 邀请人：</strong>${escapeHtml(inviterName)}</p>
+            <p><strong>🏠 队伍名：</strong>「${escapeHtml(teamName)}」</p>
           </div>
-          <p>${inviterName} 认为您非常适合加入他们的队伍，一起寻找理想的住宿伙伴。</p>
+          <p>${escapeHtml(inviterName)} 认为您非常适合加入他们的队伍，一起寻找理想的住宿伙伴。</p>
           <p style="text-align: center;">
             <a href="${process.env.BASE_URL}/teams" class="button">查看邀请详情</a>
           </p>
@@ -320,8 +331,8 @@ export async function sendTestEmail(email: string): Promise<boolean> {
         </div>
         <div class="content">
           <p>恭喜！如果您收到这封邮件，说明邮件服务配置成功！</p>
-          <p><strong>测试时间：</strong>${new Date().toLocaleString('zh-CN')}</p>
-          <p><strong>收件人：</strong>${email}</p>
+          <p><strong>测试时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
+          <p><strong>收件人：</strong>${escapeHtml(email)}</p>
           <p>现在您可以正常使用室友匹配系统的所有邮件功能了。</p>
           <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
             <strong>室友匹配系统团队</strong>
@@ -385,10 +396,10 @@ export async function sendJoinRequestNotification(
         </div>
         <div class="content">
           <p>您好，队长！</p>
-          <p>您的队伍「<strong>${teamName}</strong>」收到了一份新的入队申请。</p>
+          <p>您的队伍「<strong>${escapeHtml(teamName)}</strong>」收到了一份新的入队申请。</p>
           <div class="applicant-info">
-            <p><strong>👤 申请人：</strong>${applicantName}</p>
-            <p><strong>🎓 学号：</strong>${applicantStudentId}</p>
+            <p><strong>👤 申请人：</strong>${escapeHtml(applicantName)}</p>
+            <p><strong>🎓 学号：</strong>${escapeHtml(applicantStudentId)}</p>
           </div>
           <p>该同学希望加入您的队伍，一起寻找理想的住宿环境。请及时查看申请详情并做出回复。</p>
           <p style="text-align: center;">
@@ -444,8 +455,8 @@ export async function sendApplicationApprovedNotification(
           <div class="celebration">🎊 恭喜恭喜！ 🎊</div>
           <p>太棒了！您的入队申请已被批准！</p>
           <div class="success-box">
-            <p><strong>👤 申请人：</strong>${applicantName}</p>
-            <p><strong>🏠 队伍名：</strong>「${teamName}」</p>
+            <p><strong>👤 申请人：</strong>${escapeHtml(applicantName)}</p>
+            <p><strong>🏠 队伍名：</strong>「${escapeHtml(teamName)}」</p>
             <p><strong>✅ 状态：</strong>申请已通过</p>
           </div>
           <p>欢迎加入队伍！现在您可以：</p>
@@ -507,8 +518,8 @@ export async function sendApplicationRejectedNotification(
         <div class="content">
           <p>感谢您的申请！</p>
           <div class="info-box">
-            <p><strong>👤 申请人：</strong>${applicantName}</p>
-            <p><strong>🏠 队伍名：</strong>「${teamName}」</p>
+            <p><strong>👤 申请人：</strong>${escapeHtml(applicantName)}</p>
+            <p><strong>🏠 队伍名：</strong>「${escapeHtml(teamName)}」</p>
             <p><strong>📝 结果：</strong>很遗憾，这次申请未能通过</p>
           </div>
           <p>虽然这次申请没有成功，但请不要灰心！可能是因为：</p>
@@ -574,13 +585,13 @@ export async function sendTeamDisbandedNotification(
           <h1>📢 队伍解散通知</h1>
         </div>
         <div class="content">
-          <p>您好，${memberName}！</p>
+          <p>您好，${escapeHtml(memberName)}！</p>
           <div class="info-box">
-            <p><strong>🏠 队伍名：</strong>「${teamName}」</p>
-            <p><strong>📅 解散时间：</strong>${new Date().toLocaleString('zh-CN')}</p>
+            <p><strong>🏠 队伍名：</strong>「${escapeHtml(teamName)}」</p>
+            <p><strong>📅 解散时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
             <p><strong>👤 您的身份：</strong>${isLeader ? '队长' : '队员'}</p>
           </div>
-          <p>${isLeader ? '您解散了队伍' : '队长解散了队伍'}「${teamName}」。</p>
+          <p>${isLeader ? '您解散了队伍' : '队长解散了队伍'}「${escapeHtml(teamName)}」。</p>
           <p>队伍解散后：</p>
           <ul>
             <li>所有队员将退出该队伍</li>
