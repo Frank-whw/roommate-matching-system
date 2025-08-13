@@ -562,11 +562,11 @@ export async function leaveTeam(rawData: any) {
           })
           .where(eq(teams.id, teamId));
       } else {
-        // Update member count
+        // 原子性减少成员数：使用Drizzle类型安全的SQL表达式
         await tx
           .update(teams)
           .set({
-            currentMembers: team.currentMembers - 1,
+            currentMembers: sql`${teams.currentMembers} - 1`,
             updatedAt: new Date(),
           })
           .where(eq(teams.id, teamId));
@@ -667,11 +667,11 @@ export async function removeMember(rawData: any) {
         .delete(teamMembers)
         .where(eq(teamMembers.id, memberInfo.member.id));
 
-      // Update team member count
+      // 原子性减少成员数：使用Drizzle类型安全的SQL表达式
       await tx
         .update(teams)
         .set({
-          currentMembers: team.currentMembers - 1,
+          currentMembers: sql`${teams.currentMembers} - 1`,
           updatedAt: new Date(),
         })
         .where(eq(teams.id, teamId));
