@@ -116,22 +116,73 @@ export async function handleApiCall<T>(
   }
 }
 
+// 生产环境敏感信息过滤
+function sanitizeForProduction(data: any): any {
+  if (process.env.NODE_ENV !== 'production') {
+    return data;
+  }
+
+  if (typeof data === 'string') {
+    // 过滤可能的敏感信息模式
+    return data
+      .replace(/password['":\s]*[^,}\s]*/gi, 'password: [REDACTED]')
+      .replace(/token['":\s]*[^,}\s]*/gi, 'token: [REDACTED]')
+      .replace(/email['":\s]*[^,}\s]*/gi, 'email: [REDACTED]')
+      .replace(/secret['":\s]*[^,}\s]*/gi, 'secret: [REDACTED]');
+  }
+
+  if (typeof data === 'object' && data !== null) {
+    const sanitized: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      const lowerKey = key.toLowerCase();
+      if (lowerKey.includes('password') || lowerKey.includes('token') || 
+          lowerKey.includes('secret') || lowerKey.includes('email')) {
+        sanitized[key] = '[REDACTED]';
+      } else {
+        sanitized[key] = sanitizeForProduction(value);
+      }
+    }
+    return sanitized;
+  }
+
+  return data;
+}
+
 // 日志错误
 export function logError(error: AppError, context?: string) {
-  console.group(`🚨 ${error.type} Error ${context ? `[${context}]` : ''}`);
-  console.error('Message:', error.message);
-  console.error('Type:', error.type);
-  console.error('Field:', error.field);
-  console.error('Code:', error.code);
-  console.error('Timestamp:', error.timestamp);
-  console.error('Retry:', error.retry);
-  console.error('Details:', error.details);
-  console.error('Stack:', error.stack);
-  console.groupEnd();
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  if (isProduction) {
+    // 生产环境：只记录基本信息，不包含敏感数据
+    console.error(`[${error.type}] ${context || 'Error'}:`, {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      timestamp: error.timestamp,
+      retry: error.retry
+    });
+  } else {
+    // 开发环境：记录详细信息
+    console.group(`🚨 ${error.type} Error ${context ? `[${context}]` : ''}`);
+    console.error('Message:', error.message);
+    console.error('Type:', error.type);
+    console.error('Field:', error.field);
+    console.error('Code:', error.code);
+    console.error('Timestamp:', error.timestamp);
+    console.error('Retry:', error.retry);
+    console.error('Details:', sanitizeForProduction(error.details));
+    console.error('Stack:', error.stack);
+    console.groupEnd();
+  }
   
   // 在生产环境中，这里可以发送错误到监控服务
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction) {
     // 发送到错误监控服务 (例如 Sentry)
-    // sentryCapture(error);
+    // sentryCapture({
+    //   message: error.message,
+    //   type: error.type,
+    //   code: error.code,
+    //   timestamp: error.timestamp
+    // });
   }
 }
