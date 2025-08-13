@@ -381,18 +381,23 @@ export async function reviewJoinRequest(rawData: any) {
 
       // Approve the request (within a transaction)
       await db.transaction(async (tx) => {
-        // 原子占位：仅当未满员时增加成员数
-        const updated = await tx.execute(
-          sql`UPDATE "teams"
-              SET "current_members" = "current_members" + 1,
-                  "updated_at" = now()
-            WHERE "id" = ${team.id}
-              AND "status" = 'recruiting'
-              AND "current_members" < "max_members"
-            RETURNING "current_members";`
-        );
+        // 原子占位：仅当未满员时增加成员数，使用Drizzle类型安全的更新
+        const updatedTeams = await tx
+          .update(teams)
+          .set({
+            currentMembers: sql`${teams.currentMembers} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(teams.id, team.id),
+              eq(teams.status, 'recruiting'),
+              sql`${teams.currentMembers} < ${teams.maxMembers}`
+            )
+          )
+          .returning({ currentMembers: teams.currentMembers });
 
-        if ((updated as any[]).length === 0) {
+        if (updatedTeams.length === 0) {
           throw new Error('队伍已满');
         }
 
