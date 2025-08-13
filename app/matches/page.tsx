@@ -126,34 +126,6 @@ export default async function MatchesPage() {
 
           {/* 侧边栏 - 更紧凑 */}
           <div className="space-y-4">
-            {/* 快捷操作 */}
-            <Card className="shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">快捷操作</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 space-y-2">
-                <Button asChild className="w-full h-9" variant="outline" size="sm">
-                  <Link href="/teams/create">
-                    <Crown className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    创建队伍
-                  </Link>
-                </Button>
-                
-                <Button asChild className="w-full h-9" variant="outline" size="sm">
-                  <Link href="/teams">
-                    <Search className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    浏览队伍
-                  </Link>
-                </Button>
-                
-                <Button asChild className="w-full h-9" variant="outline" size="sm">
-                  <Link href="/explore">
-                    <MessageSquare className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    个人匹配
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
 
             {/* 队伍规则提示 - 更紧凑 */}
             <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20 shadow-sm">

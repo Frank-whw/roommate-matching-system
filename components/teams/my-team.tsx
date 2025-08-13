@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { MemberCard } from './member-card';
+import { TeamManagementActions } from './team-management-actions';
 
 interface MyTeamProps {
   currentUserId?: number;
@@ -219,6 +220,11 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
                     编辑
                   </Link>
                 </Button>
+                <TeamManagementActions 
+                  teamId={teamInfo.team.id} 
+                  teamName={teamInfo.team.name} 
+                  isLeader={teamInfo.membership.isLeader} 
+                />
               </div>
             </div>
             
