@@ -18,10 +18,7 @@ export default function PrivacyPage() {
               我们收集以下信息以提供室友匹配服务：
             </p>
             <ul className="list-disc list-inside mb-6 space-y-2">
-              <li>学号、姓名、邮箱等基本信息</li>
-              <li>专业、年级、性别等教育信息</li>
-              <li>生活习惯、兴趣爱好等个人偏好</li>
-              <li>MBTI性格类型等心理测评结果</li>
+              <li>学号、用户名、性别、生活习惯、兴趣爱好、MBTI等基本信息</li>
             </ul>
 
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. 信息使用</h2>

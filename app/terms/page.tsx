@@ -15,8 +15,9 @@ export default function TermsPage() {
           <div className="prose prose-lg max-w-none">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. 服务说明</h2>
             <p className="mb-6">
-              RoomieSync（室友匹配系统）是为华东师范大学学生提供室友匹配服务的平台。
-              通过本系统，学生可以创建个人档案、搜索兼容的室友、组建团队并管理住宿安排。
+              RoomieSync（室友匹配系统）是一个为华东师范大学数据科学于工程学院新生设计的平台，
+              旨在帮助学生找到 compatible 的室友。通过本系统，学生可以创建个人档案、
+              搜索兼容的室友、组建团队并管理住宿安排。
             </p>
 
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. 用户资格</h2>
