@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser, getUsersForMatching } from '@/lib/db/queries';
-import { z } from 'zod';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';

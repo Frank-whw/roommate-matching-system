@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull, isNotNull, or, inArray, count, ne, notInArray, sql, gte, lte, ilike } from 'drizzle-orm';
+import { desc, and, eq, isNull, or, inArray, count, ne, notInArray, gte, lte, ilike } from 'drizzle-orm';
 import { db } from './drizzle';
 import { 
   activityLogs, 

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Users, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

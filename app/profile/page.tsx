@@ -1,9 +1,6 @@
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { getCurrentUser, getUserWithProfile } from '@/lib/db/queries';
-import { generateEmailFromStudentId } from '@/lib/utils/email';
+import { getCurrentUser } from '@/lib/db/queries';
 import { 
   User, 
   Settings, 

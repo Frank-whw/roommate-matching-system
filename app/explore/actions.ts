@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { eq, and, or, sql, ne } from 'drizzle-orm';
+import { eq, and, sql, ne } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType, users as usersTable } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';

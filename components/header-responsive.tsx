@@ -5,7 +5,7 @@ import { useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, User as UserIcon, Users, Heart, Settings, MessageCircle } from 'lucide-react';
+import { Home, LogOut, User as UserIcon, Settings, MessageCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

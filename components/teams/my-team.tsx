@@ -2,7 +2,6 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, users, userProfiles } from '@/lib/db/schema';
 import { getUserContactInfo } from '@/lib/db/queries';
-import { generateEmailFromStudentId } from '@/lib/utils/email';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

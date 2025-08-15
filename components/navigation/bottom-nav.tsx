@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Users, Heart, User } from 'lucide-react';
+import { Home, Search, Users, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import useSWR from 'swr';
 import { User as UserType } from '@/lib/db/schema';
