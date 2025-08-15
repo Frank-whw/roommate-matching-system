@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { respondToTeamInvite } from '@/app/explore/actions';
-import { Check, X, Clock, Users } from 'lucide-react';
+import { Check, X, Clock, Users, Eye } from 'lucide-react';
 
 interface InviteCardProps {
   request: any;
@@ -81,6 +81,43 @@ export default function InviteCard({ request, team, user, type }: InviteCardProp
               {formatDate(request.createdAt)}
             </div>
           </div>
+
+          {/* 队伍信息或用户信息 */}
+          {type === 'received' ? (
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" style={{ fill: 'none', stroke: 'currentColor' }} />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                      队伍：{team?.name || '未知队伍'}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push(`/teams/${team?.id}`)}
+                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/30"
+                >
+                  <Eye className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
+                  查看队伍详情
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 mb-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push(`/users/${user?.id}`)}
+                className="text-green-600 hover:text-green-700 hover:bg-green-100 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-900/30"
+              >
+                <Eye className="w-3 h-3 mr-1" style={{ fill: 'none', stroke: 'currentColor' }} />
+                查看用户详情
+              </Button>
+            </div>
+          )}
 
           
           {/* {request.message && (
