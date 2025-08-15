@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { getCurrentUser } from '@/lib/db/queries';
 import { 
   User, 

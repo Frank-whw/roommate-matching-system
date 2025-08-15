@@ -24,6 +24,7 @@ import {
 import Link from 'next/link';
 import { MemberCard } from './member-card';
 import { TeamManagementActions } from './team-management-actions';
+import { LeaveTeamButton } from './leave-team-button';
 
 interface MyTeamProps {
   currentUserId?: number;
@@ -229,6 +230,27 @@ export async function MyTeam({ currentUserId, showContacts = false }: MyTeamProp
             
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
               点击成员卡片查看详情，使用右侧菜单管理成员
+            </p>
+          </div>
+        )}
+
+        {/* 普通成员操作区域 */}
+        {!teamInfo.membership.isLeader && (
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h4 className="text-base font-medium text-gray-900 dark:text-white flex items-center">
+                <UserMinus className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
+                成员操作
+              </h4>
+              
+              <LeaveTeamButton 
+                teamId={teamInfo.team.id} 
+                teamName={teamInfo.team.name} 
+              />
+            </div>
+            
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+              退出队伍后将无法查看队伍信息，需要重新申请加入
             </p>
           </div>
         )}
