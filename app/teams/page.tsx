@@ -20,7 +20,7 @@ import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
 
-export default async function TeamsPage() {
+export default async function TeamsPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
   const { user, session } = await getCurrentUser();
   
   if (!user) {
@@ -71,20 +71,21 @@ export default async function TeamsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <form className="flex flex-col sm:flex-row gap-4" action="/teams" method="get">
                   <div className="flex-1">
                     <Input
                       placeholder="搜索队伍名称、要求或描述..."
+                      name="search"
+                      defaultValue={typeof searchParams?.search === 'string' ? searchParams?.search : ''}
                       className="w-full border-gray-200/80 dark:border-gray-700/70 focus:border-blue-500 focus:ring-blue-500 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md"
-                      disabled
+                      aria-label="搜索队伍"
                     />
-                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">搜索功能开发中...</p>
                   </div>
-                  <Button variant="outline" disabled className="border-gray-200/80 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md">
+                  <Button type="submit" variant="outline" className="border-gray-200/80 dark:border-gray-700/70 text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-gray-800/70 backdrop-blur-md">
                     <Filter className="w-4 h-4 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
-                    筛选
+                    搜索
                   </Button>
-                </div>
+                </form>
               </CardContent>
             </Card>
           </div>
@@ -102,7 +103,11 @@ export default async function TeamsPage() {
             </CardHeader>
             <CardContent>
               <Suspense fallback={<TeamsListSkeleton />}>
-                <TeamsList currentUserId={user.users?.id} showAll={false} />
+                <TeamsList
+                  currentUserId={user.users?.id}
+                  showAll={false}
+                  search={typeof searchParams?.search === 'string' ? searchParams?.search : undefined}
+                />
               </Suspense>
             </CardContent>
           </Card>

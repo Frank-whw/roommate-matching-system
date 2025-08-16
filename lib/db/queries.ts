@@ -380,7 +380,11 @@ export async function getTeamWithMembersContact(teamId: number, currentUserId: n
   };
 }
 
-export async function getAllTeams(userId: number, limit = 20) {
+export async function getAllTeams(
+  userId: number,
+  limit = 20,
+  options?: { search?: string }
+) {
   // 获取当前用户的性别信息
   const currentUserProfile = await db
     .select({ gender: userProfiles.gender })
@@ -396,7 +400,7 @@ export async function getAllTeams(userId: number, limit = 20) {
   const currentUserGender = currentUserProfile[0].gender;
 
   // 获取所有同性别队伍（包括已满的）
-  return await db
+  const baseQuery = db
     .select({
       team: teams,
       leader: users,
@@ -412,9 +416,38 @@ export async function getAllTeams(userId: number, limit = 20) {
     .groupBy(teams.id, users.id)
     .orderBy(desc(teams.createdAt))
     .limit(limit);
+
+  // 关键词搜索：名称/描述/要求
+  if (options?.search && options.search.trim()) {
+    const term = `%${options.search.trim().toLowerCase()}%`;
+    // 由于 Drizzle 的查询构建已在上面完成，改为重新执行一次含搜索条件的查询
+    return await db
+      .select({ team: teams, leader: users, memberCount: count(teamMembers.id) })
+      .from(teams)
+      .leftJoin(users, eq(teams.leaderId, users.id))
+      .leftJoin(teamMembers, eq(teams.id, teamMembers.teamId))
+      .where(and(
+        eq(teams.gender, currentUserGender),
+        isNull(teams.deletedAt),
+        or(
+          ilike(teams.name, term),
+          ilike(teams.description, term),
+          ilike(teams.requirements, term)
+        )!
+      ))
+      .groupBy(teams.id, users.id)
+      .orderBy(desc(teams.createdAt))
+      .limit(limit);
+  }
+
+  return await baseQuery;
 }
 
-export async function getAvailableTeams(userId: number, limit = 20) {
+export async function getAvailableTeams(
+  userId: number,
+  limit = 20,
+  options?: { search?: string }
+) {
   // 获取当前用户的性别信息
   const currentUserProfile = await db
     .select({ gender: userProfiles.gender })
@@ -461,7 +494,7 @@ export async function getAvailableTeams(userId: number, limit = 20) {
   }
   
   // 获取符合条件的队伍，包含申请状态
-  const teams_result = await db
+  let teams_result = await db
     .select({
       team: teams,
       leader: users,
@@ -473,6 +506,26 @@ export async function getAvailableTeams(userId: number, limit = 20) {
     .where(and(...conditions))
     .groupBy(teams.id, users.id)
     .limit(limit);
+
+  // 关键词搜索：名称/描述/要求
+  if (options?.search && options.search.trim()) {
+    const term = `%${options.search.trim().toLowerCase()}%`;
+    teams_result = await db
+      .select({ team: teams, leader: users, memberCount: count(teamMembers.id) })
+      .from(teams)
+      .leftJoin(users, eq(teams.leaderId, users.id))
+      .leftJoin(teamMembers, eq(teams.id, teamMembers.teamId))
+      .where(and(
+        ...conditions,
+        or(
+          ilike(teams.name, term),
+          ilike(teams.description, term),
+          ilike(teams.requirements, term)
+        )!
+      ))
+      .groupBy(teams.id, users.id)
+      .limit(limit);
+  }
   
   // 为每个队伍添加申请状态
   return teams_result.map(result => ({

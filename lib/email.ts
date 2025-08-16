@@ -626,6 +626,78 @@ export async function sendTeamDisbandedNotification(
   });
 }
 
+// 发送密码重置邮件
+export async function sendPasswordResetEmail(
+  email: string,
+  userName: string,
+  resetToken: string
+): Promise<boolean> {
+  const subject = '室友匹配系统 - 密码重置';
+  const resetUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+  
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 15px 0; }
+        .warning { background: #fef2f2; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #ef4444; }
+        .info { background: #f0f9ff; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🔐 密码重置</h1>
+        </div>
+        <div class="content">
+          <p>您好，${escapeHtml(userName)}！</p>
+          <p>我们收到了您的密码重置请求。如果这不是您本人的操作，请忽略此邮件。</p>
+          
+          <div class="info">
+            <p><strong>📧 账户邮箱：</strong>${escapeHtml(email)}</p>
+            <p><strong>⏰ 请求时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
+          </div>
+          
+          <p>要重置您的密码，请点击下面的按钮：</p>
+          <p style="text-align: center;">
+            <a href="${resetUrl}" class="button">重置密码</a>
+          </p>
+          
+          <div class="warning">
+            <p><strong>⚠️ 安全提醒：</strong></p>
+            <ul>
+              <li>此链接将在24小时后过期</li>
+              <li>请勿将此链接分享给他人</li>
+              <li>如果您没有请求重置密码，请忽略此邮件</li>
+            </ul>
+          </div>
+          
+          <p>如果按钮无法点击，请复制以下链接到浏览器地址栏：</p>
+          <p style="word-break: break-all; color: #666; font-size: 12px;">${resetUrl}</p>
+          
+          <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+            如有疑问，请联系系统管理员<br>
+            <strong>室友匹配系统团队</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content
+  });
+}
+
 // 检查邮件配置是否完整
 export function isEmailConfigured(): boolean {
   const {

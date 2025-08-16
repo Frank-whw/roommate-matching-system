@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '20');
     const type = url.searchParams.get('type') || 'available'; // available, my
+    const search = url.searchParams.get('search') || undefined;
 
     if (type === 'my') {
       // 获取用户自己的队伍
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
       });
     } else {
       // 获取可加入的队伍列表
-      const teams = await getAvailableTeams(user.users.id, limit);
+      const teams = await getAvailableTeams(user.users.id, limit, { search });
       return NextResponse.json({
         success: true,
         data: teams,
