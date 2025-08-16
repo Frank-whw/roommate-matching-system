@@ -19,7 +19,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import Link from 'next/link';
-import { disbandTeam } from '@/app/teams/actions';
+import { disbandTeam, leaveTeam } from '@/app/teams/actions';
 import { useRouter } from 'next/navigation';
 
 interface TeamManagementActionsProps {
@@ -83,18 +83,73 @@ export function TeamManagementActions({ teamId, teamName, isLeader }: TeamManage
   );
 }
 
+// 普通成员退出队伍组件
+interface LeaveTeamButtonProps {
+  teamId: number;
+  teamName: string;
+  isLeader: boolean;
+}
+
+export function LeaveTeamButton({ teamId, teamName, isLeader }: LeaveTeamButtonProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const router = useRouter();
+
+  const handleLeaveTeam = async () => {
+    if (isLeader) {
+      if (!confirm(`您是队长，退出队伍将解散整个队伍。确定要退出队伍 "${teamName}" 吗？`)) {
+        return;
+      }
+    } else {
+      if (!confirm(`确定要退出队伍 "${teamName}" 吗？`)) {
+        return;
+      }
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await leaveTeam({ teamId });
+      if (result.error) {
+        alert(result.error);
+      } else {
+        alert(result.message);
+        router.push('/teams');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('退出队伍失败:', error);
+      alert('退出队伍失败，请重试');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleLeaveTeam}
+      disabled={isProcessing}
+      className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+    >
+      {isProcessing ? '退出中...' : '退出队伍'}
+    </Button>
+  );
+}
+
 interface MemberManagementActionsProps {
   memberId: number;
   memberName: string;
   isLeader: boolean;
   isCurrentUser: boolean;
+  teamId: number;
 }
 
 export function MemberManagementActions({ 
   memberId, 
   memberName, 
   isLeader, 
-  isCurrentUser 
+  isCurrentUser,
+  teamId
 }: MemberManagementActionsProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 

@@ -14,9 +14,10 @@ import Link from 'next/link';
 interface TeamsListProps {
   currentUserId?: number;
   showAll?: boolean; // 是否显示所有队伍（包括已满的）
+  search?: string; // 搜索关键词
 }
 
-export async function TeamsList({ currentUserId, showAll = false }: TeamsListProps) {
+export async function TeamsList({ currentUserId, showAll = false, search }: TeamsListProps) {
   if (!currentUserId) {
     return (
       <Alert>
@@ -34,8 +35,8 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
     
     // 根据showAll参数选择查询函数
     const teams = showAll 
-      ? await getAllTeams(currentUserId, 20)
-      : await getAvailableTeams(currentUserId, 20);
+      ? await getAllTeams(currentUserId, 20, { search })
+      : await getAvailableTeams(currentUserId, 20, { search });
 
     if (teams.length === 0) {
       return (

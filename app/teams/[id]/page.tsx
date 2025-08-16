@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { TeamManagementActions, MemberManagementActions } from '@/components/teams/team-management-actions';
+import { TeamManagementActions, MemberManagementActions, LeaveTeamButton } from '@/components/teams/team-management-actions';
 import { 
   ArrowLeft,
   Crown,
@@ -186,7 +186,11 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
 
                 {/* 操作按钮 */}
                 <div className="space-y-3">
-                  <JoinTeamButton teamId={team.id} canJoin={canJoin} />
+                  {isTeamMember ? (
+                    <LeaveTeamButton teamId={team.id} teamName={team.name} isLeader={!!isLeader} />
+                  ) : (
+                    <JoinTeamButton teamId={team.id} canJoin={canJoin} />
+                  )}
                   
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/matches?teamId=${team.id}`}>
@@ -282,6 +286,7 @@ export default async function TeamDetailsPage({ params }: TeamDetailsPageProps) 
                             memberName={member.user.name || '该成员'}
                             isLeader={isLeader}
                             isCurrentUser={member.user.id === currentUser.users.id}
+                            teamId={team.id}
                           />
                         </div>
                       ))}

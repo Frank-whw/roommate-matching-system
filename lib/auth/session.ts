@@ -84,6 +84,11 @@ type PasswordSetupToken = {
   expires: number;
 };
 
+type PasswordResetToken = {
+  studentId: string;
+  expires: number;
+};
+
 export async function signToken(payload: SessionData) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
@@ -259,6 +264,51 @@ export async function verifyPasswordSetupToken(token: string): Promise<PasswordS
     return tokenData;
   } catch (error) {
     console.error('设置密码令牌验证失败:', error);
+    return null;
+  }
+}
+
+// 生成密码重置令牌
+export async function generateResetToken(studentId: string): Promise<{ token: string; expires: Date } | null> {
+  try {
+    const payload: PasswordResetToken = {
+      studentId,
+      expires: Date.now() + authConfig.emailVerificationExpiresIn
+    };
+
+    const token = await new SignJWT(payload)
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime(Math.floor(payload.expires / 1000))
+      .sign(key);
+
+    return {
+      token,
+      expires: new Date(payload.expires)
+    };
+  } catch (error) {
+    console.error('生成重置令牌失败:', error);
+    return null;
+  }
+}
+
+// 验证密码重置令牌
+export async function verifyResetToken(token: string): Promise<PasswordResetToken | null> {
+  try {
+    const { payload } = await jwtVerify(token, key, {
+      algorithms: ['HS256'],
+    });
+
+    const tokenData = payload as unknown as PasswordResetToken;
+
+    // 检查是否过期
+    if (Date.now() > tokenData.expires) {
+      return null;
+    }
+
+    return tokenData;
+  } catch (error) {
+    console.error('重置令牌验证失败:', error);
     return null;
   }
 }

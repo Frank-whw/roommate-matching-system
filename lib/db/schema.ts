@@ -37,6 +37,8 @@ export const users = pgTable('users', {
   isEmailVerified: boolean('is_email_verified').notNull().default(false), // 邮箱验证状态
   emailVerificationToken: varchar('email_verification_token', { length: 255 }), // 邮箱验证令牌
   emailVerificationExpires: timestamp('email_verification_expires'), // 令牌过期时间
+  passwordResetToken: varchar('password_reset_token', { length: 255 }), // 密码重置令牌
+  passwordResetExpires: timestamp('password_reset_expires'), // 密码重置令牌过期时间
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),
