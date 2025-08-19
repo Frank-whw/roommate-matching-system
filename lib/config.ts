@@ -18,8 +18,8 @@ export const authConfig = {
     '@stu.ecnu.edu.cn'
   ],
 
-  // 学号格式正则表达式 (102555015XX)
-  studentIdPattern: /^102555015\d{2}$/,
+  // 学号格式正则表达式 (10255501XXX)
+  studentIdPattern: /^10255501\d{3}$/,
 
   // 密码强度要求
   passwordRequirements: {

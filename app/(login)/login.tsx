@@ -109,13 +109,14 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                       id="studentId"
                       name="studentId"
                       type="text"
-                      placeholder="例如：10255501500"
+                      placeholder="例如：10255501401"
                       required
                       maxLength={20}
                       className="mt-1"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
                       💡 输入你的学号，我们会发送邮件到教育邮箱<br/>
+                      ⚠️ 转专业和插班生学号格式特殊请私信管理员
                     </p>
                   </div>
                 </>

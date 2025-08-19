@@ -8,7 +8,7 @@ import { sendPasswordSetupEmail } from '@/lib/email';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 const registerSchema = z.object({
-  studentId: z.string().regex(/^102555015\d{2}$/, '学号格式不正确，应为102555015XX格式'),
+  studentId: z.string().regex(/^10255501\d{3}$/, '学号格式不正确，应为10255501XXX格式'),
   agreeToTerms: z.boolean().refine((val) => val === true, {
     message: '请同意用户协议和隐私政策'
   })
