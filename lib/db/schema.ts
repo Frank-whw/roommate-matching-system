@@ -30,7 +30,7 @@ export const matchStatusEnum = pgEnum('match_status', ['pending', 'matched', 're
 // Users table - 用户基本信息表
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  studentId: varchar('student_id', { length: 20 }).notNull().unique(), // 学号 102*55014**格式
+  studentId: varchar('student_id', { length: 20 }).notNull().unique(), // 学号 102555015XX格式
   passwordHash: text('password_hash').notNull(),
   name: varchar('name', { length: 100 }),
   isActive: boolean('is_active').notNull().default(true), // 账户激活状态

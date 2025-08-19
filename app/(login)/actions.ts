@@ -36,7 +36,7 @@ import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 // 学号格式验证zod schema
 const studentIdSchema = z.string()
-  .regex(/^102\d55014\d{2}$/, '学号格式不正确，应为102*55014**格式');
+  .regex(/^102555015\d{2}$/, '学号格式不正确，应为102555015XX格式');
 
 // 教育邮箱验证zod schema  
 const educationalEmailSchema = z.string()

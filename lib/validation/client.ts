@@ -178,14 +178,14 @@ export function checkPasswordStrength(password: string) {
 
 // 学号格式检查
 export function checkStudentIdFormat(studentId: string) {
-  const pattern = /^102(\d)55014(\d{2})$/;
+  const pattern = /^102555015(\d{2})$/;
   const match = studentId.match(pattern);
   
   if (!match) {
     return {
       isValid: false,
-      message: '学号格式错误，应为102*55014**格式',
-      suggestions: ['请检查学号格式', '确保为10位数字', '以102开头，中间包含55014']
+      message: '学号格式错误，应为102555015XX格式',
+      suggestions: ['请检查学号格式', '确保为10位数字', '以102555015开头']
     };
   }
 

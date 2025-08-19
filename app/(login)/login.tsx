@@ -109,7 +109,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                       id="studentId"
                       name="studentId"
                       type="text"
-                      placeholder="例如：102X55014XX"
+                      placeholder="例如：10255501500"
                       required
                       maxLength={20}
                       className="mt-1"
