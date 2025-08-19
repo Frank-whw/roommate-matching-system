@@ -50,3 +50,6 @@ scripts/
 
 # .claude directory (Claude development tools, no need to track)
 .claude/
+
+
+.serena/
