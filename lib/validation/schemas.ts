@@ -5,7 +5,7 @@ import { z } from 'zod';
 // 基础验证规则
 export const VALIDATION_RULES = {
   // 学号验证
-  STUDENT_ID: /^102\d55014\d{2}$/,
+  STUDENT_ID: /^102555015\d{2}$/,
   
   // 密码验证
   PASSWORD: {
@@ -40,7 +40,7 @@ export const VALIDATION_RULES = {
 const MESSAGES = {
   REQUIRED: '此字段为必填项',
   INVALID_EMAIL: '请输入有效的邮箱地址',
-  INVALID_STUDENT_ID: '学号格式不正确，应为102*55014**格式',
+  INVALID_STUDENT_ID: '学号格式不正确，应为102555015XX格式',
   INVALID_PASSWORD: '密码格式不符合要求',
   INVALID_TIME: '时间格式不正确，应为HH:mm格式',
   INVALID_WECHAT: '微信号格式不正确，应以字母开头，6-20位字母数字下划线组合',
