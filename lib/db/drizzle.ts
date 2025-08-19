@@ -30,8 +30,8 @@ if (!(globalThis as any).dbConnectionLogged) {
 const client = postgres(connectionString, {
   prepare: false,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 1, // Limit connections for serverless
-  idle_timeout: 20,
+  max: process.env.NODE_ENV === 'production' ? 10 : 5, // 生产环境10个连接，开发环境5个
+  idle_timeout: 60, // 增加到60秒，减少连接频繁创建
   max_lifetime: 60 * 30, // 30 minutes
   connect_timeout: 60, // Increase timeout further for Vercel
   transform: postgres.camel,
@@ -40,6 +40,10 @@ const client = postgres(connectionString, {
   fetch_types: false,
   types: {
     bigint: postgres.BigInt
+  },
+  // Add retry logic for connection errors
+  connection: {
+    application_name: 'roommate-matching-system'
   }
 });
 

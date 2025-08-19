@@ -100,6 +100,26 @@ export async function createTeam(rawData: any) {
       return { error: '请先完善个人资料中的性别信息' };
     }
 
+    // Check team count limits by gender
+    const teamCountByGender = await db
+      .select({ count: count() })
+      .from(teams)
+      .where(
+        and(
+          eq(teams.gender, userProfile[0].gender),
+          eq(teams.status, 'recruiting')
+        )
+      );
+
+    const currentTeamCount = teamCountByGender[0]?.count || 0;
+    const genderLimit = userProfile[0].gender === 'male' ? 19 : 14;
+
+    if (currentTeamCount >= genderLimit) {
+      return { 
+        error: `已达到${userProfile[0].gender === 'male' ? '男生' : '女生'}队伍数量上限（${genderLimit}支）` 
+      };
+    }
+
     // Create the team (within a transaction)
     const newTeam = await db.transaction(async (tx) => {
       // Create team

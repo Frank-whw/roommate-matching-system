@@ -8,7 +8,6 @@ import { TeamInvites } from '@/components/teams/team-invites';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ProfileGuard } from '@/components/profile/profile-guard';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
@@ -31,8 +30,12 @@ export default async function MatchesPage() {
     redirect('/sign-in');
   }
 
+  // Check if user profile is complete
+  if (!user.user_profiles?.isProfileComplete) {
+    redirect('/profile?from=matches');
+  }
+
   return (
-    <ProfileGuard>
       <div className="min-h-screen bg-transparent">
       <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* 面包屑导航 */}
@@ -148,7 +151,6 @@ export default async function MatchesPage() {
         </div>
       </div>
       </div>
-    </ProfileGuard>
   );
 }
 

@@ -8,11 +8,15 @@ import {
   Users,
   Crown,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Info
 } from 'lucide-react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
+import { db } from '@/lib/db/drizzle';
+import { teams, userProfiles } from '@/lib/db/schema';
+import { eq, and, count } from 'drizzle-orm';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -22,6 +26,36 @@ export default async function CreateTeamPage() {
   
   if (!user) {
     redirect('/sign-in');
+  }
+
+  // Get user's gender
+  const userProfile = await db
+    .select({ gender: userProfiles.gender })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, user.users.id))
+    .limit(1);
+
+  let teamCountInfo = null;
+  if (userProfile[0]?.gender) {
+    // Get current team count by gender
+    const teamCountByGender = await db
+      .select({ count: count() })
+      .from(teams)
+      .where(
+        and(
+          eq(teams.gender, userProfile[0].gender),
+          eq(teams.status, 'recruiting')
+        )
+      );
+
+    const currentTeamCount = teamCountByGender[0]?.count || 0;
+    const genderLimit = userProfile[0].gender === 'male' ? 19 : 14;
+    
+    teamCountInfo = {
+      current: currentTeamCount,
+      limit: genderLimit,
+      gender: userProfile[0].gender === 'male' ? '男生' : '女生'
+    };
   }
 
   return (
@@ -74,6 +108,27 @@ export default async function CreateTeamPage() {
 
           {/* 侧边栏 - 提示信息 */}
           <div className="space-y-6">
+            {/* 队伍数量限制信息 */}
+            {teamCountInfo && (
+              <Card className="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-purple-800 dark:text-purple-200">
+                    <Info className="w-5 h-5 mr-2" style={{ fill: 'none', stroke: 'currentColor' }} />
+                    队伍数量限制
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-purple-700 dark:text-purple-300">
+                  <p>当前{teamCountInfo.gender}队伍数量：<span className="font-bold">{teamCountInfo.current}/{teamCountInfo.limit}</span></p>
+                  <p className="mt-2">还可创建 <span className="font-bold text-lg">{teamCountInfo.limit - teamCountInfo.current}</span> 支队伍</p>
+                  {teamCountInfo.current >= teamCountInfo.limit && (
+                    <p className="mt-3 text-red-600 dark:text-red-400 font-medium">
+                      已达到队伍数量上限，无法创建新队伍
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             {/* 创建须知 */}
             <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
               <CardHeader>

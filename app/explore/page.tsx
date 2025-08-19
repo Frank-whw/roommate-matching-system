@@ -4,7 +4,6 @@ import { getCurrentUser, getUserTeam } from '@/lib/db/queries';
 import { ExploreHeader } from '@/components/explore/explore-header';
 import { UserCardGrid } from '@/components/explore/user-card-grid';
 import { FilterSidebar } from '@/components/explore/filter-sidebar';
-import { ProfileGuard } from '@/components/profile/profile-guard';
 import Breadcrumb from '@/components/navigation/breadcrumb';
 import { breadcrumbConfigs } from '@/lib/breadcrumb-configs';
 import { 
@@ -37,6 +36,11 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     redirect('/sign-in');
   }
 
+  // Check if user profile is complete
+  if (!user.user_profiles?.isProfileComplete) {
+    redirect('/profile?from=explore');
+  }
+
   // 检查用户是否完成了基本资料
   const hasProfile = !!user.user_profiles;
   const isProfileComplete = user.user_profiles?.isProfileComplete || false;
@@ -45,7 +49,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const currentUserTeam = user.users?.id ? await getUserTeam(user.users.id) : null;
 
   return (
-    <ProfileGuard>
       <div className="min-h-screen bg-transparent">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           {/* 面包屑导航 */}
@@ -79,7 +82,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           </div>
         </div>
       </div>
-    </ProfileGuard>
   );
 }
 
