@@ -227,15 +227,30 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 </Link>
               </Button>
 
-              {mode === 'signin' && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowResendForm(true)}
-                  type="button"
-                >
-                  重新发送验证邮件
+              {mode === 'signup' && (
+                <Button variant="secondary" asChild>
+                  <Link href="/temp">
+                    🚀 临时注册
+                  </Link>
                 </Button>
+              )}
+
+              {mode === 'signin' && (
+                <>
+                  <Button variant="secondary" asChild>
+                    <Link href="/temp">
+                      🚀 临时注册
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowResendForm(true)}
+                    type="button"
+                  >
+                    重新发送验证邮件
+                  </Button>
+                </>
               )}
             </div>
           </CardFooter>

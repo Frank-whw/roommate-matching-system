@@ -24,16 +24,33 @@ export default function HomePage() {
           </div>
           
           <div className="pt-4 sm:pt-6">
-            <Button
-              asChild
-              size="lg"
-              className="text-base sm:text-lg rounded-full px-8 sm:px-10 py-3 sm:py-4 h-auto shadow-lg hover:shadow-xl transition-all duration-300 group font-medium"
-            >
-              <a href="/sign-up">
-                开始匹配
-                <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" style={{ fill: 'none', stroke: 'currentColor' }} />
-              </a>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="text-base sm:text-lg rounded-full px-8 sm:px-10 py-3 sm:py-4 h-auto shadow-lg hover:shadow-xl transition-all duration-300 group font-medium"
+              >
+                <a href="/sign-up">
+                  开始匹配
+                  <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" style={{ fill: 'none', stroke: 'currentColor' }} />
+                </a>
+              </Button>
+              
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="text-base sm:text-lg rounded-full px-8 sm:px-10 py-3 sm:py-4 h-auto shadow-md hover:shadow-lg transition-all duration-300 group font-medium border-2"
+              >
+                <a href="/temp">
+                  🚀 新生临时注册
+                </a>
+              </Button>
+            </div>
+            
+            <p className="text-sm text-muted-foreground mt-4 max-w-md mx-auto">
+              💡 教育邮箱还未开通？先用临时注册，抢先体验匹配功能
+            </p>
           </div>
         </div>
       </section>

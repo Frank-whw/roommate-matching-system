@@ -50,8 +50,11 @@ function UserMenu() {
         <Button asChild variant="outline" size="sm" className="rounded-full">
           <Link href="/sign-in">登录</Link>
         </Button>
-        <Button asChild size="sm" className="rounded-full">
+        <Button asChild variant="outline" size="sm" className="rounded-full">
           <Link href="/sign-up">注册</Link>
+        </Button>
+        <Button asChild variant="secondary" size="sm" className="rounded-full">
+          <Link href="/temp">🚀 新生</Link>
         </Button>
       </div>
     );
