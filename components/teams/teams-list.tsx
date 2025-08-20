@@ -4,7 +4,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Search,
   Users,
   Plus,
   ArrowRight
@@ -42,7 +41,7 @@ export async function TeamsList({ currentUserId, showAll = false }: TeamsListPro
         <div className="text-center py-16">
           <div className="flex flex-col items-center space-y-6">
             <div className="w-20 h-20 bg-white/60 dark:bg-gray-800/60 rounded-full flex items-center justify-center backdrop-blur-md border border-white/40 dark:border-gray-700/60">
-              <Search className="w-8 h-8 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
+              <Users className="w-8 h-8 text-gray-500 dark:text-gray-400" style={{ fill: 'none', stroke: 'currentColor' }} />
             </div>
             <div className="max-w-md">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
