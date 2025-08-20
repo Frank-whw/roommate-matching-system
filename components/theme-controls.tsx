@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Moon, Sun, Palette, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,28 +11,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel
 } from '@/components/ui/dropdown-menu';
-import { useTheme, themeColors, type ThemeColor } from '@/contexts/theme-context';
+import { ThemeContext, themeColors, type ThemeColor } from '@/contexts/theme-context';
 
 export default function ThemeControls() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   
-  // Theme context variables
-  let mode, themeColor, toggleMode, setThemeColor;
+  // Try to get theme context, but handle case where it might not be available
+  const themeContext = useContext(ThemeContext);
   
-  try {
-    const themeContext = useTheme();
-    mode = themeContext.mode;
-    themeColor = themeContext.themeColor;
-    toggleMode = themeContext.toggleMode;
-    setThemeColor = themeContext.setThemeColor;
-  } catch (error) {
-    // If theme context is not available, use defaults
-    mode = 'light';
-    themeColor = themeColors[0];
-    toggleMode = () => {};
-    setThemeColor = () => {};
-  }
+  // Use default values if context is not available
+  const {
+    mode = 'light',
+    themeColor = themeColors[0],
+    toggleMode = () => {},
+    setThemeColor = () => {}
+  } = themeContext || {};
 
   useEffect(() => {
     setMounted(true);
