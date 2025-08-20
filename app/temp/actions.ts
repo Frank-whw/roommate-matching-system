@@ -56,7 +56,7 @@ export const tempRegister = validatedAction(tempRegisterSchema, async (data) => 
       passwordHash,
       name,
       isActive: true,  // 直接激活
-      isEmailVerified: false,  // 暂时设为未验证，后续可以添加教育邮箱绑定功能
+      isEmailVerified: true,  // 临时注册直接设为已验证，跳过邮箱验证流程
       emailVerificationToken: null,
       emailVerificationExpires: null
     };
