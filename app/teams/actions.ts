@@ -167,8 +167,23 @@ export async function createTeam(rawData: any) {
   }
 }
 
+// 定义Action返回类型
+export type ActionResult<T = any> = 
+  | {
+      success: true;
+      message: string;
+      data?: T;
+      error?: never;
+    }
+  | {
+      success?: false;
+      error: string;
+      message?: never;
+      data?: never;
+    };
+
 // Join a team (create join request)
-export async function joinTeam(rawData: any) {
+export async function joinTeam(rawData: any): Promise<ActionResult> {
   try {
     const { user } = await getCurrentUser();
     if (!user || !user.users) {
@@ -522,7 +537,7 @@ export async function reviewJoinRequest(rawData: any) {
 }
 
 // Leave team
-export async function leaveTeam(rawData: any) {
+export async function leaveTeam(rawData: any): Promise<ActionResult> {
   try {
     const { user } = await getCurrentUser();
     if (!user || !user.users) {

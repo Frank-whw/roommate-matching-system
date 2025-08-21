@@ -22,7 +22,6 @@ import {
   signEmailVerificationToken,
   signPasswordSetupToken
 } from '@/lib/auth/session';
-import { isSha256Hex } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getUser, getUserByStudentId, getUserByEmail, createUser, logActivity } from '@/lib/db/queries';
@@ -228,21 +227,7 @@ export const signIn = validatedAction(signInSchema, async (data) => {
       };
     }
 
-    // 如为旧版SHA-256哈希且验证通过，立即迁移为bcrypt
-    if (isSha256Hex(user.passwordHash)) {
-      try {
-        const newHash = await hashPassword(password);
-        await db
-          .update(users)
-          .set({ passwordHash: newHash, updatedAt: new Date() })
-          .where(eq(users.id, user.id));
-        user.passwordHash = newHash;
-      } catch (e) {
-        console.warn('密码迁移为bcrypt失败（继续登录流程）:', e);
-      }
-    }
-
-    // 检查邮箱验证状态
+    // 密码验证成功后，检查邮箱验证状态
     if (!user.isEmailVerified) {
       return {
         error: '请先完成邮箱验证，查看您的邮箱中的验证邮件',

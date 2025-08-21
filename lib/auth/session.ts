@@ -4,26 +4,13 @@ import { NewUser } from '@/lib/db/schema';
 import { authConfig } from '@/lib/config';
 import bcrypt from 'bcryptjs';
 
-// JWT 密钥：在开发环境提供安全的随机回退，生产必须显式配置
-function getDevSecret(): string {
-  // 生成更安全的开发环境密钥
-  if (typeof window === 'undefined' && typeof require !== 'undefined') {
-    try {
-      const crypto = require('crypto');
-      return crypto.randomBytes(32).toString('hex');
-    } catch {
-      // 如果crypto不可用，使用基于时间戳的复杂字符串
-      const timestamp = Date.now().toString();
-      const random = Math.random().toString(36).substring(2);
-      return `dev-secret-${timestamp}-${random}-change-me-in-production`;
-    }
-  }
-  return 'dev-secret-fallback-change-me-in-production';
-}
-
-const resolvedAuthSecret = process.env.AUTH_SECRET || (process.env.NODE_ENV !== 'production' ? getDevSecret() : '');
+// JWT 密钥：强制使用环境变量AUTH_SECRET
+const resolvedAuthSecret = process.env.AUTH_SECRET;
 if (!resolvedAuthSecret) {
-  throw new Error('AUTH_SECRET environment variable is not set');
+  throw new Error(
+    'AUTH_SECRET environment variable is not set. ' +
+    'Please set AUTH_SECRET in your .env file or environment variables.'
+  );
 }
 const key = new TextEncoder().encode(resolvedAuthSecret);
 const BCRYPT_ROUNDS = 12;
@@ -32,35 +19,23 @@ export function isBcryptHash(value: string): boolean {
   return typeof value === 'string' && value.startsWith('$2');
 }
 
-export function isSha256Hex(value: string): boolean {
-  return typeof value === 'string' && /^[0-9a-f]{64}$/i.test(value);
-}
-
 // 使用 bcryptjs 进行密码哈希
 export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
   return await bcrypt.hash(password, salt);
 }
 
-// 比较密码：优先支持 bcrypt；兼容旧版 SHA-256(十六进制) 以便迁移
+// 比较密码：仅支持 bcrypt
 export async function comparePasswords(
   plainTextPassword: string,
   hashedPassword: string
 ): Promise<boolean> {
-  if (isBcryptHash(hashedPassword)) {
-    return await bcrypt.compare(plainTextPassword, hashedPassword);
+  if (!isBcryptHash(hashedPassword)) {
+    // 如果不是bcrypt格式，直接返回false
+    // 系统应该已经迁移所有密码到bcrypt格式
+    return false;
   }
-  if (isSha256Hex(hashedPassword)) {
-    // 旧版：WebCrypto SHA-256 十六进制
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plainTextPassword);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const shaHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-    return shaHex === hashedPassword.toLowerCase();
-  }
-  // 未知格式，直接失败
-  return false;
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
 }
 
 type SessionData = {

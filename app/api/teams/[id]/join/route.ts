@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/db/queries';
-import { joinTeam, leaveTeam } from '@/app/teams/actions';
+import { joinTeam, leaveTeam, type ActionResult } from '@/app/teams/actions';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -22,16 +22,16 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
 
-    const result = await joinTeam({ teamId });
+    const result: ActionResult = await joinTeam({ teamId });
 
-    if (result.error) {
+    if ('error' in result && result.error) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({
       success: true,
       message: result.message || 'Join request submitted',
-      data: (result as any).joinRequest || null
+      data: result.data || null
     });
 
   } catch (error) {
@@ -60,9 +60,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid team ID' }, { status: 400 });
     }
 
-    const result = await leaveTeam({ teamId });
+    const result: ActionResult = await leaveTeam({ teamId });
 
-    if (result.error) {
+    if ('error' in result && result.error) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 

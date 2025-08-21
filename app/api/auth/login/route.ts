@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { db } from '@/lib/db/drizzle';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { comparePasswords, setSession, isSha256Hex, hashPassword } from '@/lib/auth/session';
+import { comparePasswords, setSession, hashPassword } from '@/lib/auth/session';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
 
 // 强制动态渲染
@@ -53,21 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 如为旧版SHA-256哈希且验证通过，立即迁移为bcrypt
-    if (isSha256Hex(foundUser.passwordHash)) {
-      try {
-        const newHash = await hashPassword(password);
-        await db
-          .update(users)
-          .set({ passwordHash: newHash, updatedAt: new Date() })
-          .where(eq(users.id, foundUser.id));
-        foundUser.passwordHash = newHash;
-      } catch (e) {
-        console.warn('密码迁移为bcrypt失败（继续登录流程）:', e);
-      }
-    }
-
-    // 检查邮箱验证状态
+    // 密码验证成功后，检查邮箱验证状态
     if (!foundUser.isEmailVerified) {
       return NextResponse.json(
         {
