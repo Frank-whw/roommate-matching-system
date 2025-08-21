@@ -381,15 +381,17 @@ export async function signOut() {
     if (user) {
       await logActivity(user.id, ActivityType.SIGN_OUT);
     }
-    const cookieStore = await cookies();
-    cookieStore.delete('session');
-    redirect('/sign-in');
   } catch (error) {
-    console.error('登出出错:', error);
-    const cookieStore = await cookies();
-    cookieStore.delete('session');
-    redirect('/sign-in');
+    console.error('登出日志记录出错:', error);
+    // 继续执行登出流程，即使日志记录失败
   }
+  
+  // 清除会话cookie
+  const cookieStore = await cookies();
+  cookieStore.delete('session');
+  
+  // redirect会抛出NEXT_REDIRECT错误，这是正常行为
+  redirect('/sign-in');
 }
 
 // 密码更新功能

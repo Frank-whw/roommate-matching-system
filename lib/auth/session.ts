@@ -13,7 +13,7 @@ if (!resolvedAuthSecret) {
   );
 }
 const key = new TextEncoder().encode(resolvedAuthSecret);
-const BCRYPT_ROUNDS = 12;
+const BCRYPT_ROUNDS = 10; // 平衡安全性和性能，约100-200ms验证时间
 
 export function isBcryptHash(value: string): boolean {
   return typeof value === 'string' && value.startsWith('$2');
