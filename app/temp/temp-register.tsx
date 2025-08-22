@@ -26,11 +26,9 @@ export function TempRegister() {
 
   const isSuccess = state?.success || false;
 
-  if (isSuccess) {
-    return <RegistrationSuccess message={state?.message || ''} />;
-  }
-
-  return (
+  return isSuccess ? (
+    <RegistrationSuccess message={state?.message || ''} />
+  ) : (
     <Card>
       <CardHeader>
         <CardTitle>🚀 临时注册</CardTitle>

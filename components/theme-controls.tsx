@@ -32,15 +32,15 @@ export default function ThemeControls() {
     setMounted(true);
   }, []);
 
-  // Don't render anything until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return <div className="flex items-center space-x-2 h-9 w-18" />;
-  }
-
   const handleColorChange = (color: ThemeColor) => {
     setThemeColor(color);
     setIsOpen(false);
   };
+
+  // Don't render anything until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return <div className="flex items-center space-x-2 h-9 w-18" />;
+  }
 
   return (
     <div className="flex items-center space-x-1 sm:space-x-2">

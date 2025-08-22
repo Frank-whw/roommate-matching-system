@@ -43,23 +43,21 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   // 检查是否需要邮箱验证
   const needsEmailVerification = state?.needEmailVerification || false;
   const isSuccess = state?.success || false;
+  const isResent = state?.data?.resent === true;
 
-  if (needsEmailVerification || showResendForm) {
-    return <EmailVerificationForm 
-      onBack={() => setShowResendForm(false)}
-      resendState={resendState}
-      resendAction={handleResendAction}
-      resendPending={isResendPending}
-    />;
-  }
-
-  if (isSuccess && mode === 'signup') {
-    // 检查是否是重新发送的情况
-    const isResent = state?.data?.resent === true;
-    return <RegistrationSuccess message={state?.message || ''} isResent={isResent} />;
-  }
-
+  // 所有渲染逻辑都在 return 语句中
   return (
+    <>
+      {(needsEmailVerification || showResendForm) ? (
+        <EmailVerificationForm 
+          onBack={() => setShowResendForm(false)}
+          resendState={resendState}
+          resendAction={handleResendAction}
+          resendPending={isResendPending}
+        />
+      ) : (isSuccess && mode === 'signup') ? (
+        <RegistrationSuccess message={state?.message || ''} isResent={isResent} />
+      ) : (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
@@ -257,6 +255,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         </Card>
       </div>
     </div>
+      )}
+    </>
   );
 }
 
