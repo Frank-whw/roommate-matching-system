@@ -69,7 +69,8 @@ const signUpSchema = z.object({
 // 用户登录schema（支持学号或邮箱登录）
 const signInSchema = z.object({
   identifier: z.string().min(1, '请输入学号或邮箱'),
-  password: z.string().min(1, '请输入密码')
+  password: z.string().min(1, '请输入密码'),
+  redirect: z.string().optional()
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
@@ -194,7 +195,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 });
 
 export const signIn = validatedAction(signInSchema, async (data) => {
-  const { identifier, password } = data;
+  const { identifier, password, redirect: redirectPath } = data;
 
   try {
     let user = null;
@@ -253,8 +254,9 @@ export const signIn = validatedAction(signInSchema, async (data) => {
     };
   }
 
-  // 登录成功后重定向到匹配广场
-  redirect('/explore');
+  // 登录成功后重定向到指定页面或默认的匹配广场
+  const targetUrl = redirectPath && redirectPath.startsWith('/') ? redirectPath : '/explore';
+  redirect(targetUrl);
 });
 
 // 重新发送验证邮件
