@@ -27,7 +27,7 @@ export function TempRegister() {
   const isSuccess = state?.success || false;
 
   return isSuccess ? (
-    <RegistrationSuccess message={state?.message || ''} />
+    <RegistrationSuccess message={state?.message || ''} isResent={false} />
   ) : (
     <Card>
       <CardHeader>
@@ -189,7 +189,7 @@ export function TempRegister() {
   );
 }
 
-function RegistrationSuccess({ message }: { message: string }) {
+function RegistrationSuccess({ message, isResent }: { message: string; isResent: boolean }) {
   return (
     <Card>
       <CardHeader>
