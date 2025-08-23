@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "RoomieSync",
   title: "RoomieSync - 智能室友匹配平台",
-  description: "基于AI算法的新一代室友匹配神器，让找室友变得简单而有趣！",
+  description: "让找室友变得简单而有趣！",
   slogan: "遇见最佳室友，开启精彩校园生活",
   version: "1.0.0"
 };
