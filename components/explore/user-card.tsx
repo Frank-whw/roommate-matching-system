@@ -241,6 +241,16 @@ export function UserCard({ user, profile, currentUserId, currentUserTeam, alread
               )}
             </div>
           )}
+
+          {/* 不可接受的行为 - 简要显示 */}
+          {profile?.dealBreakers && (
+            <div className="text-xs sm:text-sm mt-2">
+              <span className="text-red-500 dark:text-red-400">⚠️ 不可接受: </span>
+              <span className="text-gray-600 dark:text-gray-300 line-clamp-1">
+                {profile.dealBreakers}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* 操作按钮 */}

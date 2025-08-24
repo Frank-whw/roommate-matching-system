@@ -261,6 +261,23 @@ export default async function UserDetailsPage({ params }: UserDetailsPageProps) 
                 </CardContent>
               </Card>
             )}
+
+            {/* 不可接受的行为 */}
+            {profile?.dealBreakers && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <span className="text-red-500">⚠️</span>
+                    <span className="ml-2">不可接受的行为</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    {profile.dealBreakers}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
