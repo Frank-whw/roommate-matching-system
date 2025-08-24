@@ -556,6 +556,215 @@ export async function sendApplicationRejectedNotification(
   });
 }
 
+// 发送队伍邀请响应通知（通知邀请人）
+export async function sendInviteResponseNotification(
+  email: string,
+  inviterName: string,
+  inviteeName: string,
+  teamName: string,
+  accepted: boolean
+): Promise<boolean> {
+  const subject = `室友匹配系统 - ${inviteeName} ${accepted ? '接受' : '拒绝'}了您的队伍邀请`;
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, ${accepted ? '#10b981, #059669' : '#ef4444, #dc2626'}); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 15px 0; }
+        .info-box { background: ${accepted ? '#d1fae5' : '#fee2e2'}; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid ${accepted ? '#10b981' : '#ef4444'}; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${accepted ? '✅ 邀请已接受' : '❌ 邀请被拒绝'}</h1>
+        </div>
+        <div class="content">
+          <p>您好，${escapeHtml(inviterName)}！</p>
+          <div class="info-box">
+            <p><strong>${accepted ? '🎉' : '😔'} ${escapeHtml(inviteeName)}</strong> ${accepted ? '接受' : '拒绝'}了您的队伍邀请。</p>
+            <p><strong>🏠 队伍：</strong>「${escapeHtml(teamName)}」</p>
+            <p><strong>📅 响应时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
+          </div>
+          ${accepted ? `
+            <p>太好了！${escapeHtml(inviteeName)} 已经加入了您的队伍。</p>
+            <p>现在您可以：</p>
+            <ul>
+              <li>在队伍页面查看新成员的详细信息</li>
+              <li>与新成员进行沟通交流</li>
+              <li>继续邀请其他成员（如果还有空位）</li>
+            </ul>
+          ` : `
+            <p>${escapeHtml(inviteeName)} 暂时无法加入您的队伍。</p>
+            <p>您仍然可以：</p>
+            <ul>
+              <li>继续寻找其他合适的成员</li>
+              <li>调整队伍要求，吸引更多申请者</li>
+              <li>在探索页面发现更多潜在室友</li>
+            </ul>
+          `}
+          <p style="text-align: center;">
+            <a href="${process.env.BASE_URL}/teams" class="button">管理队伍</a>
+          </p>
+          <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+            祝您组建理想的队伍！<br>
+            <strong>室友匹配系统团队</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content
+  });
+}
+
+// 发送成员被移除通知
+export async function sendMemberRemovedNotification(
+  email: string,
+  memberName: string,
+  teamName: string,
+  leaderName: string
+): Promise<boolean> {
+  const subject = '室友匹配系统 - 您已被移出队伍';
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 15px 0; }
+        .info-box { background: #f3f4f6; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #6b7280; }
+        .next-steps { background: #dbeafe; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>📢 队伍变动通知</h1>
+        </div>
+        <div class="content">
+          <p>您好，${escapeHtml(memberName)}！</p>
+          <div class="info-box">
+            <p>您已被队长 <strong>${escapeHtml(leaderName)}</strong> 从队伍「${escapeHtml(teamName)}」中移除。</p>
+            <p><strong>📅 时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
+          </div>
+          <p>被移出队伍后，您可以：</p>
+          <ul>
+            <li>申请加入其他队伍</li>
+            <li>创建自己的新队伍</li>
+            <li>继续完善个人资料</li>
+          </ul>
+          <div class="next-steps">
+            <p><strong>🚀 下一步建议：</strong></p>
+            <ul>
+              <li>查看其他正在招募的队伍</li>
+              <li>根据您的需求创建新队伍</li>
+              <li>在探索页面寻找合适的室友</li>
+            </ul>
+          </div>
+          <p style="text-align: center;">
+            <a href="${process.env.BASE_URL}/teams" class="button">寻找新队伍</a>
+          </p>
+          <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+            祝您找到更合适的队伍！<br>
+            <strong>室友匹配系统团队</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content
+  });
+}
+
+// 发送成员退出通知（通知队长）
+export async function sendMemberLeftNotification(
+  email: string,
+  leaderName: string,
+  memberName: string,
+  teamName: string
+): Promise<boolean> {
+  const subject = `室友匹配系统 - ${memberName} 退出了您的队伍`;
+  const content = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 15px 0; }
+        .info-box { background: #fef3c7; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #f59e0b; }
+        .next-steps { background: #dbeafe; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>📢 成员退出通知</h1>
+        </div>
+        <div class="content">
+          <p>您好，${escapeHtml(leaderName)}！</p>
+          <div class="info-box">
+            <p><strong>📤 ${escapeHtml(memberName)}</strong> 刚刚退出了您的队伍。</p>
+            <p><strong>🏠 队伍：</strong>「${escapeHtml(teamName)}」</p>
+            <p><strong>📅 退出时间：</strong>${escapeHtml(new Date().toLocaleString('zh-CN'))}</p>
+          </div>
+          <p>队伍现在有了新的空位，您可以：</p>
+          <ul>
+            <li>继续邀请新成员加入</li>
+            <li>查看并批准待处理的申请</li>
+            <li>调整队伍招募要求</li>
+          </ul>
+          <div class="next-steps">
+            <p><strong>🚀 建议行动：</strong></p>
+            <ul>
+              <li>尽快补充队伍成员，保持队伍活跃</li>
+              <li>在探索页面寻找合适的新成员</li>
+              <li>更新队伍描述以吸引更多申请者</li>
+            </ul>
+          </div>
+          <p style="text-align: center;">
+            <a href="${process.env.BASE_URL}/teams" class="button">管理队伍</a>
+          </p>
+          <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+            祝您找到合适的新成员！<br>
+            <strong>室友匹配系统团队</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: email,
+    subject,
+    content
+  });
+}
+
 // 发送队伍解散通知邮件
 export async function sendTeamDisbandedNotification(
   email: string,

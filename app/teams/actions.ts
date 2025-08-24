@@ -6,11 +6,13 @@ import { db } from '@/lib/db/drizzle';
 import { teams, teamMembers, teamJoinRequests, users, userProfiles, ActivityType } from '@/lib/db/schema';
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
-import {
-  sendJoinRequestNotification,
-  sendApplicationApprovedNotification,
-  sendApplicationRejectedNotification,
-  sendTeamDisbandedNotification
+import { 
+  sendJoinRequestNotification, 
+  sendApplicationApprovedNotification, 
+  sendApplicationRejectedNotification, 
+  sendTeamDisbandedNotification,
+  sendMemberRemovedNotification,
+  sendMemberLeftNotification 
 } from '@/lib/email';
 import { revalidatePath } from 'next/cache';
 
@@ -616,6 +618,35 @@ export async function leaveTeam(rawData: any): Promise<ActionResult> {
       { teamId, teamName: team.name }
     );
 
+    // 如果不是队长退出，且队伍还有其他成员，通知队长
+    if (!membership.isLeader && team.currentMembers > 1) {
+      try {
+        // 获取队长信息
+        const leaderInfo = await db
+          .select({
+            user: users,
+          })
+          .from(users)
+          .where(eq(users.id, team.leaderId))
+          .limit(1);
+
+        if (leaderInfo[0]) {
+          const leaderEmail = generateEmailFromStudentId(leaderInfo[0].user.studentId);
+          const leaderName = leaderInfo[0].user.name || '队长';
+          const memberName = user.users.name || '成员';
+
+          sendMemberLeftNotification(
+            leaderEmail,
+            leaderName,
+            memberName,
+            team.name
+          ).catch(console.error);
+        }
+      } catch (error) {
+        console.error('发送退出通知失败:', error);
+      }
+    }
+
     revalidatePath('/teams');
     return {
       success: true,
@@ -727,6 +758,22 @@ export async function removeMember(rawData: any) {
         { teamId, teamName: team.name, removedByLeader: true }
       ),
     ]);
+
+    // 发送邮件通知被移除的成员（最佳努力，不影响主流程）
+    try {
+      const memberEmail = generateEmailFromStudentId(memberInfo.user.studentId);
+      const memberName = memberInfo.user.name || '成员';
+      const leaderName = user.users.name || '队长';
+      
+      sendMemberRemovedNotification(
+        memberEmail,
+        memberName,
+        team.name,
+        leaderName
+      ).catch(console.error);
+    } catch (error) {
+      console.error('发送成员移除通知失败:', error);
+    }
 
     revalidatePath('/teams');
     return {

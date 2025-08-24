@@ -7,7 +7,7 @@ import { teamJoinRequests, teams, teamMembers, userProfiles, ActivityType, users
 import { getCurrentUser, logActivity } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
 import { generateEmailFromStudentId } from '@/lib/utils/email';
-import { sendTeamInvitation } from '@/lib/email';
+import { sendTeamInvitation, sendInviteResponseNotification } from '@/lib/email';
 
 // 邀请加入队伍操作schema
 const inviteToTeamSchema = z.object({
@@ -135,7 +135,7 @@ export async function inviteUserToTeam(rawData: any) {
         const targetEmail = generateEmailFromStudentId(targetUser.studentId);
         const inviterName = user.users.name || '队长';
         // 忽略发送失败，不阻塞流程
-        sendTeamInvitation(targetEmail, team.name, inviterName).catch(() => {});
+        sendTeamInvitation(targetEmail, team.name, inviterName).catch(console.error);
       }
     } catch (_) {
       // 忽略邮件失败
@@ -329,6 +329,37 @@ export async function respondToTeamInvite(rawData: any) {
         { teamId: team.id, teamName: team.name }
       );
 
+      // 发送邮件通知邀请人（最佳努力，不影响主流程）
+      if (request.invitedBy) {
+        try {
+          const [inviter, currentUserInfo] = await db
+            .select()
+            .from(usersTable)
+            .where(
+              sql`${usersTable.id} IN (${request.invitedBy}, ${currentUserId})`
+            );
+          
+          const inviterUser = inviter.id === request.invitedBy ? inviter : currentUserInfo;
+          const inviteeUser = inviter.id === currentUserId ? inviter : currentUserInfo;
+          
+          if (inviterUser && inviteeUser) {
+            const inviterEmail = generateEmailFromStudentId(inviterUser.studentId);
+            const inviterName = inviterUser.name || '队长';
+            const inviteeName = inviteeUser.name || '用户';
+            
+            sendInviteResponseNotification(
+              inviterEmail,
+              inviterName,
+              inviteeName,
+              team.name,
+              true
+            ).catch(console.error);
+          }
+        } catch (error) {
+          console.error('发送邀请响应通知失败:', error);
+        }
+      }
+
       revalidatePath('/teams');
       revalidatePath('/explore');
 
@@ -346,6 +377,37 @@ export async function respondToTeamInvite(rawData: any) {
           reviewedAt: new Date(),
         })
         .where(eq(teamJoinRequests.id, requestId));
+
+      // 发送邮件通知邀请人（最佳努力，不影响主流程）
+      if (request.invitedBy) {
+        try {
+          const [inviter, currentUserInfo] = await db
+            .select()
+            .from(usersTable)
+            .where(
+              sql`${usersTable.id} IN (${request.invitedBy}, ${currentUserId})`
+            );
+          
+          const inviterUser = inviter.id === request.invitedBy ? inviter : currentUserInfo;
+          const inviteeUser = inviter.id === currentUserId ? inviter : currentUserInfo;
+          
+          if (inviterUser && inviteeUser) {
+            const inviterEmail = generateEmailFromStudentId(inviterUser.studentId);
+            const inviterName = inviterUser.name || '队长';
+            const inviteeName = inviteeUser.name || '用户';
+            
+            sendInviteResponseNotification(
+              inviterEmail,
+              inviterName,
+              inviteeName,
+              team.name,
+              false
+            ).catch(console.error);
+          }
+        } catch (error) {
+          console.error('发送邀请响应通知失败:', error);
+        }
+      }
 
       return {
         success: true,
