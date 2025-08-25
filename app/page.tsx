@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { siteConfig } from '@/lib/config';
 
 export default function HomePage() {
@@ -12,6 +12,35 @@ export default function HomePage() {
               欢迎来到
               <span className="block text-primary mt-2 sm:mt-3">{siteConfig.name}</span>
             </h1>
+          </div>
+          
+          {/* 平台通告 */}
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mx-auto max-w-3xl">
+            <div className="flex items-start space-x-3">
+              <Info className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="text-left space-y-4">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100 text-lg">
+                  平台使用通告
+                </h3>
+                <div className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed space-y-3">
+                  <p>
+                    <strong>亲爱的同学们，</strong>
+                  </p>
+                  <p>
+                    因学校信息办需至 8 月 29 日才能完成教育邮箱的统一激活，届时宿舍系统已关闭，平台也无法在宿舍系统关闭前完成必要的调整与重新启用。为此，平台将暂时仅保留“信息展示”功能，大家仍可继续使用，提前认识身边的同学。
+                  </p>
+                  <p>
+                    对于未能在关键时刻帮助大家选择心仪室友，我深感抱歉，也深知辜负了大家的期待。从底层架构到业务实现，平台经历了多轮迭代与测试，我原本对平台功能充满信心，也满怀期待地邀请大家使用。在此，衷心感谢学长学姐、学院老师的支持，以及参与建设的每一位同学与朋友。
+                  </p>
+                  <p>
+                    虽然未能如愿，但我由衷祝愿大家都能遇见合适的室友，开启美好的大学四年时光。短期内平台将暂停进一步开发，我也会休整一段时间，感谢大家的理解与包容。
+                  </p>
+                  <p>
+                    再次感谢你们的支持 万分抱歉
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="space-y-4 sm:space-y-6">
